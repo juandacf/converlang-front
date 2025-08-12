@@ -1,18 +1,29 @@
 import './Authentication.css'
 import { SignUp } from '../signUP/SignUp'
-import { Login } from '../login/login'
+import { useState } from 'react'
+import { Login } from '../login/Login';
 
-export function  Authentication() {
-    return (
+export function Authentication() {
+  const [chosenAuth, setAuth] = useState(0);
+
+  const authenticatorSwitch = () => {
+    setAuth(chosenAuth + 1);
+  };
+
+  return (
     <div className="mainContainer"> 
       <div className="smallContainer">
         <div className="halfPart loginLeft">
 
         </div>
         <div className="halfPart loginRight">
-        <SignUp />
+          <button onClick={authenticatorSwitch}>
+            {chosenAuth % 2 === 0 ? 'Login' : 'SignUp'}
+          </button>
+
+          {chosenAuth % 2 === 0 ? <SignUp /> : <Login />}
         </div>
       </div>
     </div>
-  )
+  );
 }

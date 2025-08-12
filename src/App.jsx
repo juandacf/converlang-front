@@ -1,14 +1,17 @@
 
 import { useState } from 'react'
 import './App.css'
-import { SignUp } from './components/signUP/SignUp'
-import { Login } from './components/login/login'
 import { Authentication } from './components/authentication/Authentication'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 export function App() {
 
   return (
-    <Authentication />
+      <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Authentication />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

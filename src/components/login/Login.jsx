@@ -1,6 +1,6 @@
 import { useState } from "react";
-import './login.css'
+import './Login.css'
 
 export function Login () {
-    return <h1>Holaaaaxd</h1>
+    
 }
