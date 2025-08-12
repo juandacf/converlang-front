@@ -17,10 +17,32 @@ export function SignUp() {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
-    // En este espacio enviaremos los datos al backend
+  const  handleSubmit = async (e) => {
+        e.preventDefault();
+
+    try {
+      
+      const res = await fetch("http://localhost:4000/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+
+      if (!res.ok) {
+        throw new Error(`Error al crear cuenta: ${res.status}`);
+      }
+
+      const createdUser = await res.json();
+      console.log("Usuario creado:", createdUser);
+
+     
+      setFormData({ first_name: "", last_name: "", email: "", password: "" });
+
+    } catch (error) {
+      console.error(error);
+    }
+
+
   };
 
   return (
