@@ -19,7 +19,7 @@ export function SignUp() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Datos enviados:", formData);
+    console.log(formData);
     // En este espacio enviaremos los datos al backend
   };
 
