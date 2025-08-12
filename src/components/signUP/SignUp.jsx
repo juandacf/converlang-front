@@ -62,7 +62,7 @@ export function SignUp() {
         </div>
 
         <div>
-          <label>Segundo nombre:</label>
+          <label>Apellido:</label>
           <input
             type="text"
             name="last_name"

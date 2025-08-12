@@ -18,7 +18,7 @@ export function Authentication() {
         </div>
         <div className="halfPart loginRight">
           <button onClick={authenticatorSwitch}>
-            {chosenAuth % 2 === 0 ? 'Login' : 'SignUp'}
+            {chosenAuth % 2 === 0 ? 'Ya tengo cuenta' : 'No tengo una cuenta'}
           </button>
 
           {chosenAuth % 2 === 0 ? <SignUp /> : <Login />}
