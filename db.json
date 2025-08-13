@@ -9,8 +9,8 @@
     },
     {
       "id": "deb3",
-      "first_name": "Pepo ",
-      "last_name": "rojo",
+      "first_name": "Pepo",
+      "last_name": "Rojo",
       "email": "fwef@gmail.com",
       "password": "312wefwe"
     },
@@ -20,6 +20,125 @@
       "last_name": "ytftu",
       "email": "uyguy@jbhiu.com",
       "password": "iuhiu"
+    },
+    {
+      "id": "a1f4",
+      "first_name": "Laura",
+      "last_name": "Gómez",
+      "email": "laura.gomez@example.com",
+      "password": "pass1234"
+    },
+    {
+      "id": "b3e7",
+      "first_name": "Carlos",
+      "last_name": "Martínez",
+      "email": "carlos.martinez@example.com",
+      "password": "qwerty89"
+    },
+    {
+      "id": "c9d1",
+      "first_name": "Sofía",
+      "last_name": "Ramírez",
+      "email": "sofia.ramirez@example.com",
+      "password": "abcd5678"
+    },
+    {
+      "id": "d4e5",
+      "first_name": "Luis",
+      "last_name": "Fernández",
+      "email": "luis.fernandez@example.com",
+      "password": "mypass99"
+    },
+    {
+      "id": "e8f2",
+      "first_name": "María",
+      "last_name": "Torres",
+      "email": "maria.torres@example.com",
+      "password": "zxcv1234"
+    },
+    {
+      "id": "f5a3",
+      "first_name": "Andrés",
+      "last_name": "Hernández",
+      "email": "andres.hernandez@example.com",
+      "password": "password1"
+    },
+    {
+      "id": "g7b9",
+      "first_name": "Claudia",
+      "last_name": "Castro",
+      "email": "claudia.castro@example.com",
+      "password": "pass5678"
+    },
+    {
+      "id": "h2c8",
+      "first_name": "Javier",
+      "last_name": "Mendoza",
+      "email": "javier.mendoza@example.com",
+      "password": "admin123"
+    },
+    {
+      "id": "i6d4",
+      "first_name": "Patricia",
+      "last_name": "Navarro",
+      "email": "patricia.navarro@example.com",
+      "password": "securepw"
+    },
+    {
+      "id": "j9e5",
+      "first_name": "Raúl",
+      "last_name": "Ortega",
+      "email": "raul.ortega@example.com",
+      "password": "12345678"
+    },
+    {
+      "id": "k1f6",
+      "first_name": "Elena",
+      "last_name": "Vargas",
+      "email": "elena.vargas@example.com",
+      "password": "mypassword"
+    },
+    {
+      "id": "l8g2",
+      "first_name": "Fernando",
+      "last_name": "Silva",
+      "email": "fernando.silva@example.com",
+      "password": "testpass"
+    },
+    {
+      "id": "m4h7",
+      "first_name": "Lucía",
+      "last_name": "Ríos",
+      "email": "lucia.rios@example.com",
+      "password": "p4ssw0rd"
+    },
+    {
+      "id": "n2i9",
+      "first_name": "Mateo",
+      "last_name": "Morales",
+      "email": "mateo.morales@example.com",
+      "password": "pw123456"
+    },
+    {
+      "id": "o5j1",
+      "first_name": "Valentina",
+      "last_name": "Santos",
+      "email": "valentina.santos@example.com",
+      "password": "loginpass"
+    },
+    {
+      "id": "p7k4",
+      "first_name": "Gabriel",
+      "last_name": "Pérez",
+      "email": "gabriel.perez@example.com",
+      "password": "access2024"
+    },
+    {
+      "id": "q3l8",
+      "first_name": "Isabella",
+      "last_name": "López",
+      "email": "isabella.lopez@example.com",
+      "password": "openpass"
     }
   ]
 }

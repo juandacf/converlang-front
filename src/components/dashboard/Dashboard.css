@@ -1,0 +1,21 @@
+
+.navBar{
+  position: fixed;          
+  left: 0; top: 0; bottom: 0;
+  width: 8vh;
+  background: linear-gradient(210deg,#5b6cff, #3a2bf0 55%, #2b23c9 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 14s ease-in-out infinite; 
+  overflow: hidden;           
+  box-shadow: 0 24px 70px rgba(45, 35, 170, .35);
+  display:flex;
+  flex-direction: column;
+  gap:2vh;
+  justify-content: center;
+  align-items: center;
+}
+
+.navBarImage {
+
+    width:6vh;
+}
