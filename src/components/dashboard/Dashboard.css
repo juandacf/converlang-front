@@ -19,3 +19,47 @@
 
     width:6vh;
 }
+
+.dashboardMainContainer {
+  display: flex;
+  flex-direction:column;
+  margin-left: 8vh;
+  width: 100vw -8vh;
+}
+
+.greetingContainer {
+  height: 9rem;
+  width: 40rem;
+  display:flex;
+  align-self: center;
+  margin-top: 5px;
+}
+
+.UserPic {
+  height: 8rem;
+  display: flex;
+  justify-content: center;
+}
+
+.actualPic {
+  height:100%;
+  align-self: center;
+  border-radius: 50%;
+}
+
+.greeting {
+  width:100%;
+  margin-left: 2rem;
+}
+
+.bigGreeting {
+  height:50%;
+  display: flex;
+  align-items: center;
+}
+
+.smallGreeting {
+  height: 50%;
+  display: flex;
+  align-items: center;
+}

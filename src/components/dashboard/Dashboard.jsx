@@ -1,15 +1,27 @@
 import './Dashboard.css'
 
-export function Dashboard() {
+export function Dashboard({}) {
 
 return (
     <>
     <NavBar />
         <div className="dashboardMainContainer">
             <div className="greetingContainer"> 
-                <div className='greetingLeft'></div>
-                <div className='greetingRight'></div>
+                <div className="UserPic">
+                    <img className="actualPic" src="../../../public/assets/user.png" alt="" />
+                </div>
+                <div className="greeting">
+                    <h3 className='bigGreeting'>
+                        Hola, Juan David Caballero.
+                    </h3>
+                    <h3 className='smallGreeting'>
+                        ¡Empecemos!
+                    </h3>
+                </div>
             </div>        
+            <div className='recentMatchContainer'>f</div>
+            <div className='carrouselStatistics'>f</div>
+            <div className='teacherContainer'>f</div>
         </div>
     </>
 )
