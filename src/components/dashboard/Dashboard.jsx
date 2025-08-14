@@ -1,6 +1,28 @@
 import './Dashboard.css'
+import { useState, useEffect } from 'react';
+
+const API_URL = 'http://localhost:4000/users';
+
 
 export function Dashboard({user}) {
+const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetch(API_URL, { signal: controller.signal })
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((json) => {
+        const data = Array.isArray(json) ? json : json.users ?? [];
+        setUsers(data);
+      })
+      .catch((err) => console.log(err.message))
+
+    return () => controller.abort();
+  }, []);
 
 return (
     <>
@@ -25,9 +47,20 @@ return (
                     </h3>
                 </div>
             </div>        
-            <div className='recentMatchContainer'>f</div>
-            <div className='carrouselStatistics'>f</div>
-            <div className='teacherContainer'>f</div>
+            <div className='recentMatchContainer'>
+                <h3 className='recentMatchTitle'>Match recientes</h3>
+                <div className='recentMatchItems'>
+                    {users.map((user)=> {
+                       return (
+                       <div className="recentMatch">
+                        <img className="matchPhoto" src="../../../public/assets/user.png" alt="" />
+                        <p>{user.first_name}</p>
+                       </div> )
+                    })}
+                </div>
+            </div>
+            <div className='carrouselStatistics'></div>
+            <div className='teacherContainer'></div>
         </div>
     </>
 )

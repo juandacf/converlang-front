@@ -77,5 +77,40 @@
   align-items: center;
 }
 .navBarElement {
-  height:70%
+  height:70% 
+}
+.recentMatchContainer {
+  width: 100vw -8vh;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 2vw;
+  align-items: center;
+}
+.recentMatchTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  align-self: center;
+  margin-bottom:2rem;
+}
+
+.recentMatchItems {
+  display:flex;
+  height:4rem;
+  width: 90vw;
+  flex-direction: row;
+
+}
+.recentMatch {
+  font-size: 1rem;
+  height:90%;
+  margin: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.matchPhoto {
+  height:100%;
+  border-radius: 50%;
 }
