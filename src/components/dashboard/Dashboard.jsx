@@ -49,15 +49,14 @@ return (
             </div>        
             <div className='recentMatchContainer'>
                 <h3 className='recentMatchTitle'>Match recientes</h3>
-                <div className='recentMatchItems'>
-                    {users.map((user)=> {
-                       return (
-                       <div className="recentMatch">
-                        <img className="matchPhoto" src="../../../public/assets/user.png" alt="" />
-                        <p>{user.first_name}</p>
-                       </div> )
-                    })}
+            <div className="recentMatchItems" >
+              {users.map((u) => (
+                <div className="recentMatch" key={u.id}>
+                  <img className="matchPhoto" src="../../../public/assets/user.png" alt="" />
+                  <p>{u.first_name}</p>
                 </div>
+              ))}
+            </div>
             </div>
             <div className='carrouselStatistics'></div>
             <div className='teacherContainer'></div>
