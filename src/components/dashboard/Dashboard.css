@@ -50,6 +50,7 @@
 .greeting {
   width:100%;
   margin-left: 2rem;
+  font-size: 2rem;
 }
 
 .bigGreeting {
@@ -62,4 +63,19 @@
   height: 50%;
   display: flex;
   align-items: center;
+}
+
+.dashNavBar {
+  height:3rem;
+  display:flex;
+  justify-content: flex-end;
+}
+.elementsNavBar {
+  width:8rem;
+  display:flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.navBarElement {
+  height:70%
 }
