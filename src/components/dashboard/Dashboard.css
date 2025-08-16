@@ -20,6 +20,12 @@
     width:6vh;
 }
 
+.navBarImage:hover {
+  transform: scale(1.05);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
 .dashboardMainContainer {
   display: flex;
   flex-direction:column;
@@ -79,6 +85,13 @@
 .navBarElement {
   height:70% 
 }
+.navBarElement:hover {
+  background: #eaeaea; /* un tono ligeramente más oscuro */
+  transform: scale(1.05); /* efecto de crecimiento */
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  border-radius: 50%;
+}
 /* corrige width inválido */
 .recentMatchContainer {
   width: calc(100vw - 8vh);
@@ -126,7 +139,7 @@
 
 .recentMatch {
   flex: 0 0 auto;
-  width: 160px;          
+  width: 12rem;          
   height: 4rem;
   display: flex;
   gap: 0.5rem;
@@ -145,4 +158,64 @@
   border-radius: 50%;
   object-fit: cover;
 }
+.recentMatch:hover {
+  background: #eaeaea; /* un tono ligeramente más oscuro */
+  transform: scale(1.05); /* efecto de crecimiento */
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+.carrouselStatistics {
+  width: calc(100vw - 8vh);
+  display:flex;
+  flex-direction: row;
+  gap:2rem; 
+  justify-content: center;
+  margin-top: 2vw;
+  align-items: center;
+}
+.matchContainer {
+  width:25rem;
+  height:12rem;
+  background: linear-gradient(210deg,#5b6cff, #3a2bf0 55%, #2b23c9 100%);
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border-radius: 2rem;
+}
+.matchStatistics {
+  background: linear-gradient(210deg, #ff9f43, #ffcd1a 55%, #ff6b1a 100%);
+}
+.carrouselTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  align-self: flex-start;
+  margin-left: 1.1rem;
+  margin-top: 1rem;
+}
+.matchButton {
+  height: 5rem;
+  width: 20rem;
+  border-radius: 2rem;
+  border: none;
+   background: linear-gradient(270deg, #ff9f43, #ffcd1a, #ff6b1a);
+  background-size: 600% 600%;
+  font-size: 1rem;
+  font-weight: 700;
+  align-self: center;
+  cursor: pointer;
+}
 
+.matchButton:hover {
+  animation: gradientMove 1s ease infinite;
+  transform: scale(1.05);
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.recentSessions {
+  margin-right: 2rem
+}

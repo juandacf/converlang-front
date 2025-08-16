@@ -140,5 +140,11 @@
       "email": "isabella.lopez@example.com",
       "password": "openpass"
     }
-  ]
+  ],
+  "datachart": [
+  { "name": "Day 0",  "sesiones": 1 },
+  { "name": "Day 10", "sesiones": 2 },
+  { "name": "Day 20", "sesiones": 3 },
+  { "name": "Day 30", "sesiones": 4 }
+]
 }
