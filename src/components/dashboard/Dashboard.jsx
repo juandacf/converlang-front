@@ -1,9 +1,6 @@
 import './Dashboard.css'
 import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
-import { Calendar, dateFnsLocalizer } from "react-big-calendar";
-import { format, parse, startOfWeek, getDay } from "date-fns";
-import enUS from "date-fns/locale/en-US";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 const API_USERS = 'http://localhost:4000/users';
@@ -13,8 +10,8 @@ const API_STATISTICS =  'http://localhost:4000/datachart';
 export function Dashboard({user}) {
 const [users, setUsers] = useState([]);
 const [sessions, setSessions]= useState([]);
-
-  useEffect(() => {
+ 
+  useEffect(() => {   //  Traemos los usuarios con los que se ha ehecho match
     const controller = new AbortController();
 
     fetch(API_USERS, { signal: controller.signal })
@@ -31,7 +28,7 @@ const [sessions, setSessions]= useState([]);
     return () => controller.abort();
   }, []);
 
-  useEffect(() => {
+  useEffect(() => {  //  Traemos la cantidad de sesiones durante algunos días del mes1
     const controller = new AbortController();
 
     fetch(API_STATISTICS, { signal: controller.signal })
@@ -111,13 +108,20 @@ return (
                   <div>  
                   </div>
                   </div>
+                
                 </div>
-                 
-            </div>
-            <div className='teacherContainer'>
+                  <div className='carrouselContainer'>
+                  <div className='carrouselTitle'>Contratar a un profesor</div>
+                  <div className='matchContainer'><div>
+                    <a href=""> <button className='matchButton buttonPremium'>Premium</button></a>
+                  </div>
+                  </div>
 
+                </div>
             </div>
+
         </div>
+        <Footer />
     </>
 )
 }
@@ -126,9 +130,37 @@ return (
 
 export function NavBar() {
     return (<nav className='navBar'>
-        <img src="../../../public/assets/friend-request.png"  alt="connect" className='navBarImage' />
-        <img src="../../../public/assets/messages.png" alt="connect" className='navBarImage' />
-        <img src="../../../public/assets/sticky-note.png" alt="connect" className='navBarImage' />
+        <a href=""> <img src="../../../public/assets/home.png"  alt="connect" className='navBarImage' /></a>
+        <a href=""> <img src="../../../public/assets/friend-request.png"  alt="connect" className='navBarImage' /></a>
+        <a href=""><img src="../../../public/assets/messages.png" alt="connect" className='navBarImage' /> </a>
+        <a href=""><img src="../../../public/assets/sticky-note.png" alt="connect" className='navBarImage' /></a>
     </nav>)
 }
 
+export function Footer() {
+  return(
+    <footer className='footerContainer'>
+      <div className='footerSection' id='socialMedia'>
+        <a href="" className='socialMediaLink'><img src="../../../public/assets/twitter.png" alt="" className="socialMediaIcon" /></a>
+        <a href="" className='socialMediaLink'><img src="../../../public/assets/instagram.png" alt="" className="socialMediaIcon" /></a>
+        <a href="" className='socialMediaLink'><img src="../../../public/assets/linkedin.png" alt="" className="socialMediaIcon" /></a>
+        <a href="" className='socialMediaLink'><img src="../../../public/assets/youtube.png" alt="" className="socialMediaIcon" /></a>
+      </div>
+      <div className='aboutUs footerSection'>
+        <h3>Sobre nosotros</h3>
+        <p>Misión</p>
+        <p>Eficacia</p>
+      </div>
+      <div className='helpSupport footerSection'>
+        <h3>Ayuda y soporte</h3>
+        <p>Contacto</p>
+        <p>Preguntas</p>
+      </div>
+      <div className='termsPrivacy footerSection'>
+        <h3>Términos y Privacidad</h3>
+        <p>Blog de la comunidad</p>
+        <p>Términos</p>
+      </div>
+    </footer>
+  )
+}
