@@ -46,7 +46,7 @@ export function Login () {
 
 // const handleSubmit = async (e) => {           // CON POSTGRES SE HARÍA ASÍ
 //   e.preventDefault();
-//   const res = await fetch("/auth/login", {           // usa proxy de Vite si quieres
+//   const res = await fetch("/auth/login", {           //Debemos poner la ruta del endpoint
 //     method: "POST",
 //     headers: { "Content-Type": "application/json" },
 //     body: JSON.stringify(formData),
