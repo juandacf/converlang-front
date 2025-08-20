@@ -30,7 +30,7 @@
     border-radius: 2rem;
 }
 
-.mainTitle {
+.mainTitlet {
   background: linear-gradient(90deg, #FFD700, #FFB700, #FFA500, #FFD700);
   background-size: 300% auto;
   -webkit-background-clip: text;

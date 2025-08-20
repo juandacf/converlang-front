@@ -40,7 +40,7 @@ export function MatchTeacher() {
           <img className="arrow" src="../../../public/assets/left-arrow.png" alt="Volver" />
         </a>
         <div className="matchMainTitlet">
-          <h1 className="mainTitle">¡Contrata a un profesor!</h1>
+          <h1 className="mainTitlet">¡Contrata a un profesor!</h1>
         </div>
       </div>
 
