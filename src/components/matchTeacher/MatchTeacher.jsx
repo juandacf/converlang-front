@@ -40,7 +40,7 @@ export function MatchTeacher() {
           <img className="arrow" src="../../../public/assets/left-arrow.png" alt="Volver" />
         </a>
         <div className="matchMainTitle">
-          <h1 className="mainTitle">¡Hagamos Match!</h1>
+          <h1 className="mainTitle">¡Contratar profesor!</h1>
         </div>
       </div>
 
@@ -55,7 +55,7 @@ export function MatchTeacher() {
                 <img src="../../../public/assets/mi_pic.png" alt="" className="matchPhotoo" />
               </div>
               <div className="matchName">
-                <p className="userName">{u.first_name} {u.last_name}(25)</p>
+                <p className="userName">{u.first_name} {u.last_name}($25)</p>
               </div>
             </div>
             <div className="userDescriptionContainer">
@@ -68,7 +68,7 @@ export function MatchTeacher() {
                 <img src="../../../public/assets/star.png" alt="" className="star" />
               </div>
               <button className="connectButton">
-                <p className="buttonText">Match</p>
+                <p className="buttonText">Contratar</p>
               </button>
             </div>
           </div>
