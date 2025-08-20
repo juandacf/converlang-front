@@ -11,7 +11,7 @@ export function Authentication() {
   };
 
   return (
-    <div className="mainContainer"> 
+    <div className="mainContainerAuth"> 
       <div className="smallContainer">
         <div className="halfPart loginLeft">
 

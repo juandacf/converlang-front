@@ -50,7 +50,27 @@ export function MatchUser() {
             className="potentialMatchContainer"
             key={u.id ?? u._id ?? `${start + i}`}
           >
-            <h1>{u.first_name}</h1>
+            <div className="photoNameContainer">
+              <div className="photoContainer">
+                <img src="../../../public/assets/mi_pic.png" alt="" className="matchPhotoo" />
+              </div>
+              <div className="matchName">
+                <p className="userName">{u.first_name} {u.last_name}(25)</p>
+              </div>
+            </div>
+            <div className="userDescriptionContainer">
+              <h3 className="userTitle">Título</h3>
+              <p className="userDescription"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean nisl nisl, blandit vel elit et. </p>
+            </div>
+            <div className="connectRateContainer">
+              <div className="rateContainer">
+                <p className="ratingNumber">5.9</p>
+                <img src="../../../public/assets/star.png" alt="" className="star" />
+              </div>
+              <button className="connectButton">
+                <p className="buttonText">Match</p>
+              </button>
+            </div>
           </div>
         ))}
       </div>
