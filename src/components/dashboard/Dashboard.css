@@ -245,14 +245,15 @@
 }
 
 .footerContainer {
+
   width: calc(90vw -8vh);
   margin:3rem;
+  margin-top:5vw;
   margin-left:calc(8vh + 3rem);
-  margin-top:20vh;
   display:flex;
   flex-wrap: wrap;
   justify-content: center;
-    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
   border-top: 1px solid rgba(0, 0, 0, 0.05);  
   border-radius: 12px 12px 0 0;               
   background: #fff;       
