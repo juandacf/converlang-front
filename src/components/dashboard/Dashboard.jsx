@@ -86,7 +86,7 @@ return (
                 <div className='carrouselContainer'>
                   <div className='carrouselTitle'>Iniciar Match</div>
                   <div className='matchContainer'><div>
-                    <a href=""> <button className='matchButton'>Match</button></a>
+                    <a href="/matchUser"> <button className='matchButton'>Match</button></a>
                   </div>
                   </div>
 
@@ -113,7 +113,7 @@ return (
                   <div className='carrouselContainer'>
                   <div className='carrouselTitle'>Contratar a un profesor</div>
                   <div className='matchContainer'><div>
-                    <a href=""> <button className='matchButton buttonPremium'>Premium</button></a>
+                    <a href="/matchTeacher"> <button className='matchButton buttonPremium'>Premium</button></a>
                   </div>
                   </div>
 

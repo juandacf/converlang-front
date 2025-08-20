@@ -4,6 +4,7 @@ import './App.css'
 import { Authentication } from './components/authentication/Authentication'
 import { Dashboard } from './components/dashboard/Dashboard';
 import { MatchUser } from './components/matchUser/MatchUser';
+import { MatchTeacher } from './components/matchTeacher/matchTeacher';
 
 
 export function App() {
@@ -20,6 +21,7 @@ export function App() {
         <Route path="/" element={<Authentication />} />
         <Route path="/dashboard" element={<Dashboard user={userExample} />} />
         <Route path="/matchUser" element={<MatchUser />} />
+        <Route path="/matchTeacher" element={<MatchTeacher />} />
       </Routes>
     </BrowserRouter>
   )
