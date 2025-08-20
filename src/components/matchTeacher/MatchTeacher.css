@@ -21,7 +21,7 @@
 .arrow {
     height:4rem;
 }
-.matchMainTitle {
+.matchMainTitlet {
     align-self: center;
     margin: auto;
     font-size: 2rem;
@@ -155,7 +155,7 @@
   line-height: 2rem1;
 }
 
-.connectButton {
+.connectButtont {
  align-self: flex-end;
  font-size: 1rem;
   border:none;

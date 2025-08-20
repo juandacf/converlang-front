@@ -39,8 +39,8 @@ export function MatchTeacher() {
         <a className="goBackContainer" href="/dashboard">
           <img className="arrow" src="../../../public/assets/left-arrow.png" alt="Volver" />
         </a>
-        <div className="matchMainTitle">
-          <h1 className="mainTitle">¡Contratar profesor!</h1>
+        <div className="matchMainTitlet">
+          <h1 className="mainTitle">¡Contrata a un profesor!</h1>
         </div>
       </div>
 
@@ -67,7 +67,7 @@ export function MatchTeacher() {
                 <p className="ratingNumber">5.9</p>
                 <img src="../../../public/assets/star.png" alt="" className="star" />
               </div>
-              <button className="connectButton">
+              <button className="connectButtont">
                 <p className="buttonText">Contratar</p>
               </button>
             </div>
