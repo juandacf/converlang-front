@@ -4,7 +4,7 @@ import './App.css'
 import { Authentication } from './components/authentication/Authentication'
 import { Dashboard } from './components/dashboard/Dashboard';
 import { MatchUser } from './components/matchUser/MatchUser';
-import { MatchTeacher } from './components/matchTeacher/matchTeacher';
+import { MatchTeacher } from './components/matchTeacher/MatchTeacher';
 
 
 export function App() {
