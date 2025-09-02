@@ -2,8 +2,8 @@
   "users": [
     {
       "id": "5008",
-      "first_name": "Christian",
-      "last_name": "Ruiz",
+      "first_name": "Carlos",
+      "last_name": "Perez",
       "email": "chruiz@gmail.com",
       "password": "marzo1998"
     },
@@ -142,9 +142,9 @@
     }
   ],
   "datachart": [
-  { "name": "Day 0",  "sesiones": 1 },
+  { "name": "Day 0",  "sesiones": 0 },
   { "name": "Day 10", "sesiones": 2 },
-  { "name": "Day 20", "sesiones": 3 },
-  { "name": "Day 30", "sesiones": 4 }
+  { "name": "Day 20", "sesiones": 5 },
+  { "name": "Day 30", "sesiones": 9 }
 ]
 }

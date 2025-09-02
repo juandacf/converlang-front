@@ -1,10 +1,10 @@
-import { useState } from 'react'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './App.css'
 import { Authentication } from './components/authentication/Authentication'
 import { Dashboard } from './components/dashboard/Dashboard';
 import { MatchUser } from './components/matchUser/MatchUser';
 import { MatchTeacher } from './components/matchTeacher/MatchTeacher';
+import { UserChat } from './components/userChat/userChat';
 
 
 export function App() {
@@ -22,6 +22,7 @@ export function App() {
         <Route path="/dashboard" element={<Dashboard user={userExample} />} />
         <Route path="/matchUser" element={<MatchUser />} />
         <Route path="/matchTeacher" element={<MatchTeacher />} />
+        <Route path="/userChat" element={<UserChat />} />
       </Routes>
     </BrowserRouter>
   )
