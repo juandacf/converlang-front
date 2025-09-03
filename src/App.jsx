@@ -4,7 +4,7 @@ import { Authentication } from './components/authentication/Authentication'
 import { Dashboard } from './components/dashboard/Dashboard';
 import { MatchUser } from './components/matchUser/MatchUser';
 import { MatchTeacher } from './components/matchTeacher/MatchTeacher';
-import { UserChat } from './components/userChat/userChat';
+import { UserChat } from './components/userChat/UserChat';
 
 
 export function App() {

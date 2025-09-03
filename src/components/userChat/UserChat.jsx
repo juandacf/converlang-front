@@ -2,13 +2,13 @@ import { useState, useEffect } from "react";
 import { NavBar, Footer } from "../dashboard/Dashboard";
 import './UserChat.css'
 
-
 const API_USERS = 'http://localhost:4000/users';
-
 
 export function UserChat () {
     const [users, setUsers] = useState([]);
-      useEffect(() => {   //  Traemos los usuarios con los que se ha ehecho match
+    const [search, setSearch] = useState("");   
+
+    useEffect(() => {
         const controller = new AbortController();
     
         fetch(API_USERS, { signal: controller.signal })
@@ -23,23 +23,41 @@ export function UserChat () {
           .catch((err) => console.log(err.message))
     
         return () => controller.abort();
-      }, []);
+    }, []);
+
+    
+    const filteredUsers = users.filter(u =>
+        `${u.first_name} ${u.last_name}`
+            .toLowerCase()
+            .includes(search.toLowerCase())
+    );
 
     return (
         <div className="userChatMainContainer">
             <div className="chatItemsContainer">
-                <div className="chatBarTitle"> 
-                    <h3 className="chatTitle">Conversaciones</h3>
-                </div>
                 <div className="chatSearchBar">
-                    <input type="text" className="searchChatInput"/>
-                    <img src="../../../public/assets/search.png" alt="" />
+                    <input 
+                        type="text" 
+                        className="searchChatInput"
+                        placeholder="Buscar..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                    <img src="../../../public/assets/search.png" alt="" className="chatSearchButton"/>
                 </div>
-                {users.map((u)=> (
-                   <div className="chatMatchContainer">
-                        <p> {u.first_name} {u.last_name}</p>
+                {filteredUsers.map((u)=> (
+                   <div className="chatMatchContainer" key={u.id}>
+                        <div className="chatPhotoContainer">
+                          <img className="userPhoto" src="../../../public/assets/user.png" alt="" />
+                        </div>
+                        <div className="chatNameContainer">
+                          <p>{u.first_name} {u.last_name}</p>
+                        </div>
                    </div>
                ) )}
+               {filteredUsers.length === 0 && (
+                  <p style={{color: "#6b7280", paddingLeft: "1rem"}}>Sin resultados</p>
+               )}
             </div>
               <NavBar />
               <Footer />
