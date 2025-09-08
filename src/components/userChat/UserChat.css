@@ -16,6 +16,7 @@
   min-height: 100dvh;
   background: var(--bg);
   padding: 2rem 1.25rem;
+  displaY:flex;
 }
 
 
@@ -142,4 +143,15 @@
 }
 .chatItemsContainer::-webkit-scrollbar-track {
   background: transparent;
+}
+
+.messagesContainer {
+  background-color:#6b7280;
+  width: 70vw;
+  border-radius: 3vw;
+  display:flex;
+}
+
+.messagesTitle {
+  display:flex;
 }

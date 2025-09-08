@@ -146,5 +146,7 @@
   { "name": "Day 10", "sesiones": 2 },
   { "name": "Day 20", "sesiones": 5 },
   { "name": "Day 30", "sesiones": 9 }
-]
+],
+
+"chats": [{ }]
 }
