@@ -24,6 +24,7 @@ export function SignUp() {
     birth_date: "",
     country_id: "",
     gender: "",
+    role: "", // 👈 nuevo campo
     native_lang_id: "",
     target_lang_id: "",
     description: "",
@@ -52,6 +53,11 @@ export function SignUp() {
     { value: "prefiero_no_decir", label: "Prefiero no decir" },
   ];
 
+  const roles = [
+    { value: "profesor", label: "Profesor" },
+    { value: "estudiante", label: "Estudiante" },
+  ];
+
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
     if (errors[name]) {
@@ -74,6 +80,7 @@ export function SignUp() {
     if (currentStep === 2) {
       if (!formData.birth_date) newErrors.birth_date = "Requerido";
       if (!formData.country_id) newErrors.country_id = "Selecciona un país";
+      if (!formData.role) newErrors.role = "Selecciona un rol"; // 👈 validación
     }
     if (currentStep === 3) {
       if (!formData.native_lang_id)
@@ -112,6 +119,7 @@ export function SignUp() {
       birth_date: formData.birth_date,
       country_id: formData.country_id,
       gender: formData.gender || "prefiero_no_decir",
+      role: formData.role,
       native_lang_id: formData.native_lang_id,
       target_lang_id: formData.target_lang_id,
       description: formData.description || "No especificado",
@@ -248,6 +256,21 @@ export function SignUp() {
                 </option>
               ))}
             </select>
+          </div>
+          <div>
+            <label>Rol</label>
+            <select
+              value={formData.role}
+              onChange={(e) => handleChange("role", e.target.value)}
+            >
+              <option value="">Selecciona tu rol</option>
+              {roles.map((r) => (
+                <option key={r.value} value={r.value}>
+                  {r.label}
+                </option>
+              ))}
+            </select>
+            {errors.role && <p className="error">{errors.role}</p>}
           </div>
         </div>
       )}
