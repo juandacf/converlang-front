@@ -139,14 +139,74 @@
       "last_name": "López",
       "email": "isabella.lopez@example.com",
       "password": "openpass"
+    },
+    {
+      "id": "3fc6",
+      "first_name": "efwf",
+      "last_name": "ewfwef",
+      "email": "ewfew@gmail.com",
+      "password": "wfewfwefwefwefwef",
+      "confirmPassword": "wfewfwefwefwefwef",
+      "birth_date": "2025-09-10",
+      "country_id": "BR",
+      "gender": "femenino",
+      "native_lang_id": "ES",
+      "target_lang_id": "PT",
+      "description": "regergre"
+    },
+    {
+      "id": "0711",
+      "first_name": "efwf",
+      "last_name": "ewfwef",
+      "email": "ewfew@gmail.com",
+      "password": "wfewfwefwefwefwef",
+      "confirmPassword": "wfewfwefwefwefwef",
+      "birth_date": "2025-09-10",
+      "country_id": "BR",
+      "gender": "femenino",
+      "native_lang_id": "ES",
+      "target_lang_id": "PT",
+      "description": "regergre"
+    },
+    {
+      "id": "b716",
+      "first_name": "efwf",
+      "last_name": "wefwef",
+      "email": "wewefwe@gmail.com",
+      "password": "jewfewfwefweffwef",
+      "birth_date": "2025-09-09",
+      "country_id": "CO",
+      "gender": "masculino",
+      "native_lang_id": "ES",
+      "target_lang_id": "EN",
+      "description": "fwefewf"
     }
   ],
   "datachart": [
-  { "name": "Day 0",  "sesiones": 0 },
-  { "name": "Day 10", "sesiones": 2 },
-  { "name": "Day 20", "sesiones": 5 },
-  { "name": "Day 30", "sesiones": 9 }
-],
-
-"chats": [{ }]
+    {
+      "name": "Day 0",
+      "sesiones": 0,
+      "id": "a66d"
+    },
+    {
+      "name": "Day 10",
+      "sesiones": 2,
+      "id": "5e6b"
+    },
+    {
+      "name": "Day 20",
+      "sesiones": 5,
+      "id": "2e78"
+    },
+    {
+      "name": "Day 30",
+      "sesiones": 9,
+      "id": "46b3"
+    }
+  ],
+  "chats": [
+    {
+      "id": "9a3c"
+    }
+  ]
 }

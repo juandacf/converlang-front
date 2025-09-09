@@ -1,100 +1,331 @@
 import { useState } from "react";
-import './SignUp.css';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Calendar,
+  MapPin,
+  MessageCircle,
+  Lock,
+  Eye,
+  EyeOff,
+  Mail,
+} from "lucide-react";
+import "./SignUp.css";
 
 export function SignUp() {
-  const [formData, setFormData] = useState({  //Se definen los datos con los que se va a crear la cuenta y se les linkea a un estado
+  const [currentStep, setCurrentStep] = useState(1);
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
     email: "",
-    password: ""
+    password: "",
+    confirmPassword: "",
+    birth_date: "",
+    country_id: "",
+    gender: "",
+    native_lang_id: "",
+    target_lang_id: "",
+    description: "",
   });
+  const [errors, setErrors] = useState({});
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData, 
-      [name]: value 
-    });
+  const countries = [
+    { code: "CO", name: "Colombia" },
+    { code: "US", name: "Estados Unidos" },
+    { code: "ES", name: "España" },
+    { code: "BR", name: "Brasil" },
+    { code: "AR", name: "Argentina" },
+  ];
+
+  const languages = [
+    { code: "ES", name: "Español" },
+    { code: "EN", name: "Inglés" },
+    { code: "PT", name: "Portugués" },
+    { code: "FR", name: "Francés" },
+  ];
+
+  const genders = [
+    { value: "masculino", label: "Masculino" },
+    { value: "femenino", label: "Femenino" },
+    { value: "otro", label: "Otro" },
+    { value: "prefiero_no_decir", label: "Prefiero no decir" },
+  ];
+
+  const handleChange = (name, value) => {
+    setFormData({ ...formData, [name]: value });
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: "" });
+    }
   };
 
-  const  handleSubmit = async (e) => {
-        e.preventDefault();
+  const validateStep = () => {
+    const newErrors = {};
+    if (currentStep === 1) {
+      if (!formData.first_name) newErrors.first_name = "Nombre requerido";
+      if (!formData.last_name) newErrors.last_name = "Apellido requerido";
+      if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/))
+        newErrors.email = "Correo inválido";
+      if (formData.password.length < 8)
+        newErrors.password = "Mínimo 8 caracteres";
+      if (formData.password !== formData.confirmPassword)
+        newErrors.confirmPassword = "Las contraseñas no coinciden";
+    }
+    if (currentStep === 2) {
+      if (!formData.birth_date) newErrors.birth_date = "Requerido";
+      if (!formData.country_id) newErrors.country_id = "Selecciona un país";
+    }
+    if (currentStep === 3) {
+      if (!formData.native_lang_id)
+        newErrors.native_lang_id = "Idioma nativo requerido";
+      if (!formData.target_lang_id)
+        newErrors.target_lang_id = "Idioma objetivo requerido";
+      if (
+        formData.native_lang_id &&
+        formData.target_lang_id &&
+        formData.native_lang_id === formData.target_lang_id
+      ) {
+        newErrors.target_lang_id = "Debe ser diferente al idioma nativo";
+      }
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const nextStep = () => {
+    if (validateStep()) setCurrentStep((s) => s + 1);
+  };
+
+  const prevStep = () => {
+    setCurrentStep((s) => s - 1);
+  };
+
+  const handleSubmit = async () => {
+    if (!validateStep()) return;
+
+    // Preparamos los datos sin confirmPassword
+    const userData = {
+      first_name: formData.first_name,
+      last_name: formData.last_name,
+      email: formData.email,
+      password: formData.password,
+      birth_date: formData.birth_date,
+      country_id: formData.country_id,
+      gender: formData.gender || "prefiero_no_decir",
+      native_lang_id: formData.native_lang_id,
+      target_lang_id: formData.target_lang_id,
+      description: formData.description || "No especificado",
+    };
 
     try {
-      
       const res = await fetch("http://localhost:4000/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(userData),
       });
-
-      if (!res.ok) {
-        throw new Error(`Error al crear cuenta: ${res.status}`);
-      }
-
-      const createdUser = await res.json();
-      console.log("Usuario creado:", createdUser);
-
-     
-      setFormData({ first_name: "", last_name: "", email: "", password: "" });
-
-    } catch (error) {
-      console.error(error);
+      if (!res.ok) throw new Error("Error al crear cuenta");
+      const user = await res.json();
+      console.log("Usuario creado:", user);
+      alert("¡Cuenta creada con éxito!");
+    } catch (err) {
+      console.error(err);
+      alert("Error en el registro");
     }
-
-
   };
 
   return (
     <div className="SignUpContainer">
-      <h3>Sign up</h3>
+      <h3>Registro</h3>
 
-      <form onSubmit={handleSubmit} className="signUpForm">
-        <div>
-          <label>Primer nombre:</label>
-          <input
-            type="text"
-            name="first_name"
-            value={formData.first_name}
-            onChange={handleChange}
-            required
-          />
+      {/* Paso 1 */}
+      {currentStep === 1 && (
+        <div className="signUpForm">
+          <div>
+            <label>Nombre</label>
+            <input
+              type="text"
+              value={formData.first_name}
+              onChange={(e) => handleChange("first_name", e.target.value)}
+            />
+            {errors.first_name && <p className="error">{errors.first_name}</p>}
+          </div>
+          <div>
+            <label>Apellido</label>
+            <input
+              type="text"
+              value={formData.last_name}
+              onChange={(e) => handleChange("last_name", e.target.value)}
+            />
+            {errors.last_name && <p className="error">{errors.last_name}</p>}
+          </div>
+          <div>
+            <label>
+              <Mail size={14} className="icon" /> Correo
+            </label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => handleChange("email", e.target.value)}
+            />
+            {errors.email && <p className="error">{errors.email}</p>}
+          </div>
+          <div>
+            <label>
+              <Lock size={14} className="icon" /> Contraseña
+            </label>
+            <div className="passwordField">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={formData.password}
+                onChange={(e) => handleChange("password", e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            {errors.password && <p className="error">{errors.password}</p>}
+          </div>
+          <div>
+            <label>Confirmar contraseña</label>
+            <input
+              type="password"
+              value={formData.confirmPassword}
+              onChange={(e) =>
+                handleChange("confirmPassword", e.target.value)
+              }
+            />
+            {errors.confirmPassword && (
+              <p className="error">{errors.confirmPassword}</p>
+            )}
+          </div>
         </div>
+      )}
 
-        <div>
-          <label>Apellido:</label>
-          <input
-            type="text"
-            name="last_name"
-            value={formData.last_name}
-            onChange={handleChange}
-          />
+      {/* Paso 2 */}
+      {currentStep === 2 && (
+        <div className="signUpForm">
+          <div>
+            <label>
+              <Calendar size={14} className="icon" /> Fecha de nacimiento
+            </label>
+            <input
+              type="date"
+              value={formData.birth_date}
+              onChange={(e) => handleChange("birth_date", e.target.value)}
+            />
+            {errors.birth_date && <p className="error">{errors.birth_date}</p>}
+          </div>
+          <div>
+            <label>
+              <MapPin size={14} className="icon" /> País
+            </label>
+            <select
+              value={formData.country_id}
+              onChange={(e) => handleChange("country_id", e.target.value)}
+            >
+              <option value="">Selecciona</option>
+              {countries.map((c) => (
+                <option key={c.code} value={c.code}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+            {errors.country_id && <p className="error">{errors.country_id}</p>}
+          </div>
+          <div>
+            <label>Género</label>
+            <select
+              value={formData.gender}
+              onChange={(e) => handleChange("gender", e.target.value)}
+            >
+              <option value="">Prefiero no decir</option>
+              {genders.map((g) => (
+                <option key={g.value} value={g.value}>
+                  {g.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
+      )}
 
-        <div>
-          <label>Correo:</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
+      {/* Paso 3 */}
+      {currentStep === 3 && (
+        <div className="signUpForm">
+          <div>
+            <label>Idioma nativo</label>
+            <select
+              value={formData.native_lang_id}
+              onChange={(e) =>
+                handleChange("native_lang_id", e.target.value)
+              }
+            >
+              <option value="">Selecciona</option>
+              {languages.map((l) => (
+                <option key={l.code} value={l.code}>
+                  {l.name}
+                </option>
+              ))}
+            </select>
+            {errors.native_lang_id && (
+              <p className="error">{errors.native_lang_id}</p>
+            )}
+          </div>
+          <div>
+            <label>Idioma a aprender</label>
+            <select
+              value={formData.target_lang_id}
+              onChange={(e) =>
+                handleChange("target_lang_id", e.target.value)
+              }
+            >
+              <option value="">Selecciona</option>
+              {languages
+                .filter((l) => l.code !== formData.native_lang_id)
+                .map((l) => (
+                  <option key={l.code} value={l.code}>
+                    {l.name}
+                  </option>
+                ))}
+            </select>
+            {errors.target_lang_id && (
+              <p className="error">{errors.target_lang_id}</p>
+            )}
+          </div>
+          <div>
+            <label>Sobre ti</label>
+            <textarea
+              value={formData.description}
+              onChange={(e) =>
+                handleChange("description", e.target.value)
+              }
+              placeholder="Cuéntanos algo..."
+              rows={3}
+            />
+          </div>
         </div>
+      )}
 
-        <div>
-          <label>Contraseña:</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <button type="submit">Crear cuenta</button>
-      </form>
+      {/* Botones navegación */}
+      <div className="navButtons">
+        {currentStep > 1 && (
+          <button type="button" onClick={prevStep} className="secondaryBtn">
+            <ChevronLeft size={14} /> Anterior
+          </button>
+        )}
+        {currentStep < 3 ? (
+          <button type="button" onClick={nextStep} className="primaryBtn">
+            Siguiente <ChevronRight size={14} />
+          </button>
+        ) : (
+          <button type="button" onClick={handleSubmit} className="primaryBtn">
+            Crear cuenta <MessageCircle size={14} />
+          </button>
+        )}
+      </div>
     </div>
   );
 }
