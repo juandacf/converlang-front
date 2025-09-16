@@ -16,7 +16,7 @@
   min-height: 100dvh;
   background: var(--bg);
   padding: 2rem 1.25rem;
-  displaY:flex;
+  displaY: flex;
 }
 
 
@@ -111,12 +111,14 @@
   border: 3px solid transparent;
   background:
     linear-gradient(#fff, #fff) padding-box,
-    var(--grad-1) border-box; /* aro con degradado */
+    var(--grad-1) border-box;
+  /* aro con degradado */
 }
 
 .chatNameContainer {
   align-self: center;
-  margin-left: 0.25rem; /* más compacto para alinear con la UI */
+  margin-left: 0.25rem;
+  /* más compacto para alinear con la UI */
 }
 
 .chatNameContainer p {
@@ -128,7 +130,7 @@
 
 
 .chatItemsContainer {
-  height: 90vh;          
+  height: 90vh;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #c7d2fe transparent;
@@ -137,21 +139,58 @@
 .chatItemsContainer::-webkit-scrollbar {
   width: 8px;
 }
+
 .chatItemsContainer::-webkit-scrollbar-thumb {
   background: #c7d2fe;
   border-radius: 8px;
 }
+
 .chatItemsContainer::-webkit-scrollbar-track {
   background: transparent;
 }
 
 .messagesContainer {
-  background-color:#6b7280;
+  background-color: #6b7280;
   width: 70vw;
   border-radius: 3vw;
-  display:flex;
+  display: flex;
 }
 
 .messagesTitle {
-  display:flex;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 5rem;
+  width: 100%;
+}
+
+.currentUserPhoto {
+  height: 4rem;
+  border-radius: 50%;
+}
+
+.currentChosenNameContainer {
+  margin-left: 0.5rem;
+}
+
+.currentChosenName {
+  font-size: 1.5rem;
+}
+
+.otherIcons {
+  position: relative;
+  display: flex;
+
+}
+
+.chatIconImage {
+  height: 3rem
+}
+
+.selectedUserInfo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 3rem;
 }

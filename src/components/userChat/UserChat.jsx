@@ -78,17 +78,28 @@ export function UserChat() {
         </div>
         <div className="messagesContainer">
           <div className="messagesTitle">
-            <div className="currentUserPhotoContainer">
-              <img
-                className="currentUserPhoto"
-                src="../../../public/assets/user.png"
-                alt=""
-              />
+            <div className="selectedUserInfo">
+              <div className="currentUserPhotoContainer">
+                <img
+                  className="currentUserPhoto"
+                  src="../../../public/assets/user.png"
+                  alt=""
+                />
+              </div>
+              <div className="currentChosenNameContainer">
+                <p className="currentChosenName">
+                  {selectedUser}
+                </p>
+              </div>
             </div>
-            <div className="currentChosenNameContainer">
-              <p className="currentChosenName">
-               {selectedUser}
-              </p>
+
+            <div className="otherIcons">
+              <div className="chatIcon">
+                <img className="chatIconImage" src="../../../public/assets/video-camera.png" alt="" />
+              </div>
+              <div className="chatIcon">
+                <img className="chatIconImage" src="../../../public/assets/dots.png" alt="" />
+              </div>
             </div>
           </div>
         </div>
