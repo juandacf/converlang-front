@@ -3,9 +3,11 @@ import { NavBar, Footer } from "../dashboard/Dashboard";
 import "./UserChat.css";
 
 const API_USERS = "http://localhost:4000/users";
+const API_MESSAGES = "http://localhost:4000/chats";
 
 export function UserChat() {
   const [users, setUsers] = useState([]);
+  const [messages, setMessages] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState("");
 
@@ -25,6 +27,23 @@ export function UserChat() {
 
     return () => controller.abort();
   }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetch(API_MESSAGES, { signal: controller.signal })
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((json) => {
+        const chatData = Array.isArray(json) ? json : json.users ?? [];
+        setMessages(chatData);
+      })
+      .catch((err) => console.log(err.message));
+
+    return () => controller.abort();
+  }, [selectedUser]);
 
   const filteredUsers = users.filter((u) =>
     `${u.first_name} ${u.last_name}`
@@ -101,6 +120,10 @@ export function UserChat() {
                 <img className="chatIconImage" src="../../../public/assets/dots.png" alt="" />
               </div>
             </div>
+          </div>
+          <div className="actualMessageContainer">
+            <div className="otherMessage">holaxd</div>
+            <div className="selfMessage">como tas</div>
           </div>
         </div>
       </div>

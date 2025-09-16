@@ -220,7 +220,124 @@
   ],
   "chats": [
     {
-      "id": "9a3c"
+      "id": "c001",
+      "message": "Hola",
+      "sender": 1,
+      "date": "2025-09-15 14:23:00"
+    },
+    {
+      "id": "c002",
+      "message": "Hola, ¿cómo estás?",
+      "sender": 2,
+      "date": "2025-09-15 14:23:03"
+    },
+    {
+      "id": "c003",
+      "message": "Bien, ¿y tú?",
+      "sender": 1,
+      "date": "2025-09-15 14:23:06"
+    },
+    {
+      "id": "c004",
+      "message": "También bien, gracias.",
+      "sender": 2,
+      "date": "2025-09-15 14:23:09"
+    },
+    {
+      "id": "c005",
+      "message": "¿Qué haces?",
+      "sender": 1,
+      "date": "2025-09-15 14:23:12"
+    },
+    {
+      "id": "c006",
+      "message": "Trabajando un poco.",
+      "sender": 2,
+      "date": "2025-09-15 14:23:15"
+    },
+    {
+      "id": "c007",
+      "message": "Ah, entiendo.",
+      "sender": 1,
+      "date": "2025-09-15 14:23:18"
+    },
+    {
+      "id": "c008",
+      "message": "¿Y tú? ¿Descansando?",
+      "sender": 2,
+      "date": "2025-09-15 14:23:21"
+    },
+    {
+      "id": "c009",
+      "message": "Sí, viendo algo de series.",
+      "sender": 1,
+      "date": "2025-09-15 14:23:24"
+    },
+    {
+      "id": "c010",
+      "message": "Qué bien, ¿cuál ves?",
+      "sender": 2,
+      "date": "2025-09-15 14:23:27"
+    },
+    {
+      "id": "c011",
+      "message": "Una nueva en Netflix.",
+      "sender": 1,
+      "date": "2025-09-15 14:23:30"
+    },
+    {
+      "id": "c012",
+      "message": "¿Está buena?",
+      "sender": 2,
+      "date": "2025-09-15 14:23:33"
+    },
+    {
+      "id": "c013",
+      "message": "Sí, bastante interesante.",
+      "sender": 1,
+      "date": "2025-09-15 14:23:36"
+    },
+    {
+      "id": "c014",
+      "message": "Después me pasas el nombre.",
+      "sender": 2,
+      "date": "2025-09-15 14:23:39"
+    },
+    {
+      "id": "c015",
+      "message": "Claro que sí.",
+      "sender": 1,
+      "date": "2025-09-15 14:23:42"
+    },
+    {
+      "id": "c016",
+      "message": "Gracias!",
+      "sender": 2,
+      "date": "2025-09-15 14:23:45"
+    },
+    {
+      "id": "c017",
+      "message": "¿Vas a estar libre más tarde?",
+      "sender": 1,
+      "date": "2025-09-15 14:23:48"
+    },
+    {
+      "id": "c018",
+      "message": "Sí, después de las 6.",
+      "sender": 2,
+      "date": "2025-09-15 14:23:51"
+    },
+    {
+      "id": "c019",
+      "message": "Perfecto, hablamos luego.",
+      "sender": 1,
+      "date": "2025-09-15 14:23:54"
+    },
+    {
+      "id": "c020",
+      "message": "Dale, cuídate.",
+      "sender": 2,
+      "date": "2025-09-15 14:23:57"
     }
   ]
 }
