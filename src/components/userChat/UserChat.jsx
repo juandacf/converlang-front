@@ -122,8 +122,15 @@ export function UserChat() {
             </div>
           </div>
           <div className="actualMessageContainer">
-            <div className="otherMessage">holaxd</div>
-            <div className="selfMessage">como tas</div>
+
+             {messages.map((m) => {
+               if (m.sender === 1) {
+                 return (
+                 <div className="otherMessage"><p className="messageOther">{m.message}</p></div> 
+                 );
+               }
+               return <div className="selfMessage"><p className="messageSelf">{m.message}</p></div>; 
+             })}
           </div>
         </div>
       </div>
