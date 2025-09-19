@@ -10,6 +10,7 @@ export function UserChat() {
   const [messages, setMessages] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState("");
+  const [draft, setDraft] = useState("");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -131,6 +132,12 @@ export function UserChat() {
                }
                return <div className="selfMessage"><p className="messageSelf">{m.message}</p></div>; 
              })}
+          </div>
+          
+          <div className="inputContainer">
+          <img className="addPictures inputImage" src="../../../public/assets/camera.png" alt="" />
+          <input type="text" className="inputChat" />
+          <img className="sendMessage inputImage" src="../../../public/assets/send.png" alt="" />
           </div>
         </div>
       </div>
