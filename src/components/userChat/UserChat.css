@@ -150,7 +150,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  height:90vh;
+  height: 90vh;
 }
 
 .messagesTitle {
@@ -237,15 +237,17 @@
   word-break: break-word;
 }
 
-.otherMessage, .messageOther {
+.otherMessage,
+.messageOther {
   align-self: flex-start;
   background: #ffffff;
-  border: 1px solid #eef2ff;
   color: #111827;
   border-radius: 20px;
+  margin: 1rem;
 }
 
-.selfMessage, .messageSelf {
+.selfMessage,
+.messageSelf {
   align-self: flex-end;
   background: var(--grad-1);
   color: white;
@@ -271,31 +273,36 @@
   transform: translateY(-1px);
   background: #e0e7ff;
 }
+
 .inputContainer {
-  display:flex;
-  height:3rem;
+  display: flex;
+  height: 3rem;
   align-items: center;
   justify-content: center;
 }
+
 .inputImage {
-  height:2.5rem;
-}
-.inputChat{
-  height:3rem;
-  width:90%;
+  height: 2.5rem;
 }
 
-.inputChat{
-  width: calc(90% - 1.5rem);   /* respira dentro del card */
+.inputChat {
   height: 3rem;
-  margin: 0.5rem 0.75rem 1rem;  /* separaciones similares al panel */
+  width: 90%;
+}
+
+.inputChat {
+  width: calc(90% - 1.5rem);
+  /* respira dentro del card */
+  height: 3rem;
+  margin: 0.5rem 0.75rem 1rem;
+  /* separaciones similares al panel */
   padding: 0 1rem;
 
   background: #ffffff;
   color: var(--ink);
   border: 1px solid #eef2ff;
   border-radius: var(--radius-pill);
-  box-shadow: 0 10px 22px rgba(17,24,39,0.12);
+  box-shadow: 0 10px 22px rgba(17, 24, 39, 0.12);
 
   outline: none;
   font-size: 0.975rem;
@@ -303,18 +310,20 @@
 }
 
 /* Placeholder en tono muted */
-.inputChat::placeholder{
+.inputChat::placeholder {
   color: var(--muted);
 }
 
 /* Hover/focus coherentes con el resto de inputs */
-.inputChat:hover{
+.inputChat:hover {
   background: #fbfbff;
 }
-.inputChat:focus{
+
+.inputChat:focus {
   background: #fff;
   border-color: #c7d2fe;
   box-shadow:
-    0 10px 22px rgba(17,24,39,0.12),
-    0 0 0 3px rgba(59,130,246,.22); /* anillo suave */
+    0 10px 22px rgba(17, 24, 39, 0.12),
+    0 0 0 3px rgba(59, 130, 246, .22);
+  /* anillo suave */
 }
