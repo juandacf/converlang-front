@@ -131,8 +131,8 @@ export function Dashboard({ user }) {
 export function NavBar() {
   return (<nav className='navBar'>
     <a href="/dashboard"> <img src="../../../public/assets/home.png" alt="connect" className='navBarImage' /></a>
-    <a href="/"> <img src="../../../public/assets/friend-request.png" alt="connect" className='navBarImage' /></a>
-    <a href=""><img src="../../../public/assets/messages.png" alt="connect" className='navBarImage' /> </a>
+    <a href=""> <img src="../../../public/assets/friend-request.png" alt="connect" className='navBarImage' /></a>
+    <a href="/userChat"><img src="../../../public/assets/messages.png" alt="connect" className='navBarImage' /> </a>
     <a href=""><img src="../../../public/assets/sticky-note.png" alt="connect" className='navBarImage' /></a>
   </nav>)
 }
