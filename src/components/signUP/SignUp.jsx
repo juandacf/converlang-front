@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -24,20 +24,32 @@ export function SignUp() {
     birth_date: "",
     country_id: "",
     gender: "",
-    role: "", // 👈 nuevo campo
+    role: "", 
     native_lang_id: "",
     target_lang_id: "",
     description: "",
   });
   const [errors, setErrors] = useState({});
+  const [countries, setCountries] = useState([])
 
-  const countries = [
-    { code: "CO", name: "Colombia" },
-    { code: "US", name: "Estados Unidos" },
-    { code: "ES", name: "España" },
-    { code: "BR", name: "Brasil" },
-    { code: "AR", name: "Argentina" },
-  ];
+
+    useEffect(() => {
+    fetch("http://localhost:3000/countries")
+      .then((res) => {
+        if (!res.ok) throw new Error("Error al obtener los países");
+        return res.json();
+      })
+      .then((data) => setCountries(data))
+      .catch((error) => console.error(error))
+  }, []);
+
+  // const countries = [
+  //   { code: "CO", name: "Colombia" },
+  //   { code: "US", name: "Estados Unidos" },
+  //   { code: "ES", name: "España" },
+  //   { code: "BR", name: "Brasil" },
+  //   { code: "AR", name: "Argentina" },
+  // ];
 
   const languages = [
     { code: "ES", name: "Español" },
@@ -236,8 +248,8 @@ export function SignUp() {
             >
               <option value="">Selecciona</option>
               {countries.map((c) => (
-                <option key={c.code} value={c.code}>
-                  {c.name}
+                <option key={c.country_code} value={c.country_code}>
+                  {c.country_name}
                 </option>
               ))}
             </select>
