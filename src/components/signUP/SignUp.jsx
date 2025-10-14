@@ -31,32 +31,37 @@ export function SignUp() {
   });
   const [errors, setErrors] = useState({});
   const [countries, setCountries] = useState([])
+  const [languages, setLanguages] = useState([])
 
 
-    useEffect(() => {
+    useEffect(() => {  //Traemos los países de la bdd
     fetch("http://localhost:3000/countries")
       .then((res) => {
         if (!res.ok) throw new Error("Error al obtener los países");
+        console.log(res.body)
         return res.json();
       })
       .then((data) => setCountries(data))
       .catch((error) => console.error(error))
   }, []);
 
-  // const countries = [
-  //   { code: "CO", name: "Colombia" },
-  //   { code: "US", name: "Estados Unidos" },
-  //   { code: "ES", name: "España" },
-  //   { code: "BR", name: "Brasil" },
-  //   { code: "AR", name: "Argentina" },
-  // ];
 
-  const languages = [
-    { code: "ES", name: "Español" },
-    { code: "EN", name: "Inglés" },
-    { code: "PT", name: "Portugués" },
-    { code: "FR", name: "Francés" },
-  ];
+    useEffect(()=>{
+    fetch("http://localhost:3000/languages")
+    .then((res)=> {
+      if(!res.ok) throw new Error("Error al obtener los lenguajes");
+      console.log(res.body)
+      return res.json();
+    })
+    .then((data)=> setLanguages(data))
+    .catch((error)=> console.error(error))
+    }, []);
+  //const languages = [
+  //  { code: "ES", name: "Español" },
+  //  { code: "EN", name: "Inglés" },
+  //  { code: "PT", name: "Portugués" },
+  //  { code: "FR", name: "Francés" },
+  //];
 
   const genders = [
     { value: "masculino", label: "Masculino" },
@@ -299,9 +304,10 @@ export function SignUp() {
               }
             >
               <option value="">Selecciona</option>
-              {languages.map((l) => (
-                <option key={l.code} value={l.code}>
-                  {l.name}
+              {
+              languages.map((l) => (
+                <option key={l.language_code} value={l.language_name}>
+                  {l.language_name}
                 </option>
               ))}
             </select>
@@ -319,10 +325,10 @@ export function SignUp() {
             >
               <option value="">Selecciona</option>
               {languages
-                .filter((l) => l.code !== formData.native_lang_id)
+                .filter((l) => l.language_code !== formData.native_lang_id)
                 .map((l) => (
-                  <option key={l.code} value={l.code}>
-                    {l.name}
+                  <option key={l.language_code} value={l.language_name}>
+                    {l.language_name}
                   </option>
                 ))}
             </select>
