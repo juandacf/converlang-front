@@ -24,7 +24,7 @@ export function SignUp() {
     birth_date: "",
     country_id: "",
     gender: "",
-    role: "", 
+    role: "",
     native_lang_id: "",
     target_lang_id: "",
     description: "",
@@ -32,9 +32,10 @@ export function SignUp() {
   const [errors, setErrors] = useState({});
   const [countries, setCountries] = useState([])
   const [languages, setLanguages] = useState([])
+  const [genders, setGenders] = useState([])
 
 
-    useEffect(() => {  //Traemos los países de la bdd
+  useEffect(() => {  //Traemos los países de la bdd
     fetch("http://localhost:3000/countries")
       .then((res) => {
         if (!res.ok) throw new Error("Error al obtener los países");
@@ -46,29 +47,35 @@ export function SignUp() {
   }, []);
 
 
-    useEffect(()=>{
+  useEffect(() => {
     fetch("http://localhost:3000/languages")
-    .then((res)=> {
-      if(!res.ok) throw new Error("Error al obtener los lenguajes");
-      console.log(res.body)
-      return res.json();
-    })
-    .then((data)=> setLanguages(data))
-    .catch((error)=> console.error(error))
-    }, []);
-  //const languages = [
-  //  { code: "ES", name: "Español" },
-  //  { code: "EN", name: "Inglés" },
-  //  { code: "PT", name: "Portugués" },
-  //  { code: "FR", name: "Francés" },
-  //];
+      .then((res) => {
+        if (!res.ok) throw new Error("Error al obtener los lenguajes");
+        console.log(res.body)
+        return res.json();
+      })
+      .then((data) => setLanguages(data))
+      .catch((error) => console.error(error))
+  }, []);
 
-  const genders = [
-    { value: "masculino", label: "Masculino" },
-    { value: "femenino", label: "Femenino" },
-    { value: "otro", label: "Otro" },
-    { value: "prefiero_no_decir", label: "Prefiero no decir" },
-  ];
+  useEffect(() => {
+    fetch("http://localhost:3000/gender-type")
+      .then((res) => {
+        if (!res.ok) { throw new Error("Error al obtener los géneros") }
+        return res.json();
+      }
+      )
+      .then((data) => setGenders(data))
+      .catch((error) => console.error(error))
+  }, []
+  )
+
+  // const genders = [
+  //   { value: "masculino", label: "Masculino" },
+  //   { value: "femenino", label: "Femenino" },
+  //   { value: "otro", label: "Otro" },
+  //   { value: "prefiero_no_decir", label: "Prefiero no decir" },
+  // ];
 
   const roles = [
     { value: "profesor", label: "Profesor" },
@@ -268,8 +275,8 @@ export function SignUp() {
             >
               <option value="">Prefiero no decir</option>
               {genders.map((g) => (
-                <option key={g.value} value={g.value}>
-                  {g.label}
+                <option key={g.gender_id} value={g.gender_name}>
+                  {g.gender_name}
                 </option>
               ))}
             </select>
@@ -305,11 +312,11 @@ export function SignUp() {
             >
               <option value="">Selecciona</option>
               {
-              languages.map((l) => (
-                <option key={l.language_code} value={l.language_name}>
-                  {l.language_name}
-                </option>
-              ))}
+                languages.map((l) => (
+                  <option key={l.language_code} value={l.language_name}>
+                    {l.language_name}
+                  </option>
+                ))}
             </select>
             {errors.native_lang_id && (
               <p className="error">{errors.native_lang_id}</p>
