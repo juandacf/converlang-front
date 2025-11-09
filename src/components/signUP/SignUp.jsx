@@ -23,8 +23,8 @@ export function SignUp() {
     confirmPassword: "",
     birth_date: "",
     country_id: "",
-    gender: "",
-    role: "",
+    gender_id: "",
+    role_code: "",
     native_lang_id: "",
     target_lang_id: "",
     description: "",
@@ -70,16 +70,9 @@ export function SignUp() {
   }, []
   )
 
-  // const genders = [
-  //   { value: "masculino", label: "Masculino" },
-  //   { value: "femenino", label: "Femenino" },
-  //   { value: "otro", label: "Otro" },
-  //   { value: "prefiero_no_decir", label: "Prefiero no decir" },
-  // ];
-
   const roles = [
-    { value: "profesor", label: "Profesor" },
-    { value: "estudiante", label: "Estudiante" },
+    { value: "teacher", label: "Profesor" },
+    { value: "user", label: "Usuario" },
   ];
 
   const handleChange = (name, value) => {
@@ -104,7 +97,7 @@ export function SignUp() {
     if (currentStep === 2) {
       if (!formData.birth_date) newErrors.birth_date = "Requerido";
       if (!formData.country_id) newErrors.country_id = "Selecciona un país";
-      if (!formData.role) newErrors.role = "Selecciona un rol"; // 👈 validación
+      if (!formData.role_code) newErrors.role_code = "Selecciona un rol"; // 👈 validación
     }
     if (currentStep === 3) {
       if (!formData.native_lang_id)
@@ -131,39 +124,41 @@ export function SignUp() {
     setCurrentStep((s) => s - 1);
   };
 
-  const handleSubmit = async () => {
-    if (!validateStep()) return;
+const handleSubmit = async () => {
+  if (!validateStep()) return;
 
-    // Preparamos los datos sin confirmPassword
-    const userData = {
-      first_name: formData.first_name,
-      last_name: formData.last_name,
-      email: formData.email,
-      password: formData.password,
-      birth_date: formData.birth_date,
-      country_id: formData.country_id,
-      gender: formData.gender || "prefiero_no_decir",
-      role: formData.role,
-      native_lang_id: formData.native_lang_id,
-      target_lang_id: formData.target_lang_id,
-      description: formData.description || "No especificado",
-    };
-
-    try {
-      const res = await fetch("http://localhost:4000/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
-      });
-      if (!res.ok) throw new Error("Error al crear cuenta");
-      const user = await res.json();
-      console.log("Usuario creado:", user);
-      alert("¡Cuenta creada con éxito!");
-    } catch (err) {
-      console.error(err);
-      alert("Error en el registro");
-    }
+  const userData = {
+    first_name: formData.first_name,
+    last_name: formData.last_name,
+    email: formData.email,
+    password: formData.password,
+    birth_date: formData.birth_date,
+    country_id: formData.country_id,
+    gender_id: Number(formData.gender_id) || null,
+    role_code: formData.role_code,
+    native_lang_id: formData.native_lang_id,
+    target_lang_id: formData.target_lang_id,
+    description: formData.description || "No especificado",
   };
+
+  try {
+    const res = await fetch("http://localhost:3000/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(userData),
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Error al crear cuenta");
+
+    console.log("Usuario creado:", data);
+    alert("¡Cuenta creada con éxito!");
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  }
+};
+
 
   return (
     <div className="SignUpContainer">
@@ -270,12 +265,12 @@ export function SignUp() {
           <div>
             <label>Género</label>
             <select
-              value={formData.gender}
-              onChange={(e) => handleChange("gender", e.target.value)}
+              value={formData.gender_id}
+              onChange={(e) => handleChange("gender_id", e.target.value)}
             >
               <option value="">Prefiero no decir</option>
               {genders.map((g) => (
-                <option key={g.gender_id} value={g.gender_name}>
+                <option key={g.gender_id} value={g.gender_id}>
                   {g.gender_name}
                 </option>
               ))}
@@ -285,7 +280,7 @@ export function SignUp() {
             <label>Rol</label>
             <select
               value={formData.role}
-              onChange={(e) => handleChange("role", e.target.value)}
+              onChange={(e) => handleChange("role_code", e.target.value)}
             >
               <option value="">Selecciona tu rol</option>
               {roles.map((r) => (
@@ -294,7 +289,7 @@ export function SignUp() {
                 </option>
               ))}
             </select>
-            {errors.role && <p className="error">{errors.role}</p>}
+            {errors.role_code && <p className="error">{errors.role_code}</p>}
           </div>
         </div>
       )}
@@ -313,7 +308,7 @@ export function SignUp() {
               <option value="">Selecciona</option>
               {
                 languages.map((l) => (
-                  <option key={l.language_code} value={l.language_name}>
+                  <option key={l.language_code} value={l.language_code}>
                     {l.language_name}
                   </option>
                 ))}
@@ -334,7 +329,7 @@ export function SignUp() {
               {languages
                 .filter((l) => l.language_code !== formData.native_lang_id)
                 .map((l) => (
-                  <option key={l.language_code} value={l.language_name}>
+                  <option key={l.language_code} value={l.language_code}>
                     {l.language_name}
                   </option>
                 ))}

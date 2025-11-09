@@ -5,6 +5,7 @@
   border-radius: 22px;
   padding: 28px;
   width: min(520px, 100%);
+  overflow: auto;
 }
 
 .SignUpContainer h3 {
