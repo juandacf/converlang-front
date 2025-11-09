@@ -1,7 +1,7 @@
-import './Authentication.css'
-import { SignUp } from '../signUP/SignUp'
-import { useState } from 'react'
+import './Authentication.css';
+import { SignUp } from '../signUP/SignUp';
 import { Login } from '../login/Login';
+import { useState } from 'react';
 
 export function Authentication() {
   const [chosenAuth, setAuth] = useState(0);
@@ -11,17 +11,20 @@ export function Authentication() {
   };
 
   return (
-    <div className="mainContainerAuth"> 
+    <div className="mainContainerAuth">
       <div className="smallContainer">
-        <div className="halfPart loginLeft">
+        <div className="halfPart loginLeft"></div>
 
-        </div>
         <div className="halfPart loginRight">
           <button onClick={authenticatorSwitch}>
             {chosenAuth % 2 === 0 ? 'Ya tengo cuenta' : 'No tengo una cuenta'}
           </button>
 
-          {chosenAuth % 2 === 0 ? <SignUp /> : <Login />}
+          {chosenAuth % 2 === 0 ? (
+            <SignUp onSuccess={() => setAuth(1)} /> 
+          ) : (
+            <Login />
+          )}
         </div>
       </div>
     </div>

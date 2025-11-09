@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import "./SignUp.css";
 
-export function SignUp() {
+export function SignUp({ onSuccess }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -124,41 +124,40 @@ export function SignUp() {
     setCurrentStep((s) => s - 1);
   };
 
-const handleSubmit = async () => {
-  if (!validateStep()) return;
+  const handleSubmit = async () => {
+    if (!validateStep()) return;
 
-  const userData = {
-    first_name: formData.first_name,
-    last_name: formData.last_name,
-    email: formData.email,
-    password: formData.password,
-    birth_date: formData.birth_date,
-    country_id: formData.country_id,
-    gender_id: Number(formData.gender_id) || null,
-    role_code: formData.role_code,
-    native_lang_id: formData.native_lang_id,
-    target_lang_id: formData.target_lang_id,
-    description: formData.description || "No especificado",
+    const userData = {
+      first_name: formData.first_name,
+      last_name: formData.last_name,
+      email: formData.email,
+      password: formData.password,
+      birth_date: formData.birth_date,
+      country_id: formData.country_id,
+      gender_id: Number(formData.gender_id),
+      role_code: formData.role_code,
+      native_lang_id: formData.native_lang_id,
+      target_lang_id: formData.target_lang_id,
+      description: formData.description || "No especificado",
+    };
+
+    try {
+      const res = await fetch("http://localhost:3000/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Error al crear cuenta");
+
+      alert("¡Cuenta creada con éxito!");
+      onSuccess(); // 👈 Llama a la función del padre
+    } catch (err) {
+      console.error("Error al crear cuenta:", err);
+      alert(err.message);
+    }
   };
-
-  try {
-    const res = await fetch("http://localhost:3000/users", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(userData),
-    });
-
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || "Error al crear cuenta");
-
-    console.log("Usuario creado:", data);
-    alert("¡Cuenta creada con éxito!");
-  } catch (err) {
-    console.error(err);
-    alert(err.message);
-  }
-};
-
 
   return (
     <div className="SignUpContainer">
