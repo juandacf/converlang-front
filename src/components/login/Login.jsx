@@ -15,49 +15,23 @@ export function Login () {
         });
     };
 
-   const handleSubmit = async (e) => {
+   
+const handleSubmit = async (e) => {          
   e.preventDefault();
-
-  try {
-    
-    const res = await fetch(
-      `http://localhost:4000/users?email=${encodeURIComponent(formData.email)}&password=${encodeURIComponent(formData.password)}` // esto es momentaneo. Después lo adaptamos al puerto que usemos en postgres
-    );
-
-    if (!res.ok) {
-      throw new Error(`Error en la petición: ${res.status}`);
-    }
-
-    const users = await res.json();
-
-    if (users.length > 0) {
-      console.log("Usuario válido:", users[0]);
-      alert("Login exitoso", users[0]);
-      
-    } else {
-      console.log("Credenciales incorrectas");
-      alert("Correo o contraseña incorrectos");
-    }
-  } catch (error) {
-    console.error("Error al validar usuario:", error);
-    alert("Ocurrió un error al intentar iniciar sesión");
+  const res = await fetch("http://localhost:3000/auth/login", {           
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(formData),
+  });
+  if (!res.ok) {
+    alert("Correo o contraseña incorrectos");
+    return;
   }
+  const user = await res.json();
+  console.log("Login OK", user);
 };
 
-// const handleSubmit = async (e) => {           // CON POSTGRES SE HARÍA ASÍ
-//   e.preventDefault();
-//   const res = await fetch("/auth/login", {           //Debemos poner la ruta del endpoint
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify(formData),
-//   });
-//   if (!res.ok) {
-//     alert("Correo o contraseña incorrectos");
-//     return;
-//   }
-//   const user = await res.json();
-//   console.log("Login OK", user);
-// };
+
     return (
         <div className="loginContainer">
             <h3>Login</h3>
