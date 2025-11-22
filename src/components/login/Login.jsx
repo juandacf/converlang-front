@@ -1,12 +1,16 @@
 import { useState } from "react";
 import './Login.css'
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+
+
 
 export function Login () {
     const [formData, setFormData] = useState({
         email: "",
         password: ""
     });
-
+    const navigate = useNavigate();
     const handleChange = (e) => {
         const {name, value} = e.target;
         setFormData({
@@ -28,7 +32,20 @@ const handleSubmit = async (e) => {
     return;
   }
   const user = await res.json();
-  console.log("Login OK", user);
+
+    localStorage.setItem("token", user.access_token);
+    const decoded = jwtDecode(user.access_token);
+    const role = decoded.roles?.[0];
+    if (role === "admin") {
+    navigate("/adminDashboard");
+} 
+else if (role === "teacher") {
+    navigate("/teacherDashboard");
+}
+else {
+    navigate("/dashboard");
+}
+
 };
 
 
