@@ -2,19 +2,41 @@ import './Dashboard.css'
 import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { jwtDecode } from "jwt-decode";
 
-const API_USERS = 'http://localhost:4000/users';
+
 const API_STATISTICS = 'http://localhost:4000/datachart';
 
 
 export function Dashboard({ user }) {
   const [users, setUsers] = useState([]);
   const [sessions, setSessions] = useState([]);
+  const [authUser, setAuthUser] = useState({});
 
-  useEffect(() => {   //  Traemos los usuarios con los que se ha ehecho match
+  const token = localStorage.getItem("token");
+  const decodedToken = jwtDecode(token);
+
+
+  useEffect(()=> {
     const controller = new AbortController();
 
-    fetch(API_USERS, { signal: controller.signal })
+    fetch(`http://localhost:3000/users/${decodedToken.sub}`)
+    .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+    })
+    .then((json) =>{
+      setAuthUser(json)
+    })
+    .catch((err) => console.log(err.message))
+  }, [])
+    
+
+
+  useEffect(() => {   
+    const controller = new AbortController();
+
+    fetch(`http://localhost:3000/users/getCurrentMatches/${decodedToken.sub}`, { signal: controller.signal })
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
@@ -28,7 +50,7 @@ export function Dashboard({ user }) {
     return () => controller.abort();
   }, []);
 
-  useEffect(() => {  //  Traemos la cantidad de sesiones durante algunos días del mes1
+  useEffect(() => {  
     const controller = new AbortController();
 
     fetch(API_STATISTICS, { signal: controller.signal })
@@ -38,7 +60,7 @@ export function Dashboard({ user }) {
       })
       .then((json) => {
         const userStatistics = Array.isArray(json) ? json : json.users ?? [];
-        console.log(userStatistics)
+        console.log("SESSIONS SETEADA:", userStatistics);
         setSessions(userStatistics);
       })
       .catch((err) => console.log(err.message))
@@ -63,7 +85,7 @@ export function Dashboard({ user }) {
           </div>
           <div className="greeting">
             <h3 className='bigGreeting'>
-              Hola, {user.name + " " + user.lastname}
+              Hola, {authUser.first_name + " " + authUser.last_name}
             </h3>
             <h3 className='smallGreeting'>
               ¡Empecemos!
@@ -95,15 +117,20 @@ export function Dashboard({ user }) {
           <div className='carrouselContainer'>
             <div className='carrouselTitle'>Tus sesiones (últimos 30 días):</div>
             <div className='matchContainer matchStatistics'>
-              <ResponsiveContainer className="recentSessions" width="90%" height={150}>
-                <LineChart width={300} height={180} data={sessions}>
-                  <CartesianGrid stroke="#D88484FF" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="sesiones" stroke="#8884d8" strokeWidth={2} />
-                </LineChart>
-              </ResponsiveContainer>
+            <ResponsiveContainer className="recentSessions" width="90%" height={150}>
+              <LineChart data={sessions}>
+                <CartesianGrid stroke="#D88484FF" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Line 
+                  type="monotone" 
+                  dataKey="sesiones"
+                  stroke="#8884d8"
+                  strokeWidth={2}
+                />
+              </LineChart>
+            </ResponsiveContainer>
 
               <div>
               </div>
