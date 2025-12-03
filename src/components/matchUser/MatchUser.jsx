@@ -1,13 +1,17 @@
 import { useState, useEffect, useMemo } from "react";
 import { NavBar, Footer } from "../dashboard/Dashboard";
 import "./MatchUser.css";
+import { jwtDecode } from "jwt-decode";
 
-const API_USERS = "http://localhost:4000/users";
-const PAGE_SIZE = 6;
+
 
 export function MatchUser() {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
+  const token = localStorage.getItem("token");
+  const decodedToken = jwtDecode(token);
+  const API_USERS = `http://localhost:3000/users/potentialMatches/${decodedToken.sub}`;
+  const PAGE_SIZE = 6;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -19,7 +23,8 @@ export function MatchUser() {
       .then((json) => {
         const userData = Array.isArray(json) ? json : json.users ?? [];
         setUsers(userData);
-        setPage(1); // resetea a la primera página cuando llegan datos
+        console.log(users)
+        setPage(1); 
       })
       .catch((err) => console.log(err.message));
     return () => controller.abort();
@@ -28,6 +33,7 @@ export function MatchUser() {
   const totalPages = Math.max(1, Math.ceil(users.length / PAGE_SIZE));
   const start = (page - 1) * PAGE_SIZE;
   const pageItems = useMemo(() => users.slice(start, start + PAGE_SIZE), [users, start]);
+  console.log(pageItems)
 
   const goTo = (p) => setPage(Math.min(Math.max(1, p), totalPages));
 
@@ -59,13 +65,12 @@ export function MatchUser() {
               </div>
             </div>
             <div className="userDescriptionContainer">
-              <h3 className="userTitle">Título</h3>
-              <p className="userDescription"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean nisl nisl, blandit vel elit et. </p>
+              <p className="userDescription"> {u.description} </p>
             </div>
             <div className="connectRateContainer">
               <div className="rateContainer">
-                <p className="ratingNumber">5.9</p>
-                <img src="../../../public/assets/star.png" alt="" className="star" />
+                <p className="ratingNumber">{u.native_lang_id_out}</p>
+                <img src="../../../public/assets/languages.png" alt="" className="star" />
               </div>
               <button className="connectButton">
                 <p className="buttonText">Match</p>
