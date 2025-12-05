@@ -5,7 +5,6 @@ import { Dashboard } from './components/dashboard/Dashboard';
 import { MatchUser } from './components/matchUser/MatchUser';
 import { MatchTeacher } from './components/matchTeacher/MatchTeacher';
 import { UserChat } from './components/userChat/UserChat';
-import { AdminDashboard } from "./components/admin-Dashboard/AdminDashboard";
 import { TeacherDashboard } from "./components/teacher-Dashboard/TeacherDashboard";
 
 
@@ -25,7 +24,6 @@ export function App() {
         <Route path="/matchUser" element={<MatchUser />} />
         <Route path="/matchTeacher" element={<MatchTeacher />} />
         <Route path="/userChat" element={<UserChat />} />
-        <Route path="/adminDashboard" element={<AdminDashboard />} />
         <Route path="/teacherDashboard" element={<TeacherDashboard />} />
 
       </Routes>
