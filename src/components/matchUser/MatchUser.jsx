@@ -114,7 +114,7 @@ export function MatchUser() {
               </div>
               <div className="matchName">
                 <p className="userName">
-                  {u.first_name} {u.last_name}(25)
+                  {u.first_name} {u.last_name} {`(${u.age})`}
                 </p>
               </div>
             </div>
