@@ -6,7 +6,7 @@ import { MatchUser } from './components/matchUser/MatchUser';
 import { MatchTeacher } from './components/matchTeacher/MatchTeacher';
 import { UserChat } from './components/userChat/UserChat';
 import { TeacherDashboard } from "./components/teacher-Dashboard/TeacherDashboard";
-
+import {AdminDashboard}from "./components/adminDashboard/AdminDashboard";
 
 export function App() {
 
@@ -25,7 +25,7 @@ export function App() {
         <Route path="/matchTeacher" element={<MatchTeacher />} />
         <Route path="/userChat" element={<UserChat />} />
         <Route path="/teacherDashboard" element={<TeacherDashboard />} />
-
+        <Route path="/adminDashboard" element={<AdminDashboard />} />
       </Routes>
     </BrowserRouter>
   )
