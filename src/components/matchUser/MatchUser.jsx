@@ -43,6 +43,8 @@ export function MatchUser() {
     [users, start]
   );
 
+  console.log(pageItems)
+
   const goTo = (p) => setPage(Math.min(Math.max(1, p), totalPages));
 
   // ---- HANDLE LIKE ----
@@ -125,9 +127,13 @@ export function MatchUser() {
 
             <div className="connectRateContainer">
               <div className="rateContainer">
-                <p className="ratingNumber">{u.native_lang_id_out}</p>
+                <p className="ratingNumber">{u.country_id}</p>
                 <img
-                  src="../../../public/assets/languages.png"
+                  src={
+                    u.country_id
+                      ? `../../../public/assets/flag_pics/${u.country_id}.png`
+                      : `../../../public/assets/flag_picslanguages.png`
+                  }
                   alt=""
                   className="star"
                 />
