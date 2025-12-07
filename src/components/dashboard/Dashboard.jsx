@@ -74,10 +74,10 @@ export function Dashboard({ user }) {
       <NavBar />
       <div className="dashboardMainContainer">
         <div className="dashNavBar">
-          <div className="elementsNavBar">
+
             <img className="navBarElement" src="../../../public/assets/notification.png" alt="" />
             <img className="navBarElement" src="../../../public/assets/setting.png" alt="" />
-          </div>
+
         </div>
         <div className="greetingContainer">
           <div className="UserPic">
