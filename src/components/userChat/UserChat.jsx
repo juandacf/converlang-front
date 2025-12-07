@@ -1,80 +1,98 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { io } from "socket.io-client";
 import { NavBar, Footer } from "../dashboard/Dashboard";
 import "./UserChat.css";
-
-const API_USERS = "http://localhost:4000/users";
-const API_MESSAGES = "http://localhost:4000/chats";
+import { jwtDecode } from "jwt-decode";
 
 export function UserChat() {
-  const [users, setUsers] = useState([]);
+  const token = localStorage.getItem("token");
+  const decodedToken = jwtDecode(token);
+
+  const [chatList, setChatList] = useState([]);
   const [messages, setMessages] = useState([]);
-  const [search, setSearch] = useState("");
-  const [selectedUser, setSelectedUser] = useState("");
+  const [selectedMatch, setSelectedMatch] = useState(null);
   const [draft, setDraft] = useState("");
 
+  const socketRef = useRef(null);
+  console.log(decodedToken.sub)
+  
+
+  // =====================================================
+  // 1. Inicializar socket SOLO una vez
+  // =====================================================
   useEffect(() => {
-    const controller = new AbortController();
+    socketRef.current = io("http://localhost:3000", {
+      transports: ["websocket"],
+    });
 
-    fetch(API_USERS, { signal: controller.signal })
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
-      .then((json) => {
-        const userData = Array.isArray(json) ? json : json.users ?? [];
-        setUsers(userData);
-      })
-      .catch((err) => console.log(err.message));
-
-    return () => controller.abort();
+    return () => {
+      socketRef.current.disconnect();
+    };
   }, []);
 
+  // =====================================================
+  // 2. Obtener lista de chats
+  // =====================================================
   useEffect(() => {
-    const controller = new AbortController();
+    fetch(`http://localhost:3000/chats/list/${decodedToken.sub}`)
+      .then((res) => res.json())
+      .then((data) => setChatList(data));
+  }, [decodedToken.sub]);
 
-    fetch(API_MESSAGES, { signal: controller.signal })
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
-      .then((json) => {
-        const chatData = Array.isArray(json) ? json : json.users ?? [];
-        setMessages(chatData);
-      })
-      .catch((err) => console.log(err.message));
+  // =====================================================
+  // 3. Cuando selecciono un match → cargar mensajes + unirme a sala
+  // =====================================================
+  useEffect(() => {
+    if (!selectedMatch) return;
 
-    return () => controller.abort();
-  }, [selectedUser]);
+    socketRef.current.emit("joinRoom", selectedMatch.match_id);
 
-  const filteredUsers = users.filter((u) =>
-    `${u.first_name} ${u.last_name}`
-      .toLowerCase()
-      .includes(search.toLowerCase())
-  );
+    fetch(`http://localhost:3000/chats/${selectedMatch.match_id}`)
+      .then((res) => res.json())
+      .then((data) => setMessages(data));
+  }, [selectedMatch]);
+
+  // =====================================================
+  // 4. Recibir mensajes nuevos en tiempo real
+  // =====================================================
+  useEffect(() => {
+    if (!socketRef.current) return;
+
+    socketRef.current.on("newMessage", (msg) => {
+      setMessages((prev) => [...prev, msg]);
+    });
+
+    return () => {
+      socketRef.current.off("newMessage");
+    };
+  }, []);
+
+  // =====================================================
+  // 5. Enviar mensaje
+  // =====================================================
+  const sendMessage = () => {
+    if (!draft.trim() || !selectedMatch) return;
+
+    socketRef.current.emit("sendMessage", {
+      matchId: selectedMatch.match_id,
+      senderId: decodedToken.sub,
+      message: draft,
+    });
+
+    setDraft("");
+  };
 
   return (
     <>
       <div className="userChatMainContainer">
+        
+        {/* Chat List */}
         <div className="chatItemsContainer">
-          <div className="chatSearchBar">
-            <input
-              type="text"
-              className="searchChatInput"
-              placeholder="Buscar..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <img
-              src="../../../public/assets/search.png"
-              alt=""
-              className="chatSearchButton"
-            />
-          </div>
-          {filteredUsers.map((u) => (
+          {chatList.map((chat) => (
             <div
               className="chatMatchContainer"
-              key={u.id}
-              onClick={() => setSelectedUser(`${u.first_name} ${u.last_name}`)}
+              key={chat.match_id}
+              onClick={() => setSelectedMatch(chat)}
             >
               <div className="chatPhotoContainer">
                 <img
@@ -84,63 +102,57 @@ export function UserChat() {
                 />
               </div>
               <div className="chatNameContainer">
-                <p>
-                  {u.first_name} {u.last_name}
-                </p>
+                <p>{chat.full_name}</p>
               </div>
             </div>
           ))}
-          {filteredUsers.length === 0 && (
-            <p style={{ color: "#6b7280", paddingLeft: "1rem" }}>
-              Sin resultados
+        </div>
+
+        {/* Chat Window */}
+        <div className="messagesContainer">
+          {selectedMatch ? (
+            <>
+              <div className="messagesTitle">
+                <p>{selectedMatch.full_name}</p>
+              </div>
+
+              <div className="actualMessageContainer">
+                {messages.map((m) => (
+                  <div
+                    key={m.message_id}
+                    className={
+                      m.sender_id === decodedToken.sub ? "selfMessage" : "otherMessage"
+                    }
+                  >
+                    <p>{m.message}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="inputContainer">
+                <input
+                  type="text"
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  className="inputChat"
+                />
+
+                <img
+                  src="../../../public/assets/send.png"
+                  alt="send"
+                  className="sendMessage inputImage"
+                  onClick={sendMessage}
+                />
+              </div>
+            </>
+          ) : (
+            <p style={{ textAlign: "center", marginTop: "20%" }}>
+              Selecciona un chat
             </p>
           )}
         </div>
-        <div className="messagesContainer">
-          <div className="messagesTitle">
-            <div className="selectedUserInfo">
-              <div className="currentUserPhotoContainer">
-                <img
-                  className="currentUserPhoto"
-                  src="../../../public/assets/user.png"
-                  alt=""
-                />
-              </div>
-              <div className="currentChosenNameContainer">
-                <p className="currentChosenName">
-                  {selectedUser}
-                </p>
-              </div>
-            </div>
-
-            <div className="otherIcons">
-              <div className="chatIcon">
-                <img className="chatIconImage" src="../../../public/assets/video-camera.png" alt="" />
-              </div>
-              <div className="chatIcon">
-                <img className="chatIconImage" src="../../../public/assets/dots.png" alt="" />
-              </div>
-            </div>
-          </div>
-          <div className="actualMessageContainer">
-
-             {messages.map((m) => {
-               if (m.sender === 1) {
-                 return (
-                 <div className="otherMessage"><p className="messageOther">{m.message}</p></div> 
-                 );
-               }
-               return <div className="selfMessage"><p className="messageSelf">{m.message}</p></div>; 
-             })}
-          </div>
-          
-          <div className="inputContainer">
-          <img className="addPictures inputImage" src="../../../public/assets/camera.png" alt="" />
-          <input type="text" className="inputChat" />
-          <img className="sendMessage inputImage" src="../../../public/assets/send.png" alt="" />
-          </div>
-        </div>
       </div>
+
       <NavBar />
       <Footer />
     </>
