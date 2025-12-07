@@ -14,8 +14,7 @@ export function UserChat() {
   const [draft, setDraft] = useState("");
 
   const socketRef = useRef(null);
-  console.log(decodedToken.sub)
-  
+  console.log(decodedToken.sub);
 
   // =====================================================
   // 1. Inicializar socket SOLO una vez
@@ -85,7 +84,6 @@ export function UserChat() {
   return (
     <>
       <div className="userChatMainContainer">
-        
         {/* Chat List */}
         <div className="chatItemsContainer">
           {chatList.map((chat) => (
@@ -121,7 +119,9 @@ export function UserChat() {
                   <div
                     key={m.message_id}
                     className={
-                      m.sender_id === decodedToken.sub ? "selfMessage" : "otherMessage"
+                      m.sender_id === decodedToken.sub
+                        ? "selfMessage"
+                        : "otherMessage"
                     }
                   >
                     <p>{m.message}</p>
@@ -134,7 +134,11 @@ export function UserChat() {
                   type="text"
                   value={draft}
                   onChange={(e) => setDraft(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") sendMessage();
+                  }}
                   className="inputChat"
+                  placeholder="Escribe un mensaje..."
                 />
 
                 <img
