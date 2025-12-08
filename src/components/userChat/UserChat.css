@@ -33,6 +33,23 @@
   height: 90vh;
 }
 
+.messagesTitle{
+  display: flex;
+  justify-content: space-between;
+}
+
+.configMatch{
+align-self: self-end}
+
+.chatName{
+align-self: center;
+margin-left: 1vh;
+}
+
+.configButton:hover{
+  cursor:pointer
+}
+
 .chatMatchContainer {
   display: flex;
   align-items: center;
@@ -56,6 +73,10 @@
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid transparent;
+  
+}
+
+.purpleMargin{
   background: linear-gradient(#fff, #fff) padding-box, var(--grad-1) border-box;
 }
 

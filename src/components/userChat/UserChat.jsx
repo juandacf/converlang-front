@@ -94,7 +94,7 @@ export function UserChat() {
             >
               <div className="chatPhotoContainer">
                 <img
-                  className="userPhoto"
+                  className="userPhoto purpleMargin"
                   src="../../../public/assets/user.png"
                   alt=""
                 />
@@ -111,7 +111,19 @@ export function UserChat() {
           {selectedMatch ? (
             <>
               <div className="messagesTitle">
-                <p>{selectedMatch.full_name}</p>
+                 <div className="chatPhotoContainer">
+                <img
+                  className="userPhoto purpleMargin"
+                  src="../../../public/assets/user.png" ///Esta ruta debe actualizarse por la ruta de la imagen del usuario traida de la BD.
+                  alt=""
+                />
+              </div>
+                <p className="chatName">{selectedMatch.full_name}</p>
+                                <img
+                  className="userPhoto configButton"
+                  src="../../../public/assets/dots.png" 
+                  alt=""
+                />
               </div>
 
               <div className="actualMessageContainer">
