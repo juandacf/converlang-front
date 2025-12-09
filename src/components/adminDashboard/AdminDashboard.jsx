@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from 'react';
 import { 
   Users, 
@@ -37,7 +39,8 @@ import {
   Legend, 
   ResponsiveContainer 
 } from 'recharts';
-
+import { dashboardService } from '../../adminServices/dashboardService';
+import { usersService } from '../../adminServices/usersService';
 // --- CONFIGURACIÓN Y CONSTANTES (Del código nuevo) ---
 
 const COLORS = {
