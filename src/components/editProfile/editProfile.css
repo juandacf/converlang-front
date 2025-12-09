@@ -1,0 +1,99 @@
+.preferencesContainer {
+  padding: 30px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.preferencesCard {
+  width: 60%;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.inputGroup label {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.inputGroup input,
+.inputGroup textarea {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+textarea {
+  min-height: 100px;
+  resize: none;
+}
+
+.saveBtn {
+  grid-column: span 2;
+  padding: 15px 20px;
+  border: none;
+  border-radius: 15px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  color: white;
+
+  background: linear-gradient(to right, #ff9900, #ffd000);
+  box-shadow: 0 4px 15px rgba(255,166,0,0.5);
+  transition: transform 0.2s ease;
+}
+
+.saveBtn:hover {
+  transform: scale(1.03);
+}
+
+.previewPhoto {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-top: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.fullWidth {
+  grid-column: span 2;
+}
+
+.deletePhotoBtn {
+  margin-top: 10px;
+  background: #d9534f;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.deletePhotoBtn:hover {
+  background: #c9302c;
+}
+.disabledInput {
+  background-color: #f3f3f3;
+  cursor: not-allowed;
+  color: #555;
+}
+

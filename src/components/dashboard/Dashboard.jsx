@@ -11,6 +11,8 @@ import {
 } from "recharts";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+
 
 const API_STATISTICS = "http://localhost:4000/datachart";
 
@@ -19,7 +21,7 @@ export function Dashboard({ user }) {
   const [sessions, setSessions] = useState([]);
   const [authUser, setAuthUser] = useState({});
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
-
+  const Navigate = useNavigate();
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
 
@@ -92,7 +94,7 @@ export function Dashboard({ user }) {
           />
           {showSettingsMenu && (
   <div className="settingsMenu">
-    <p onClick={() => console.log("Editar perfil")}>Editar perfil</p>
+    <p onClick={() => Navigate('/editProfile')}>Editar perfil</p>
     <p onClick={() => console.log("Preferencias")}>Preferencias</p>
     <p onClick={() => {
       localStorage.removeItem("token");

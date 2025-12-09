@@ -7,6 +7,7 @@ import { MatchTeacher } from './components/matchTeacher/MatchTeacher';
 import { UserChat } from './components/userChat/UserChat';
 import { TeacherDashboard } from "./components/teacher-Dashboard/TeacherDashboard";
 import {AdminDashboard}from "./components/adminDashboard/AdminDashboard";
+import { EditProfile } from "./components/editProfile/editProfile";
 
 export function App() {
 
@@ -26,6 +27,7 @@ export function App() {
         <Route path="/userChat" element={<UserChat />} />
         <Route path="/teacherDashboard" element={<TeacherDashboard />} />
         <Route path="/adminDashboard" element={<AdminDashboard />} />
+        <Route path="/editProfile" element={<EditProfile />} />
       </Routes>
     </BrowserRouter>
   )
