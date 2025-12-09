@@ -7,8 +7,8 @@ export function EditProfile() {
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
   const [languages, setLanguages] = useState([]);
+  const [photoPreview, setPhotoPreview] = useState(null);
 
-  // === CAMPOS EDITABLES (una sola fuente de verdad) ===
   const editableFields = [
     "first_name",
     "last_name",
@@ -22,7 +22,6 @@ export function EditProfile() {
     "bank_id",
   ];
 
-  // === Estado inicial basado en los campos editables ===
   const initialForm = editableFields.reduce(
     (acc, field) => {
       acc[field] = "";
@@ -33,7 +32,7 @@ export function EditProfile() {
 
   const [form, setForm] = useState(initialForm);
 
-  // === Cargar usuario desde backend y filtrar campos ===
+  // Cargar usuario
   useEffect(() => {
     fetch(`http://localhost:3000/users/${decodedToken.sub}`)
       .then((r) => r.json())
@@ -43,43 +42,69 @@ export function EditProfile() {
           filtered[field] = data[field] ?? "";
         });
 
-        filtered.match_quantity = 10; // Forzado
-
+        filtered.match_quantity = 10;
         setForm(filtered);
+
+        // Vista previa de foto
+        if (data.profile_photo) {
+          setPhotoPreview(`http://localhost:3000${data.profile_photo}`);
+        }
       })
       .catch((err) => console.log(err));
   }, [decodedToken.sub]);
 
-  // === Manejo de cambios ===
   function handleChange(e) {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   }
 
-  // === Cargar catálogo de lenguajes ===
+  // Cargar lenguajes
   useEffect(() => {
     fetch("http://localhost:3000/languages")
-      .then((res) => {
-        if (!res.ok) throw new Error("Error al obtener los lenguajes");
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((data) => setLanguages(data))
       .catch((error) => console.error(error));
   }, []);
 
-  // === Enviar solo los campos válidos ===
+  // Subir foto
+  async function handlePhotoChange(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("photo", file);
+
+    const res = await fetch(
+      `http://localhost:3000/users/photo/${decodedToken.sub}`,
+      {
+        method: "PATCH",
+        body: formData,
+      }
+    );
+
+    if (!res.ok) {
+      alert("Error al subir la foto");
+      return;
+    }
+
+    const json = await res.json();
+
+    // Nueva foto
+    setPhotoPreview(`http://localhost:3000${json.path}`);
+    setForm({ ...form, profile_photo: json.path });
+
+    alert("Foto actualizada!");
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
 
     const dataToSend = {};
-
     editableFields.forEach((field) => {
       dataToSend[field] = form[field];
     });
 
     dataToSend.match_quantity = 10;
-
-
 
     const res = await fetch(
       `http://localhost:3000/users/${decodedToken.sub}`,
@@ -91,16 +116,13 @@ export function EditProfile() {
     );
 
     if (!res.ok) {
-      const errorMessage = await res.text();
-      console.error(errorMessage);
       alert("Error al actualizar");
       return;
     }
 
     alert("Perfil actualizado!");
   }
-
-
+  console.log(photoPreview)
   return (
     <>
       <NavBar />
@@ -108,42 +130,38 @@ export function EditProfile() {
         <h2 className="title">Modificar Perfil</h2>
 
         <form className="preferencesCard" onSubmit={handleSubmit}>
+          
+        
+            <img
+              src={photoPreview}
+              alt="Foto de perfil"
+              className="profilePhotoPreview"
+            />
+
+          <div className="inputGroup fullWidth">
+            <label>Cambiar foto</label>
+            <input type="file" accept="image/*" onChange={handlePhotoChange} />
+          </div>
+
           <div className="inputGroup">
             <label>Nombre</label>
-            <input
-              name="first_name"
-              value={form.first_name}
-              onChange={handleChange}
-            />
+            <input name="first_name" value={form.first_name} onChange={handleChange} />
           </div>
 
           <div className="inputGroup">
             <label>Apellido</label>
-            <input
-              name="last_name"
-              value={form.last_name}
-              onChange={handleChange}
-            />
+            <input name="last_name" value={form.last_name} onChange={handleChange} />
           </div>
 
           <div className="inputGroup">
             <label>Email</label>
-            <input
-              name="email"
-              type="email"
-              value={form.email}
-              onChange={handleChange}
-            />
+            <input name="email" type="email" value={form.email} onChange={handleChange} />
           </div>
 
           <div className="inputGroup">
             <label>Idioma nativo</label>
-            <select
-              name="native_lang_id"
-              value={form.native_lang_id}
-              onChange={handleChange}
-            >
-              <option value="">Selecciona tu idioma</option>
+            <select name="native_lang_id" value={form.native_lang_id} onChange={handleChange}>
+              <option value="">Selecciona</option>
               {languages.map((l) => (
                 <option key={l.language_code} value={l.language_code}>
                   {l.language_name}
@@ -154,11 +172,7 @@ export function EditProfile() {
 
           <div className="inputGroup">
             <label>Idioma a aprender</label>
-            <select
-              name="target_lang_id"
-              value={form.target_lang_id}
-              onChange={handleChange}
-            >
+            <select name="target_lang_id" value={form.target_lang_id} onChange={handleChange}>
               <option value="">Selecciona</option>
               {languages
                 .filter((l) => l.language_code !== form.native_lang_id)
@@ -169,30 +183,26 @@ export function EditProfile() {
                 ))}
             </select>
           </div>
-<div className="inputGroup">
-  <label>Fecha de nacimiento</label>
-  <input
-    type="date"
-    name="birth_date"
-    value={form.birth_date?.split("T")[0] || ""}
-    readOnly
-    className="disabledInput"
-  />
-</div>
 
+          <div className="inputGroup">
+            <label>Fecha de nacimiento</label>
+            <input
+              type="date"
+              name="birth_date"
+              value={form.birth_date?.split("T")[0] || ""}
+              readOnly
+            />
+          </div>
 
           <div className="inputGroup">
             <label>Descripción</label>
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-            />
+            <textarea name="description" value={form.description} onChange={handleChange} />
           </div>
 
           <button className="saveBtn" type="submit">
             Guardar cambios
           </button>
+
         </form>
       </div>
     </>
