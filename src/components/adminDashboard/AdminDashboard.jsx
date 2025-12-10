@@ -452,56 +452,39 @@ export function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   // LÓGICA DE CARGA (Del código nuevo)
-  const loadDashboardData = async () => {
-    try {
-      setLoading(true);
-      
-      // Simulación de Fetch
-      const statsResponse = {
-        total_users: 156,
-        active_users: 89,
-        total_matches: 234,
-        total_sessions: 567,
-        visitors_count: 1250,
-        logged_in_count: 89
-      };
-      setStats(statsResponse);
+// En AdminDashboard.jsx
 
-      const activityResponse = [
-        { name: 'Lun', matches: 12, sesiones: 25 },
-        { name: 'Mar', matches: 19, sesiones: 32 },
-        { name: 'Mié', matches: 15, sesiones: 28 },
-        { name: 'Jue', matches: 22, sesiones: 35 },
-        { name: 'Vie', matches: 28, sesiones: 42 },
-        { name: 'Sáb', matches: 17, sesiones: 30 },
-        { name: 'Dom', matches: 14, sesiones: 22 }
-      ];
-      setActivityData(activityResponse);
+const loadDashboardData = async () => {
+  try {
+    setLoading(true);
+    
+    // 1. Llamar a los servicios reales en paralelo
+    const [statsData, activityData, reviewsData, usersData] = await Promise.all([
+      dashboardService.getStats(),
+      dashboardService.getActivity(),
+      dashboardService.getRecentReviews(),
+      usersService.getAllUsers() 
+    ]);
 
-      const reviewsResponse = [
-        { session_id: 'SES_001', user_name: 'Carlos Ramírez', rating: 5, comment: 'Excelente experiencia de aprendizaje.' },
-        { session_id: 'SES_002', user_name: 'María López', rating: 4, comment: 'Muy buena clase, aprendí mucho.' },
-        { session_id: 'SES_003', user_name: 'John Smith', rating: 5, comment: 'Great teacher! Very patient.' },
-        { session_id: 'SES_004', user_name: 'Ana Pereira', rating: 5, comment: 'Adorei a aula!' },
-        { session_id: 'SES_005', user_name: 'Luc Dubois', rating: 4, comment: 'Bonne session, merci beaucoup!' }
-      ];
-      setReviews(reviewsResponse);
+    // 2. Asignar los datos del backend al estado
+    // Nota: dashboardService ya maneja el catch y devuelve mocks si falla,
+    // así que aquí recibiremos datos reales o los mocks del servicio.
+    setStats(statsData);
+    setActivityData(activityData);
+    setReviews(reviewsData);
+    
+    // Nota: usersService devuelve la respuesta cruda de api.get.
+    // Asegúrate de que tu backend devuelve un array directo en 'usersData'
+    // o si viene dentro de una propiedad (ej. usersData.data).
+    // Basado en tu admin.service.ts, parece devolver el array directo.
+    setUsers(usersData);
 
-      const usersResponse = [
-        { id_user: 1, first_name: 'Carlos', last_name: 'Ramírez', email: 'carlos@gmail.com', role_code: 'user', is_active: true, last_login: '2025-12-05T10:30:00' },
-        { id_user: 2, first_name: 'María', last_name: 'López', email: 'maria@gmail.com', role_code: 'teacher', is_active: true, last_login: '2025-12-05T09:15:00' },
-        { id_user: 3, first_name: 'John', last_name: 'Smith', email: 'john@gmail.com', role_code: 'user', is_active: true, last_login: '2025-12-04T16:45:00' },
-        { id_user: 4, first_name: 'Ana', last_name: 'Pereira', email: 'ana@outlook.com', role_code: 'teacher', is_active: true, last_login: '2025-12-05T11:20:00' },
-        { id_user: 5, first_name: 'Luc', last_name: 'Dubois', email: 'luc@protonmail.com', role_code: 'admin', is_active: true, last_login: '2025-12-05T08:00:00' }
-      ];
-      setUsers(usersResponse);
-
-    } catch (error) {
-      console.error('Error cargando datos:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (error) {
+    console.error('Error cargando datos en el Dashboard:', error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     loadDashboardData();
