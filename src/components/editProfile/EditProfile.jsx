@@ -8,6 +8,7 @@ export function EditProfile() {
   const decodedToken = jwtDecode(token);
   const [languages, setLanguages] = useState([]);
   const [photoPreview, setPhotoPreview] = useState(null);
+ 
 
   const editableFields = [
     "first_name",
@@ -22,6 +23,23 @@ export function EditProfile() {
     "bank_id",
   ];
 
+  async function handleDeletePhoto() {
+    const res = await fetch(
+      `http://localhost:3000/users/photo/${decodedToken.sub}`,
+      { method: "DELETE" }
+    );
+
+    if (!res.ok) {
+      alert("Error al eliminar la foto");
+      return;
+    }
+
+    setPhotoPreview(null);
+    setForm({ ...form, profile_photo: null });
+
+    alert("Foto eliminada!");
+  }
+
   const initialForm = editableFields.reduce(
     (acc, field) => {
       acc[field] = "";
@@ -30,7 +48,7 @@ export function EditProfile() {
     { match_quantity: 10 }
   );
 
-  const [form, setForm] = useState(initialForm);
+   const [form, setForm] = useState(initialForm);
 
   // Cargar usuario
   useEffect(() => {
@@ -106,14 +124,11 @@ export function EditProfile() {
 
     dataToSend.match_quantity = 10;
 
-    const res = await fetch(
-      `http://localhost:3000/users/${decodedToken.sub}`,
-      {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dataToSend),
-      }
-    );
+    const res = await fetch(`http://localhost:3000/users/${decodedToken.sub}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(dataToSend),
+    });
 
     if (!res.ok) {
       alert("Error al actualizar");
@@ -122,7 +137,7 @@ export function EditProfile() {
 
     alert("Perfil actualizado!");
   }
-  console.log(photoPreview)
+  console.log(photoPreview);
   return (
     <>
       <NavBar />
@@ -130,37 +145,60 @@ export function EditProfile() {
         <h2 className="title">Modificar Perfil</h2>
 
         <form className="preferencesCard" onSubmit={handleSubmit}>
-          
-        
-            <img
-              src={photoPreview}
-              alt="Foto de perfil"
-              className="profilePhotoPreview"
-            />
+          <img
+            src={photoPreview}
+            className="profilePhotoPreview"
+          />
 
           <div className="inputGroup fullWidth">
             <label>Cambiar foto</label>
             <input type="file" accept="image/*" onChange={handlePhotoChange} />
           </div>
+          {photoPreview && (
+            <button
+              type="button"
+              className="deletePhotoBtn"
+              onClick={handleDeletePhoto}
+            >
+              Eliminar foto
+            </button>
+          )}
 
           <div className="inputGroup">
             <label>Nombre</label>
-            <input name="first_name" value={form.first_name} onChange={handleChange} />
+            <input
+              name="first_name"
+              value={form.first_name}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="inputGroup">
             <label>Apellido</label>
-            <input name="last_name" value={form.last_name} onChange={handleChange} />
+            <input
+              name="last_name"
+              value={form.last_name}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="inputGroup">
             <label>Email</label>
-            <input name="email" type="email" value={form.email} onChange={handleChange} />
+            <input
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="inputGroup">
             <label>Idioma nativo</label>
-            <select name="native_lang_id" value={form.native_lang_id} onChange={handleChange}>
+            <select
+              name="native_lang_id"
+              value={form.native_lang_id}
+              onChange={handleChange}
+            >
               <option value="">Selecciona</option>
               {languages.map((l) => (
                 <option key={l.language_code} value={l.language_code}>
@@ -172,7 +210,11 @@ export function EditProfile() {
 
           <div className="inputGroup">
             <label>Idioma a aprender</label>
-            <select name="target_lang_id" value={form.target_lang_id} onChange={handleChange}>
+            <select
+              name="target_lang_id"
+              value={form.target_lang_id}
+              onChange={handleChange}
+            >
               <option value="">Selecciona</option>
               {languages
                 .filter((l) => l.language_code !== form.native_lang_id)
@@ -196,13 +238,16 @@ export function EditProfile() {
 
           <div className="inputGroup">
             <label>Descripción</label>
-            <textarea name="description" value={form.description} onChange={handleChange} />
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+            />
           </div>
 
           <button className="saveBtn" type="submit">
             Guardar cambios
           </button>
-
         </form>
       </div>
     </>
