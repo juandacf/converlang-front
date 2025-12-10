@@ -109,7 +109,7 @@ export function MatchUser() {
             <div className="photoNameContainer">
               <div className="photoContainer">
                 <img
-                  src="../../../public/assets/mi_pic.png"
+                  src={u.profile_photo ? `http://localhost:3000${u.profile_photo}`: "../../../public/assets/user.png" }
                   alt=""
                   className="matchPhotoo"
                 />

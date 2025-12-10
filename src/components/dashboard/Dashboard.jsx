@@ -81,6 +81,8 @@ export function Dashboard({ user }) {
     return () => controller.abort();
   }, []);
 
+  console.log(users)
+
   return (
     <>
       <NavBar />
@@ -113,7 +115,7 @@ export function Dashboard({ user }) {
           <div className="UserPic">
             <img
               className="actualPic"
-              src={photoPreview}
+              src={photoPreview || "../../../public/assets/user.png"}
               alt=""
             />
           </div>
@@ -128,10 +130,10 @@ export function Dashboard({ user }) {
           <h3 className="recentMatchTitle">Match recientes</h3>
           <div className="recentMatchItems">
             {users.map((u) => (
-              <div className="recentMatch" key={u.id}>
+              <div className="recentMatch" key={u.id} id={u.matched_user_id}>
                 <img
                   className="matchPhoto"
-                  src="../../../public/assets/user.png"
+                  src={u.profile_photo ? `http://localhost:3000${u.profile_photo}`: "../../../public/assets/user.png" }
                   alt=""
                 />
                 <p>{u.first_name}</p>
