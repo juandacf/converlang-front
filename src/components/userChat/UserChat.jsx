@@ -12,6 +12,8 @@ export function UserChat() {
   const [messages, setMessages] = useState([]);
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [draft, setDraft] = useState("");
+  const [search, setSearch] = useState("");
+
 
   const socketRef = useRef(null);
   console.log(decodedToken.sub);
@@ -81,12 +83,27 @@ export function UserChat() {
     setDraft("");
   };
 
+  const filteredChats = chatList.filter((chat) =>
+  chat.full_name.toLowerCase().includes(search.toLowerCase())
+);
+
+
   return (
     <>
       <div className="userChatMainContainer">
         {/* Chat List */}
         <div className="chatItemsContainer">
-          {chatList.map((chat) => (
+          <div className="chatSearchContainer">
+  <input
+    type="text"
+    className="chatSearchInput"
+    placeholder="Buscar..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+  />
+</div>
+
+          {filteredChats.map((chat) => (
             <div
               className="chatMatchContainer"
               key={chat.match_id}

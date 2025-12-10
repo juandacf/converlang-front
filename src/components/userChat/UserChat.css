@@ -182,3 +182,17 @@ margin-left: 1vh;
 .sendMessage:hover {
   transform: scale(1.12);
 }
+
+.chatSearchContainer {
+  padding: 10px;
+  background: #f8f8f8;
+}
+
+.chatSearchInput {
+  width: 95%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 14px;
+}
