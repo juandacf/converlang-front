@@ -20,6 +20,7 @@ export function Dashboard({ user }) {
   const [users, setUsers] = useState([]);
   const [sessions, setSessions] = useState([]);
   const [authUser, setAuthUser] = useState({});
+  const [photoPreview, setPhotoPreview] = useState(null);
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const Navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -35,6 +36,10 @@ export function Dashboard({ user }) {
       })
       .then((json) => {
         setAuthUser(json);
+
+            if (json.profile_photo) {
+          setPhotoPreview(`http://localhost:3000${json.profile_photo}`);
+        }
       })
       .catch((err) => console.log(err.message));
   }, []);
@@ -108,7 +113,7 @@ export function Dashboard({ user }) {
           <div className="UserPic">
             <img
               className="actualPic"
-              src="../../../public/assets/mi_pic.png"
+              src={photoPreview}
               alt=""
             />
           </div>
