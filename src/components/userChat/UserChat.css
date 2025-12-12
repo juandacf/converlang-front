@@ -196,3 +196,37 @@ margin-left: 1vh;
   outline: none;
   font-size: 14px;
 }
+
+.configButton {
+  cursor: pointer;
+}
+
+.configMenu {
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  width: 180px;
+}
+
+.configMenu p {
+  margin: 0;
+  padding: 12px 15px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.configMenu p:hover {
+  background-color: #f2f2f2;
+}
+
+.configMenu .danger {
+  color: #d9534f;
+}
+
+.configMenu .danger:hover {
+  background-color: #fdecea;
+}

@@ -13,6 +13,9 @@ export function UserChat() {
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [draft, setDraft] = useState("");
   const [search, setSearch] = useState("");
+  const [showConfigMenu, setShowConfigMenu] = useState(false);
+const configMenuRef = useRef(null);
+
 
 
   const socketRef = useRef(null);
@@ -87,6 +90,65 @@ export function UserChat() {
   chat.full_name.toLowerCase().includes(search.toLowerCase())
 );
 
+useEffect(() => {
+  const handleClickOutside = (e) => {
+    if (
+      configMenuRef.current &&
+      !configMenuRef.current.contains(e.target)
+    ) {
+      setShowConfigMenu(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => document.removeEventListener("mousedown", handleClickOutside);
+}, []);
+
+const handleDeleteMatch = async () => {
+  if (!selectedMatch) return;
+
+  const confirmDelete = window.confirm(
+    "¿Estás seguro de que deseas eliminar este match?"
+  );
+  if (!confirmDelete) return;
+
+  try {
+    // IDs correctos
+    const user1 = Number(decodedToken.sub);
+    const user2 = Number(selectedMatch.other_user_id);
+
+    if (Number.isNaN(user1) || Number.isNaN(user2)) {
+      throw new Error("IDs de usuario inválidos");
+    }
+
+    const res = await fetch(
+      `http://localhost:3000/matches/deleteMatch?user_1=${user1}&user_2=${user2}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(text || "Error al eliminar el match");
+    }
+
+    // Limpiar UI
+    setChatList((prev) =>
+      prev.filter((c) => c.match_id !== selectedMatch.match_id)
+    );
+    setSelectedMatch(null);
+    setMessages([]);
+    setShowConfigMenu(false);
+
+  } catch (err) {
+    alert(err.message);
+  }
+};
+
 
   return (
     <>
@@ -144,11 +206,23 @@ src={
                   />
                 </div>
                 <p className="chatName">{selectedMatch.full_name}</p>
-                <img
-                  className="userPhoto configButton"
-                  src="../../../public/assets/dots.png"
-                  alt=""
-                />
+<img
+  className="userPhoto configButton"
+  src="../../../public/assets/dots.png"
+  alt=""
+  onClick={() => setShowConfigMenu((prev) => !prev)}
+/>
+
+{showConfigMenu && (
+  <div className="configMenu" ref={configMenuRef}>
+    <p onClick={() => alert("Función de llamada próximamente 🚧")}>
+      📞 Iniciar llamada
+    </p>
+    <p className="danger" onClick={handleDeleteMatch}>
+      ❌ Eliminar match
+    </p>
+  </div>
+)}
               </div>
 
               <div className="actualMessageContainer">
