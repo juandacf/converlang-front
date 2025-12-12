@@ -81,7 +81,43 @@ export function Dashboard({ user }) {
     return () => controller.abort();
   }, []);
 
-  console.log(users)
+const handleDeleteMatch = async (matchedUserId) => {
+  const confirmDelete = window.confirm(
+    "¿Estás seguro de que deseas eliminar este match?"
+  );
+  if (!confirmDelete) return;
+
+  const user1 = decodedToken.sub;
+  const user2 = matchedUserId;
+
+  try {
+    const response = await fetch(
+      `http://localhost:3000/matches/deleteMatch?user_1=${user1}&user_2=${user2}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+if (!response.ok) {
+  const text = await response.text();
+  console.error("BACKEND ERROR:", text);
+  throw new Error(text || "Error al eliminar el match");
+}
+
+
+    // actualizar UI
+    setUsers((prev) =>
+      prev.filter((u) => u.matched_user_id !== matchedUserId)
+    );
+  } catch (err) {
+    alert(err.message);
+  }
+};
+
+
 
   return (
     <>
@@ -128,19 +164,33 @@ export function Dashboard({ user }) {
         </div>
         <div className="recentMatchContainer">
           <h3 className="recentMatchTitle">Match recientes</h3>
-          <div className="recentMatchItems">
-            {users.map((u) => (
-              <div className="recentMatch" key={u.id} id={u.matched_user_id}>
-                <img
-                  className="matchPhoto"
-                  src={u.profile_photo ? `http://localhost:3000${u.profile_photo}`: "../../../public/assets/user.png" }
-                  alt=""
-                />
-                <p>{u.first_name}</p>
-                <p>{u.last_name}</p>
-              </div>
-            ))}
-          </div>
+<div className="recentMatchItems">
+  {users.map((u) => (
+    <div className="recentMatch" key={u.matched_user_id}>
+      
+
+      <button
+        className="deleteMatchBtn"
+        onClick={() => handleDeleteMatch(u.matched_user_id)}
+      >
+        ✕
+      </button>
+
+      <img
+        className="matchPhoto"
+        src={
+          u.profile_photo
+            ? `http://localhost:3000${u.profile_photo}`
+            : "../../../public/assets/user.png"
+        }
+        alt=""
+      />
+      <p>{u.first_name}</p>
+      <p>{u.last_name}</p>
+    </div>
+  ))}
+</div>
+
         </div>
         <div className="carrouselStatistics">
           <div className="carrouselContainer">
@@ -211,7 +261,7 @@ export function NavBar() {
           className="navBarImage"
         />
       </a>
-      <a href="">
+      <a href="/matchUser">
         {" "}
         <img
           src="../../../public/assets/friend-request.png"

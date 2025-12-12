@@ -313,3 +313,24 @@
 .settingsMenu p:hover {
   background: #f0f0f0;
 }
+
+.recentMatch {
+  position: relative;
+}
+
+.deleteMatchBtn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: transparent;
+  border: none;
+  color: #d9534f;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.deleteMatchBtn:hover {
+  color: #c9302c;
+  transform: scale(1.1);
+}
+
