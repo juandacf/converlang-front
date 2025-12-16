@@ -49,7 +49,9 @@ export function UserChat() {
   useEffect(() => {
     if (!selectedMatch || !socket) return;
 
-    socket.emit("joinRoom", selectedMatch.match_id);
+   socket.emit("joinRoom", Number(selectedMatch.match_id));
+
+
 
     fetch(`http://localhost:3000/chats/${selectedMatch.match_id}`)
       .then((res) => res.json())

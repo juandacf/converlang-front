@@ -1,184 +1,244 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
+import { useSocket } from "../../context/SocketContext";
 import "./videoCall.css";
 import { jwtDecode } from "jwt-decode";
-import { useSocket } from "../../context/SocketContext";
 
 export default function VideoCall() {
   const { match_id } = useParams();
-  const location = useLocation();
+  const socket = useSocket();
 
-  // Persona con la que hablo
+  const location = useLocation();
   const selectedMatch = location.state?.selectedMatch;
 
-  // Obtener userId desde el token
-  const token = localStorage.getItem("token");
-  const decoded = jwtDecode(token);
-  const userId = decoded.sub;
-
-  // Referencias de video
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
+  const peerRef = useRef(null);
+  const localStreamRef = useRef(null);
 
-  // Chat
   const [messages, setMessages] = useState([]);
   const [draft, setDraft] = useState("");
 
-const socket = useSocket();
+  const token = localStorage.getItem("token");
+  const decoded = jwtDecode(token);
+  const userId = Number(decoded.sub);
 
-if (!socket) {
-  return (
-    <div style={{ padding: 20, textAlign: "center" }}>
-      Conectando a la sala...
-    </div>
+  const numericMatchId = useMemo(() => Number(match_id), [match_id]);
+
+  const iceServers = useMemo(
+    () => ({ iceServers: [{ urls: ["stun:stun.l.google.com:19302"] }] }),
+    []
   );
-}
 
+  if (!socket) return <div>Conectando con el servidor...</div>;
 
-  /* ===============================
-     1. Cargar mensajes antiguos
-  =============================== */
+  // -------- helpers (NORMALIZA payloads) ----------
+  const getMsgMatchId = (msg) => Number(msg?.match_id ?? msg?.matchId ?? msg?.matchID);
+  const getMsgSenderId = (msg) => Number(msg?.sender_id ?? msg?.senderId ?? msg?.senderID);
+
+  // ======================================================
+  // 1) Load historial
+  // ======================================================
   useEffect(() => {
-    async function loadMessages() {
-      try {
-        const res = await fetch(`http://localhost:3000/chats/${match_id}`);
-        const data = await res.json();
+    fetch(`http://localhost:3000/chats/${numericMatchId}`)
+      .then((res) => res.json())
+      .then((data) => setMessages(Array.isArray(data) ? data : []))
+      .catch(() => setMessages([]));
+  }, [numericMatchId]);
 
-        if (Array.isArray(data)) setMessages(data);
-      } catch (err) {
-        console.error("Error cargando mensajes:", err);
-      }
-    }
-
-    loadMessages();
-  }, [match_id]);
-
-
-  /* ===============================
-     2. Unirse a la sala WebSocket
-  =============================== */
+  // ======================================================
+  // 2) Join room + listener ÚNICO
+  // ======================================================
   useEffect(() => {
-    socket.emit("joinRoom", Number(match_id));
-  }, [socket, match_id]);
+    // Unirse SIEMPRE con el ID numérico (así tu gateway no depende de strings)
+    socket.emit("joinRoom", numericMatchId);
 
-
-  /* ===============================
-     3. Escuchar nuevos mensajes
-  =============================== */
-  useEffect(() => {
     const handler = (msg) => {
-      if (msg.match_id === Number(match_id)) {
-        setMessages((prev) => [...prev, msg]);
-      }
+      const mid = getMsgMatchId(msg);
+      if (mid !== numericMatchId) return;
+
+      setMessages((prev) => {
+        // Si el server devuelve el mensaje real, elimina el optimistic equivalente (si existe)
+        // Heurística: mismo sender + mismo texto + estaba marcado como pending
+        const sender = getMsgSenderId(msg);
+        const text = msg?.message ?? "";
+
+        const withoutPendingDup = prev.filter(
+          (m) =>
+            !(
+              m?.__pending === true &&
+              Number(m?.sender_id) === sender &&
+              String(m?.message) === String(text)
+            )
+        );
+
+        return [...withoutPendingDup, msg];
+      });
     };
 
     socket.on("newMessage", handler);
     return () => socket.off("newMessage", handler);
-  }, [socket, match_id]);
+  }, [socket, numericMatchId]);
 
+  // ======================================================
+  // 3) WebRTC (tu lógica; ojo: initCamera() debes llamarla cuando corresponda)
+  // ======================================================
+  function createPeerConnection() {
+    peerRef.current = new RTCPeerConnection(iceServers);
 
-  /* ===============================
-     4. Enviar mensaje
-  =============================== */
-const sendMessage = () => {
-  if (!draft.trim() || !socket) return;
+    peerRef.current.ontrack = (event) => {
+      if (remoteVideoRef.current) remoteVideoRef.current.srcObject = event.streams[0];
+    };
 
-  const newMessage = {
-    message: draft,
-    sender_id: userId,
-    match_id: Number(match_id),
-    timestamp: Date.now(),
-    message_id: Math.random() // Id temporal
-  };
-
-  setMessages(prev => [...prev, newMessage]);
-
-  socket.emit("sendMessage", {
-    matchId: Number(match_id),
-    senderId: userId,
-    message: draft,
-  });
-
-  setDraft("");
-};
-
-
-
-  /* ===============================
-     5. Activar cámara local
-  =============================== */
-  useEffect(() => {
-    async function initCamera() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
+    peerRef.current.onicecandidate = (event) => {
+      if (event.candidate) {
+        socket.emit("webrtcIceCandidate", {
+          matchId: numericMatchId,
+          candidate: event.candidate,
         });
-
-        if (localVideoRef.current) {
-          localVideoRef.current.srcObject = stream;
-        }
-      } catch (err) {
-        console.error("No se pudo iniciar cámara:", err);
       }
-    }
+    };
+  }
 
+  async function initCamera() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+
+      localStreamRef.current = stream;
+      if (localVideoRef.current) localVideoRef.current.srcObject = stream;
+
+      if (!peerRef.current) createPeerConnection();
+      stream.getTracks().forEach((track) => peerRef.current.addTrack(track, stream));
+    } catch (err) {
+      console.error("Error iniciando cámara:", err);
+    }
+  }
+
+  // Si quieres iniciar cámara automáticamente al entrar:
+  useEffect(() => {
     initCamera();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  async function handleReceivedOffer({ offer }) {
+    if (!peerRef.current) createPeerConnection();
+    await peerRef.current.setRemoteDescription(offer);
+
+    const answer = await peerRef.current.createAnswer();
+    await peerRef.current.setLocalDescription(answer);
+
+    socket.emit("webrtcAnswer", {
+      matchId: numericMatchId,
+      answer,
+    });
+  }
+
+  async function handleReceivedAnswer({ answer }) {
+    if (!peerRef.current) return;
+    await peerRef.current.setRemoteDescription(answer);
+  }
+
+  async function handleNewICECandidate({ candidate }) {
+    try {
+      await peerRef.current?.addIceCandidate(candidate);
+    } catch (error) {
+      console.error("ICE error:", error);
+    }
+  }
+
+  async function startCall() {
+    if (!peerRef.current) createPeerConnection();
+
+    const offer = await peerRef.current.createOffer();
+    await peerRef.current.setLocalDescription(offer);
+
+    socket.emit("webrtcOffer", {
+      matchId: numericMatchId,
+      offer,
+    });
+  }
+
+  // Listeners WebRTC (si ya los tienes en otro lado, ok, pero no los dupliques)
+  useEffect(() => {
+    socket.on("webrtcOffer", handleReceivedOffer);
+    socket.on("webrtcAnswer", handleReceivedAnswer);
+    socket.on("webrtcIceCandidate", handleNewICECandidate);
+    socket.on("callAccepted", startCall);
+
+    return () => {
+      socket.off("webrtcOffer", handleReceivedOffer);
+      socket.off("webrtcAnswer", handleReceivedAnswer);
+      socket.off("webrtcIceCandidate", handleNewICECandidate);
+      socket.off("callAccepted", startCall);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket, numericMatchId]);
+
+  // ======================================================
+  // 4) Send message (optimistic + sin duplicados)
+  // ======================================================
+  const sendMessage = () => {
+    const text = draft.trim();
+    if (!text) return;
+
+    // 1) optimistic render
+    setMessages((prev) => [
+      ...prev,
+      {
+        message_id: `tmp_${Date.now()}_${Math.random()}`,
+        match_id: numericMatchId,
+        sender_id: userId,
+        message: text,
+        __pending: true,
+      },
+    ]);
+
+    // 2) emit al server
+    socket.emit("sendMessage", {
+      matchId: numericMatchId,
+      senderId: userId,
+      message: text,
+    });
+
+    setDraft("");
+  };
+
+  // ======================================================
+  // UI
+  // ======================================================
   return (
     <div className="videoCallMainContainer">
-
-      {/* ===============================
-          ZONA DE VIDEO + PIP
-      =============================== */}
       <div className="videoArea">
         <div className="videoWrapper">
-          
-          {/* Video remoto (cuando WebRTC esté listo) */}
-          <video
-            className="videoBox"
-            ref={remoteVideoRef}
-            autoPlay
-            playsInline
-          />
-
-          {/* Picture-in-picture: tú */}
-          <video
-            className="pipVideo"
-            ref={localVideoRef}
-            autoPlay
-            muted
-            playsInline
-          />
-
+          <video className="videoBox" ref={remoteVideoRef} autoPlay playsInline />
+          <video className="pipVideo" ref={localVideoRef} autoPlay muted playsInline />
         </div>
       </div>
+
       <div className="videoChatContainer">
-        <h3 className="videoChatTitle">
-          Chat con {selectedMatch?.full_name}
-        </h3>
+        <h3 className="videoChatTitle">Chat con {selectedMatch?.full_name}</h3>
 
         <div className="videoChatMessages">
           {messages.map((m) => {
-            const isMe = m.sender_id === userId;
-
+            const isMe = getMsgSenderId(m) === userId;
             return (
               <div
-                key={m.message_id || Math.random()}
+                key={m.message_id}
                 className={isMe ? "selfVideoMessage" : "otherVideoMessage"}
+                style={m.__pending ? { opacity: 0.6 } : undefined}
               >
                 <div className="messageMeta">
-                  <span className="senderName">
-                    {isMe ? "Tú" : selectedMatch?.full_name}
-                  </span>
+                  {isMe ? "Tú" : selectedMatch?.full_name}
                 </div>
-
-                <p className="messageText">{m.message}</p>
+                <p>{m.message}</p>
               </div>
             );
           })}
         </div>
+
         <div className="videoChatInputArea">
           <input
             value={draft}
@@ -187,12 +247,10 @@ const sendMessage = () => {
             className="videoChatInput"
             placeholder="Escribe un mensaje..."
           />
-
           <button className="videoChatSendBtn" onClick={sendMessage}>
             Enviar
           </button>
         </div>
-
       </div>
     </div>
   );
