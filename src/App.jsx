@@ -8,6 +8,7 @@ import { UserChat } from './components/userChat/UserChat';
 import { TeacherDashboard } from "./components/teacher-Dashboard/TeacherDashboard";
 import {AdminDashboard}from "./components/adminDashboard/AdminDashboard";
 import { EditProfile } from "./components/editProfile/editProfile";
+import VideoCall from "./components/videoCall/VideoCall";
 
 export function App() {
 
@@ -28,6 +29,7 @@ export function App() {
         <Route path="/teacherDashboard" element={<TeacherDashboard />} />
         <Route path="/adminDashboard" element={<AdminDashboard />} />
         <Route path="/editProfile" element={<EditProfile />} />
+        <Route path="/videoCall" element={<VideoCall />} />
       </Routes>
     </BrowserRouter>
   )
