@@ -217,3 +217,18 @@
     font-size: 0.85rem;
   }
 }
+
+
+.messageMeta {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  margin-bottom: 3px;
+}
+
+.senderName {
+  font-weight: 600;
+}
+
+.messageText {
+  margin: 0;
+}

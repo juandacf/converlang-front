@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { io } from "socket.io-client";
 import { NavBar, Footer } from "../dashboard/Dashboard";
 import "./UserChat.css";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+import { useSocket } from "../../context/SocketContext";
 
 export function UserChat() {
   const token = localStorage.getItem("token");
@@ -14,28 +15,27 @@ export function UserChat() {
   const [draft, setDraft] = useState("");
   const [search, setSearch] = useState("");
   const [showConfigMenu, setShowConfigMenu] = useState(false);
-const configMenuRef = useRef(null);
 
+  const configMenuRef = useRef(null);
+  const navigate = useNavigate();
 
-
-  const socketRef = useRef(null);
-  console.log(decodedToken.sub);
-
-  // =====================================================
-  // 1. Inicializar socket SOLO una vez
-  // =====================================================
-  useEffect(() => {
-    socketRef.current = io("http://localhost:3000", {
-      transports: ["websocket"],
-    });
-
-    return () => {
-      socketRef.current.disconnect();
-    };
-  }, []);
+  // 👉 Socket global proveniente del provider
+  const socket = useSocket();
 
   // =====================================================
-  // 2. Obtener lista de chats
+  // 🚨 MUY IMPORTANTE:
+  // Si el socket aún no está listo, no renderizamos nada para evitar errores
+  // =====================================================
+  if (!socket) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "2rem" }}>
+        Conectando con el servidor...
+      </div>
+    );
+  }
+
+  // =====================================================
+  // 1. Obtener lista de chats del usuario
   // =====================================================
   useEffect(() => {
     fetch(`http://localhost:3000/chats/list/${decodedToken.sub}`)
@@ -44,40 +44,42 @@ const configMenuRef = useRef(null);
   }, [decodedToken.sub]);
 
   // =====================================================
-  // 3. Cuando selecciono un match → cargar mensajes + unirme a sala
+  // 2. Al seleccionar un chat → unirme a la sala + cargar mensajes
   // =====================================================
   useEffect(() => {
-    if (!selectedMatch) return;
+    if (!selectedMatch || !socket) return;
 
-    socketRef.current.emit("joinRoom", selectedMatch.match_id);
+    socket.emit("joinRoom", selectedMatch.match_id);
 
     fetch(`http://localhost:3000/chats/${selectedMatch.match_id}`)
       .then((res) => res.json())
       .then((data) => setMessages(data));
-  }, [selectedMatch]);
+
+  }, [selectedMatch, socket]);
 
   // =====================================================
-  // 4. Recibir mensajes nuevos en tiempo real
+  // 3. Escuchar mensajes nuevos
   // =====================================================
   useEffect(() => {
-    if (!socketRef.current) return;
+    if (!socket) return;
 
-    socketRef.current.on("newMessage", (msg) => {
+    const handler = (msg) => {
       setMessages((prev) => [...prev, msg]);
-    });
-
-    return () => {
-      socketRef.current.off("newMessage");
     };
-  }, []);
+
+    socket.on("newMessage", handler);
+
+    return () => socket.off("newMessage", handler);
+
+  }, [socket]);
 
   // =====================================================
-  // 5. Enviar mensaje
+  // 4. Enviar mensaje
   // =====================================================
   const sendMessage = () => {
-    if (!draft.trim() || !selectedMatch) return;
+    if (!draft.trim() || !selectedMatch || !socket) return;
 
-    socketRef.current.emit("sendMessage", {
+    socket.emit("sendMessage", {
       matchId: selectedMatch.match_id,
       senderId: decodedToken.sub,
       message: draft,
@@ -86,84 +88,92 @@ const configMenuRef = useRef(null);
     setDraft("");
   };
 
+  // =====================================================
+  // 5. Filtrar chats por búsqueda
+  // =====================================================
   const filteredChats = chatList.filter((chat) =>
-  chat.full_name.toLowerCase().includes(search.toLowerCase())
-);
+    chat.full_name.toLowerCase().includes(search.toLowerCase())
+  );
 
-useEffect(() => {
-  const handleClickOutside = (e) => {
-    if (
-      configMenuRef.current &&
-      !configMenuRef.current.contains(e.target)
-    ) {
+  // =====================================================
+  // 6. Cerrar menú contextual al hacer clic fuera
+  // =====================================================
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        configMenuRef.current &&
+        !configMenuRef.current.contains(e.target)
+      ) {
+        setShowConfigMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // =====================================================
+  // 7. Eliminar match
+  // =====================================================
+  const handleDeleteMatch = async () => {
+    if (!selectedMatch) return;
+
+    const confirmDelete = window.confirm(
+      "¿Estás seguro de que deseas eliminar este match?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const user1 = Number(decodedToken.sub);
+      const user2 = Number(selectedMatch.other_user_id);
+
+      const res = await fetch(
+        `http://localhost:3000/matches/deleteMatch?user_1=${user1}&user_2=${user2}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Error al eliminar el match");
+      }
+
+      setChatList((prev) =>
+        prev.filter((c) => c.match_id !== selectedMatch.match_id)
+      );
+
+      setSelectedMatch(null);
+      setMessages([]);
       setShowConfigMenu(false);
+
+    } catch (err) {
+      alert(err.message);
     }
   };
 
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => document.removeEventListener("mousedown", handleClickOutside);
-}, []);
-
-const handleDeleteMatch = async () => {
-  if (!selectedMatch) return;
-
-  const confirmDelete = window.confirm(
-    "¿Estás seguro de que deseas eliminar este match?"
-  );
-  if (!confirmDelete) return;
-
-  try {
-    // IDs correctos
-    const user1 = Number(decodedToken.sub);
-    const user2 = Number(selectedMatch.other_user_id);
-
-    if (Number.isNaN(user1) || Number.isNaN(user2)) {
-      throw new Error("IDs de usuario inválidos");
-    }
-
-    const res = await fetch(
-      `http://localhost:3000/matches/deleteMatch?user_1=${user1}&user_2=${user2}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    if (!res.ok) {
-      const text = await res.text();
-      throw new Error(text || "Error al eliminar el match");
-    }
-
-    // Limpiar UI
-    setChatList((prev) =>
-      prev.filter((c) => c.match_id !== selectedMatch.match_id)
-    );
-    setSelectedMatch(null);
-    setMessages([]);
-    setShowConfigMenu(false);
-
-  } catch (err) {
-    alert(err.message);
-  }
-};
-
+  // =====================================================
+  //  RENDER
+  // =====================================================
 
   return (
     <>
       <div className="userChatMainContainer">
-        {/* Chat List */}
+
+        {/* ========================
+             LISTA DE CHATS
+        ======================== */}
         <div className="chatItemsContainer">
           <div className="chatSearchContainer">
-  <input
-    type="text"
-    className="chatSearchInput"
-    placeholder="Buscar..."
-    value={search}
-    onChange={(e) => setSearch(e.target.value)}
-  />
-</div>
+            <input
+              type="text"
+              className="chatSearchInput"
+              placeholder="Buscar..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
 
           {filteredChats.map((chat) => (
             <div
@@ -182,6 +192,7 @@ const handleDeleteMatch = async () => {
                   alt=""
                 />
               </div>
+
               <div className="chatNameContainer">
                 <p>{chat.full_name}</p>
               </div>
@@ -189,7 +200,9 @@ const handleDeleteMatch = async () => {
           ))}
         </div>
 
-        {/* Chat Window */}
+        {/* ========================
+             VENTANA DE CHAT
+        ======================== */}
         <div className="messagesContainer">
           {selectedMatch ? (
             <>
@@ -197,32 +210,41 @@ const handleDeleteMatch = async () => {
                 <div className="chatPhotoContainer">
                   <img
                     className="userPhoto purpleMargin"
-src={
-  selectedMatch?.profile_photo
-    ? `http://localhost:3000${selectedMatch.profile_photo}`
-    : "../../../public/assets/user.png"
-}
+                    src={
+                      selectedMatch?.profile_photo
+                        ? `http://localhost:3000${selectedMatch.profile_photo}`
+                        : "../../../public/assets/user.png"
+                    }
                     alt=""
                   />
                 </div>
-                <p className="chatName">{selectedMatch.full_name}</p>
-<img
-  className="userPhoto configButton"
-  src="../../../public/assets/dots.png"
-  alt=""
-  onClick={() => setShowConfigMenu((prev) => !prev)}
-/>
 
-{showConfigMenu && (
-  <div className="configMenu" ref={configMenuRef}>
-    <p onClick={() => alert("Función de llamada próximamente 🚧")}>
-      📞 Iniciar llamada
-    </p>
-    <p className="danger" onClick={handleDeleteMatch}>
-      ❌ Eliminar match
-    </p>
-  </div>
-)}
+                <p className="chatName">{selectedMatch.full_name}</p>
+
+                <img
+                  className="userPhoto configButton"
+                  src="../../../public/assets/dots.png"
+                  alt=""
+                  onClick={() => setShowConfigMenu((prev) => !prev)}
+                />
+
+                {showConfigMenu && (
+                  <div className="configMenu" ref={configMenuRef}>
+                    <p
+                      onClick={() =>
+                        navigate(`/videocall/${selectedMatch.match_id}`, {
+                          state: { selectedMatch },
+                        })
+                      }
+                    >
+                      📞 Iniciar llamada
+                    </p>
+
+                    <p className="danger" onClick={handleDeleteMatch}>
+                      ❌ Eliminar match
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div className="actualMessageContainer">
@@ -245,9 +267,7 @@ src={
                   type="text"
                   value={draft}
                   onChange={(e) => setDraft(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") sendMessage();
-                  }}
+                  onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                   className="inputChat"
                   placeholder="Escribe un mensaje..."
                 />

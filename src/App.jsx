@@ -10,7 +10,7 @@ import {AdminDashboard}from "./components/adminDashboard/AdminDashboard";
 import { EditProfile } from "./components/editProfile/editProfile";
 import VideoCall from "./components/videoCall/VideoCall";
 
-export function App() {
+export default function App() {
 
   const userExample = {  // Esta data se debe obtener de alguna forma después de hacer el login
     name: "Juan",
@@ -29,7 +29,7 @@ export function App() {
         <Route path="/teacherDashboard" element={<TeacherDashboard />} />
         <Route path="/adminDashboard" element={<AdminDashboard />} />
         <Route path="/editProfile" element={<EditProfile />} />
-        <Route path="/videoCall" element={<VideoCall />} />
+        <Route path="/videocall/:match_id" element={<VideoCall />} />
       </Routes>
     </BrowserRouter>
   )

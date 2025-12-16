@@ -1,14 +1,112 @@
 import { useEffect, useRef, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import "./videoCall.css";
+import { jwtDecode } from "jwt-decode";
+import { useSocket } from "../../context/SocketContext";
 
-export default function VideoCall({ socket, userId, remoteUser }) {
+export default function VideoCall() {
+  const { match_id } = useParams();
+  const location = useLocation();
+
+  // Persona con la que hablo
+  const selectedMatch = location.state?.selectedMatch;
+
+  // Obtener userId desde el token
+  const token = localStorage.getItem("token");
+  const decoded = jwtDecode(token);
+  const userId = decoded.sub;
+
+  // Referencias de video
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
 
+  // Chat
   const [messages, setMessages] = useState([]);
   const [draft, setDraft] = useState("");
 
-  /* ====== Inicializar cámara ====== */
+const socket = useSocket();
+
+if (!socket) {
+  return (
+    <div style={{ padding: 20, textAlign: "center" }}>
+      Conectando a la sala...
+    </div>
+  );
+}
+
+
+  /* ===============================
+     1. Cargar mensajes antiguos
+  =============================== */
+  useEffect(() => {
+    async function loadMessages() {
+      try {
+        const res = await fetch(`http://localhost:3000/chats/${match_id}`);
+        const data = await res.json();
+
+        if (Array.isArray(data)) setMessages(data);
+      } catch (err) {
+        console.error("Error cargando mensajes:", err);
+      }
+    }
+
+    loadMessages();
+  }, [match_id]);
+
+
+  /* ===============================
+     2. Unirse a la sala WebSocket
+  =============================== */
+  useEffect(() => {
+    socket.emit("joinRoom", Number(match_id));
+  }, [socket, match_id]);
+
+
+  /* ===============================
+     3. Escuchar nuevos mensajes
+  =============================== */
+  useEffect(() => {
+    const handler = (msg) => {
+      if (msg.match_id === Number(match_id)) {
+        setMessages((prev) => [...prev, msg]);
+      }
+    };
+
+    socket.on("newMessage", handler);
+    return () => socket.off("newMessage", handler);
+  }, [socket, match_id]);
+
+
+  /* ===============================
+     4. Enviar mensaje
+  =============================== */
+const sendMessage = () => {
+  if (!draft.trim() || !socket) return;
+
+  const newMessage = {
+    message: draft,
+    sender_id: userId,
+    match_id: Number(match_id),
+    timestamp: Date.now(),
+    message_id: Math.random() // Id temporal
+  };
+
+  setMessages(prev => [...prev, newMessage]);
+
+  socket.emit("sendMessage", {
+    matchId: Number(match_id),
+    senderId: userId,
+    message: draft,
+  });
+
+  setDraft("");
+};
+
+
+
+  /* ===============================
+     5. Activar cámara local
+  =============================== */
   useEffect(() => {
     async function initCamera() {
       try {
@@ -20,75 +118,67 @@ export default function VideoCall({ socket, userId, remoteUser }) {
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream;
         }
-
-        // Aquí luego conectaremos WebRTC y enviaremos stream al remoteVideoRef
-
-      } catch (error) {
-        console.error("Error al acceder a la cámara:", error);
+      } catch (err) {
+        console.error("No se pudo iniciar cámara:", err);
       }
     }
 
     initCamera();
   }, []);
 
-  /* ====== Mensajes entrantes del chat ====== */
-  useEffect(() => {
-    if (!socket) return;
-
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === "chat") {
-        setMessages((prev) => [...prev, data]);
-      }
-    };
-  }, [socket]);
-
-
-  /* ====== Enviar mensaje ====== */
-  const sendMessage = () => {
-    if (!draft.trim()) return;
-
-    const message = {
-      type: "chat",
-      sender_id: userId,
-      message: draft,
-      timestamp: Date.now(),
-    };
-
-    socket.send(JSON.stringify(message));
-    setDraft("");
-  };
-
-
   return (
     <div className="videoCallMainContainer">
 
-      {/* ======= Columna de videollamada ======= */}
-<div className="videoArea">
-  <div className="videoWrapper">
-    <video className="videoBox" ref={remoteVideoRef} autoPlay />
-    <video className="pipVideo" ref={localVideoRef} autoPlay muted />
-  </div>
-</div>
+      {/* ===============================
+          ZONA DE VIDEO + PIP
+      =============================== */}
+      <div className="videoArea">
+        <div className="videoWrapper">
+          
+          {/* Video remoto (cuando WebRTC esté listo) */}
+          <video
+            className="videoBox"
+            ref={remoteVideoRef}
+            autoPlay
+            playsInline
+          />
 
+          {/* Picture-in-picture: tú */}
+          <video
+            className="pipVideo"
+            ref={localVideoRef}
+            autoPlay
+            muted
+            playsInline
+          />
 
-      {/* ======= Columna de Chat ======= */}
+        </div>
+      </div>
       <div className="videoChatContainer">
-        <h3 className="videoChatTitle">Chat de la videollamada</h3>
+        <h3 className="videoChatTitle">
+          Chat con {selectedMatch?.full_name}
+        </h3>
 
         <div className="videoChatMessages">
-          {messages.map((m, i) => (
-            <div
-              key={i}
-              className={
-                m.sender_id === userId ? "selfVideoMessage" : "otherVideoMessage"
-              }
-            >
-              <p>{m.message}</p>
-            </div>
-          ))}
-        </div>
+          {messages.map((m) => {
+            const isMe = m.sender_id === userId;
 
+            return (
+              <div
+                key={m.message_id || Math.random()}
+                className={isMe ? "selfVideoMessage" : "otherVideoMessage"}
+              >
+                <div className="messageMeta">
+                  <span className="senderName">
+                    {isMe ? "Tú" : selectedMatch?.full_name}
+                  </span>
+                </div>
+
+                <p className="messageText">{m.message}</p>
+              </div>
+            );
+          })}
+        </div>
         <div className="videoChatInputArea">
           <input
             value={draft}
@@ -104,7 +194,6 @@ export default function VideoCall({ socket, userId, remoteUser }) {
         </div>
 
       </div>
-
     </div>
   );
 }
