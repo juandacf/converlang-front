@@ -16,9 +16,15 @@ export default function VideoCall() {
   const peerRef = useRef(null);
   const localStreamRef = useRef(null);
 
+  // Chat
   const [messages, setMessages] = useState([]);
   const [draft, setDraft] = useState("");
 
+  // WebRTC role/state (REFS para evitar carreras)
+  const isCallerRef = useRef(false);
+  const hasLocalOfferRef = useRef(false);
+
+  // Auth
   const token = localStorage.getItem("token");
   const decoded = jwtDecode(token);
   const userId = Number(decoded.sub);
@@ -32,13 +38,15 @@ export default function VideoCall() {
 
   if (!socket) return <div>Conectando con el servidor...</div>;
 
-  // -------- helpers (NORMALIZA payloads) ----------
-  const getMsgMatchId = (msg) => Number(msg?.match_id ?? msg?.matchId ?? msg?.matchID);
-  const getMsgSenderId = (msg) => Number(msg?.sender_id ?? msg?.senderId ?? msg?.senderID);
+  // Helpers chat payload
+  const getMsgMatchId = (msg) =>
+    Number(msg?.match_id ?? msg?.matchId ?? msg?.matchID);
+  const getMsgSenderId = (msg) =>
+    Number(msg?.sender_id ?? msg?.senderId ?? msg?.senderID);
 
-  // ======================================================
-  // 1) Load historial
-  // ======================================================
+  /* ======================================================
+     1) Load historial de chat
+  ====================================================== */
   useEffect(() => {
     fetch(`http://localhost:3000/chats/${numericMatchId}`)
       .then((res) => res.json())
@@ -46,11 +54,10 @@ export default function VideoCall() {
       .catch(() => setMessages([]));
   }, [numericMatchId]);
 
-  // ======================================================
-  // 2) Join room + listener ÚNICO
-  // ======================================================
+  /* ======================================================
+     2) Join chat room + listener ÚNICO de mensajes
+  ====================================================== */
   useEffect(() => {
-    // Unirse SIEMPRE con el ID numérico (así tu gateway no depende de strings)
     socket.emit("joinRoom", numericMatchId);
 
     const handler = (msg) => {
@@ -58,8 +65,6 @@ export default function VideoCall() {
       if (mid !== numericMatchId) return;
 
       setMessages((prev) => {
-        // Si el server devuelve el mensaje real, elimina el optimistic equivalente (si existe)
-        // Heurística: mismo sender + mismo texto + estaba marcado como pending
         const sender = getMsgSenderId(msg);
         const text = msg?.message ?? "";
 
@@ -80,17 +85,22 @@ export default function VideoCall() {
     return () => socket.off("newMessage", handler);
   }, [socket, numericMatchId]);
 
-  // ======================================================
-  // 3) WebRTC (tu lógica; ojo: initCamera() debes llamarla cuando corresponda)
-  // ======================================================
+  /* ======================================================
+     3) WebRTC: Peer connection
+  ====================================================== */
   function createPeerConnection() {
-    peerRef.current = new RTCPeerConnection(iceServers);
+    if (peerRef.current) return;
 
-    peerRef.current.ontrack = (event) => {
-      if (remoteVideoRef.current) remoteVideoRef.current.srcObject = event.streams[0];
+    const pc = new RTCPeerConnection(iceServers);
+    peerRef.current = pc;
+
+    pc.ontrack = (event) => {
+      if (remoteVideoRef.current) {
+        remoteVideoRef.current.srcObject = event.streams[0];
+      }
     };
 
-    peerRef.current.onicecandidate = (event) => {
+    pc.onicecandidate = (event) => {
       if (event.candidate) {
         socket.emit("webrtcIceCandidate", {
           matchId: numericMatchId,
@@ -111,24 +121,47 @@ export default function VideoCall() {
       if (localVideoRef.current) localVideoRef.current.srcObject = stream;
 
       if (!peerRef.current) createPeerConnection();
-      stream.getTracks().forEach((track) => peerRef.current.addTrack(track, stream));
+
+      // Añadir tracks UNA sola vez
+      const pc = peerRef.current;
+      const existingSenders = pc.getSenders().map((s) => s.track).filter(Boolean);
+      stream.getTracks().forEach((track) => {
+        const alreadyAdded = existingSenders.includes(track);
+        if (!alreadyAdded) pc.addTrack(track, stream);
+      });
     } catch (err) {
       console.error("Error iniciando cámara:", err);
     }
   }
 
-  // Si quieres iniciar cámara automáticamente al entrar:
   useEffect(() => {
     initCamera();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /* ======================================================
+     4) WebRTC: Señalización
+     - SOLO caller crea offer al recibir callAccepted
+     - SOLO callee responde con answer al recibir offer
+  ====================================================== */
   async function handleReceivedOffer({ offer }) {
-    if (!peerRef.current) createPeerConnection();
-    await peerRef.current.setRemoteDescription(offer);
+    // Si soy caller, ignoro offers para evitar glare/doble negociación
+    if (isCallerRef.current) return;
 
-    const answer = await peerRef.current.createAnswer();
-    await peerRef.current.setLocalDescription(answer);
+    if (!peerRef.current) createPeerConnection();
+    const pc = peerRef.current;
+
+    // Solo si estamos en estado estable o esperando offer
+    if (pc.signalingState !== "stable") {
+      // Si estás en otro estado, no intentes aplicar offer de nuevo
+      console.warn("Ignoring offer, signalingState:", pc.signalingState);
+      return;
+    }
+
+    await pc.setRemoteDescription(offer);
+
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
 
     socket.emit("webrtcAnswer", {
       matchId: numericMatchId,
@@ -137,23 +170,47 @@ export default function VideoCall() {
   }
 
   async function handleReceivedAnswer({ answer }) {
-    if (!peerRef.current) return;
-    await peerRef.current.setRemoteDescription(answer);
+    // Solo el caller debe procesar answer
+    if (!isCallerRef.current) return;
+    if (!hasLocalOfferRef.current) return;
+
+    const pc = peerRef.current;
+    if (!pc) return;
+
+    // El estado correcto para aplicar answer es have-local-offer
+    if (pc.signalingState !== "have-local-offer") {
+      console.warn("Ignoring answer, signalingState:", pc.signalingState);
+      return;
+    }
+
+    await pc.setRemoteDescription(answer);
   }
 
   async function handleNewICECandidate({ candidate }) {
+    const pc = peerRef.current;
+    if (!pc) return;
+
     try {
-      await peerRef.current?.addIceCandidate(candidate);
+      await pc.addIceCandidate(candidate);
     } catch (error) {
-      console.error("ICE error:", error);
+      console.warn("ICE candidate ignored/error:", error);
     }
   }
 
-  async function startCall() {
+  async function startCallAsCaller() {
     if (!peerRef.current) createPeerConnection();
+    const pc = peerRef.current;
 
-    const offer = await peerRef.current.createOffer();
-    await peerRef.current.setLocalDescription(offer);
+    // Evitar doble offer
+    if (hasLocalOfferRef.current) return;
+    if (pc.signalingState !== "stable") {
+      console.warn("Not creating offer, signalingState:", pc.signalingState);
+      return;
+    }
+
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    hasLocalOfferRef.current = true;
 
     socket.emit("webrtcOffer", {
       matchId: numericMatchId,
@@ -161,30 +218,79 @@ export default function VideoCall() {
     });
   }
 
-  // Listeners WebRTC (si ya los tienes en otro lado, ok, pero no los dupliques)
+  /* ======================================================
+     5) Join CALL room + handshake simple
+     - Ambos entran a call room
+     - El primero "intenta" ser caller y manda callRequest
+     - El que recibe incomingCall acepta
+     - SOLO caller crea offer al recibir callAccepted
+  ====================================================== */
+  useEffect(() => {
+    socket.emit("joinCallRoom", numericMatchId);
+  }, [socket, numericMatchId]);
+
+  // Intenta iniciar llamada al entrar (caller “optimista”)
+  useEffect(() => {
+    // Resetea banderas al entrar
+    isCallerRef.current = true;
+    hasLocalOfferRef.current = false;
+
+    socket.emit("callRequest", {
+      matchId: numericMatchId,
+      caller: { userId },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [numericMatchId]);
+
+  useEffect(() => {
+    const onIncomingCall = () => {
+      console.log("📞 Llamada entrante");
+
+      // Este lado es callee
+      isCallerRef.current = false;
+      hasLocalOfferRef.current = false;
+
+      socket.emit("callAccepted", { matchId: numericMatchId });
+    };
+
+    socket.on("incomingCall", onIncomingCall);
+    return () => socket.off("incomingCall", onIncomingCall);
+  }, [socket, numericMatchId]);
+
+  useEffect(() => {
+    const onCallAccepted = async () => {
+      // Solo el caller inicia offer
+      if (!isCallerRef.current) return;
+
+      console.log("📞 callAccepted → creando OFFER (caller)");
+      await startCallAsCaller();
+    };
+
+    socket.on("callAccepted", onCallAccepted);
+    return () => socket.off("callAccepted", onCallAccepted);
+  }, [socket, numericMatchId]);
+
+  // Listeners WebRTC
   useEffect(() => {
     socket.on("webrtcOffer", handleReceivedOffer);
     socket.on("webrtcAnswer", handleReceivedAnswer);
     socket.on("webrtcIceCandidate", handleNewICECandidate);
-    socket.on("callAccepted", startCall);
 
     return () => {
       socket.off("webrtcOffer", handleReceivedOffer);
       socket.off("webrtcAnswer", handleReceivedAnswer);
       socket.off("webrtcIceCandidate", handleNewICECandidate);
-      socket.off("callAccepted", startCall);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, numericMatchId]);
 
-  // ======================================================
-  // 4) Send message (optimistic + sin duplicados)
-  // ======================================================
+  /* ======================================================
+     6) Chat: enviar mensaje (optimistic + sin duplicados)
+  ====================================================== */
   const sendMessage = () => {
     const text = draft.trim();
     if (!text) return;
 
-    // 1) optimistic render
     setMessages((prev) => [
       ...prev,
       {
@@ -196,7 +302,6 @@ export default function VideoCall() {
       },
     ]);
 
-    // 2) emit al server
     socket.emit("sendMessage", {
       matchId: numericMatchId,
       senderId: userId,
@@ -206,9 +311,9 @@ export default function VideoCall() {
     setDraft("");
   };
 
-  // ======================================================
-  // UI
-  // ======================================================
+  /* ======================================================
+     UI
+  ====================================================== */
   return (
     <div className="videoCallMainContainer">
       <div className="videoArea">
