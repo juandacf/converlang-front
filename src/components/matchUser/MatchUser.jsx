@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { NavBar, Footer } from "../dashboard/Dashboard";
 import "./MatchUser.css";
 import { jwtDecode } from "jwt-decode";
+import { API_URL } from "../../config/api";
 
 export function MatchUser() {
   const [users, setUsers] = useState([]);
@@ -10,9 +11,10 @@ export function MatchUser() {
 
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
+  const API_BACKEND = API_URL
 
-  const API_USERS = `http://localhost:3000/users/potentialMatches/${decodedToken.sub}`;
-  const API_SEND_LIKE = `http://localhost:3000/matches/createLike`;
+  const API_USERS = `${API_BACKEND}/users/potentialMatches/${decodedToken.sub}`;
+  const API_SEND_LIKE = `${API_BACKEND}/matches/createLike`;
 
   const PAGE_SIZE = 6;
 
@@ -109,7 +111,7 @@ export function MatchUser() {
             <div className="photoNameContainer">
               <div className="photoContainer">
                 <img
-                  src={u.profile_photo ? `http://localhost:3000${u.profile_photo}`: "../../../public/assets/user.png" }
+                  src={u.profile_photo ? `${API_BACKEND}${u.profile_photo}`: "../../../public/assets/user.png" }
                   alt=""
                   className="matchPhotoo"
                 />

@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev:vite": "vite",
-    "server": "json-server --watch ./db.json --port 4000",
+    "dev:vite": "vite --host",
+    "server": "json-server --watch ./db.json --host 0.0.0.0 --port 4000",
     "dev": "concurrently -k -n \"api,web\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm:server\" \"npm:dev:vite\"",
     "build": "vite build",
     "lint": "eslint .",
@@ -27,6 +27,7 @@
     "@eslint/js": "^9.33.0",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-basic-ssl": "^2.1.0",
     "@vitejs/plugin-react": "^5.0.0",
     "autoprefixer": "^10.4.22",
     "concurrently": "^9.2.0",

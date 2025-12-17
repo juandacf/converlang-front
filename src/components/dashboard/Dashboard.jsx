@@ -12,9 +12,12 @@ import {
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../../config/api";
+
 
 
 const API_STATISTICS = "http://localhost:4000/datachart";
+const API_BACKEND = API_URL
 
 export function Dashboard({ user }) {
   const [users, setUsers] = useState([]);
@@ -26,10 +29,11 @@ export function Dashboard({ user }) {
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
 
+  
   useEffect(() => {
     const controller = new AbortController();
 
-    fetch(`http://localhost:3000/users/${decodedToken.sub}`)
+    fetch(`${API_BACKEND}/users/${decodedToken.sub}`)
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
@@ -38,7 +42,7 @@ export function Dashboard({ user }) {
         setAuthUser(json);
 
             if (json.profile_photo) {
-          setPhotoPreview(`http://localhost:3000${json.profile_photo}`);
+          setPhotoPreview(`${API_BACKEND}${json.profile_photo}`);
         }
       })
       .catch((err) => console.log(err.message));
@@ -47,7 +51,7 @@ export function Dashboard({ user }) {
   useEffect(() => {
     const controller = new AbortController();
 
-    fetch(`http://localhost:3000/users/getCurrentMatches/${decodedToken.sub}`, {
+    fetch(`${API_BACKEND}/users/getCurrentMatches/${decodedToken.sub}`, {
       signal: controller.signal,
     })
       .then((r) => {
@@ -92,7 +96,7 @@ const handleDeleteMatch = async (matchedUserId) => {
 
   try {
     const response = await fetch(
-      `http://localhost:3000/matches/deleteMatch?user_1=${user1}&user_2=${user2}`,
+      `${API_BACKEND}/matches/deleteMatch?user_1=${user1}&user_2=${user2}`,
       {
         method: "DELETE",
         headers: {

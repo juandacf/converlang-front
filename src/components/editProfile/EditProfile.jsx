@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { NavBar } from "../dashboard/Dashboard";
 import "./editProfile.css";
+import { API_URL } from "../../config/api";
 
 export function EditProfile() {
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
   const [languages, setLanguages] = useState([]);
   const [photoPreview, setPhotoPreview] = useState(null);
+  const API_BACKEND = API_URL
  
 
   const editableFields = [
@@ -25,7 +27,7 @@ export function EditProfile() {
 
   async function handleDeletePhoto() {
     const res = await fetch(
-      `http://localhost:3000/users/photo/${decodedToken.sub}`,
+      `${API_BACKEND}/users/photo/${decodedToken.sub}`,
       { method: "DELETE" }
     );
 
@@ -52,7 +54,7 @@ export function EditProfile() {
 
   // Cargar usuario
   useEffect(() => {
-    fetch(`http://localhost:3000/users/${decodedToken.sub}`)
+    fetch(`${API_BACKEND}/users/${decodedToken.sub}`)
       .then((r) => r.json())
       .then((data) => {
         const filtered = {};
@@ -65,7 +67,7 @@ export function EditProfile() {
 
         // Vista previa de foto
         if (data.profile_photo) {
-          setPhotoPreview(`http://localhost:3000${data.profile_photo}`);
+          setPhotoPreview(`${API_BACKEND}${data.profile_photo}`);
         }
       })
       .catch((err) => console.log(err));
@@ -78,7 +80,7 @@ export function EditProfile() {
 
   // Cargar lenguajes
   useEffect(() => {
-    fetch("http://localhost:3000/languages")
+    fetch(`${API_BACKEND}/languages`)
       .then((res) => res.json())
       .then((data) => setLanguages(data))
       .catch((error) => console.error(error));
@@ -93,7 +95,7 @@ export function EditProfile() {
     formData.append("photo", file);
 
     const res = await fetch(
-      `http://localhost:3000/users/photo/${decodedToken.sub}`,
+      `${API_BACKEND}/users/photo/${decodedToken.sub}`,
       {
         method: "PATCH",
         body: formData,
@@ -108,7 +110,7 @@ export function EditProfile() {
     const json = await res.json();
 
     // Nueva foto
-    setPhotoPreview(`http://localhost:3000${json.path}`);
+    setPhotoPreview(`${API_BACKEND}${json.path}`);
     setForm({ ...form, profile_photo: json.path });
 
     alert("Foto actualizada!");
@@ -124,7 +126,7 @@ export function EditProfile() {
 
     dataToSend.match_quantity = 10;
 
-    const res = await fetch(`http://localhost:3000/users/${decodedToken.sub}`, {
+    const res = await fetch(`${API_BACKEND}/users/${decodedToken.sub}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dataToSend),

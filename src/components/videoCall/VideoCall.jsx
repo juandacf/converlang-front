@@ -3,6 +3,7 @@ import { useLocation, useParams } from "react-router-dom";
 import { useSocket } from "../../context/SocketContext";
 import "./videoCall.css";
 import { jwtDecode } from "jwt-decode";
+import { API_URL } from "../../config/api";
 
 export default function VideoCall() {
   const { match_id } = useParams();
@@ -15,6 +16,7 @@ export default function VideoCall() {
   const remoteVideoRef = useRef(null);
   const peerRef = useRef(null);
   const localStreamRef = useRef(null);
+  const API_BACKEND = API_URL
 
   // Chat
   const [messages, setMessages] = useState([]);
@@ -48,7 +50,7 @@ export default function VideoCall() {
      1) Load historial de chat
   ====================================================== */
   useEffect(() => {
-    fetch(`http://localhost:3000/chats/${numericMatchId}`)
+    fetch(`${API_BACKEND}/chats/${numericMatchId}`)
       .then((res) => res.json())
       .then((data) => setMessages(Array.isArray(data) ? data : []))
       .catch(() => setMessages([]));

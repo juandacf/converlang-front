@@ -2,10 +2,12 @@ import { useState } from "react";
 import './Login.css'
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { API_URL } from "../../config/api";
 
 
 
 export function Login () {
+    const API_BACKEND = API_URL
     const [formData, setFormData] = useState({
         email: "",
         password: ""
@@ -22,7 +24,7 @@ export function Login () {
    
 const handleSubmit = async (e) => {          
   e.preventDefault();
-  const res = await fetch("http://localhost:3000/auth/login", {           
+  const res = await fetch(`${API_BACKEND}/auth/login`, {           
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(formData),

@@ -11,6 +11,7 @@ import {
   Mail,
 } from "lucide-react";
 import "./SignUp.css";
+import { API_URL } from "../../config/api";
 
 export function SignUp({ onSuccess }) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -33,10 +34,11 @@ export function SignUp({ onSuccess }) {
   const [countries, setCountries] = useState([])
   const [languages, setLanguages] = useState([])
   const [genders, setGenders] = useState([])
+  const API_BACKEND = API_URL
 
 
   useEffect(() => {  //Traemos los países de la bdd
-    fetch("http://localhost:3000/countries")
+    fetch(`${API_BACKEND}/countries`)
       .then((res) => {
         if (!res.ok) throw new Error("Error al obtener los países");
         console.log(res.body)
@@ -48,7 +50,7 @@ export function SignUp({ onSuccess }) {
 
 
   useEffect(() => {
-    fetch("http://localhost:3000/languages")
+    fetch(`${API_BACKEND}/languages`)
       .then((res) => {
         if (!res.ok) throw new Error("Error al obtener los lenguajes");
         console.log(res.body)
@@ -59,7 +61,7 @@ export function SignUp({ onSuccess }) {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:3000/gender-type")
+    fetch(`${API_BACKEND}/gender-type`)
       .then((res) => {
         if (!res.ok) { throw new Error("Error al obtener los géneros") }
         return res.json();
@@ -71,7 +73,6 @@ export function SignUp({ onSuccess }) {
   )
 
   const roles = [
-    { value: "teacher", label: "Profesor" },
     { value: "user", label: "Usuario" },
   ];
 
@@ -142,7 +143,7 @@ export function SignUp({ onSuccess }) {
     };
 
     try {
-      const res = await fetch("http://localhost:3000/users", {
+      const res = await fetch(`${API_BACKEND}/users`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),

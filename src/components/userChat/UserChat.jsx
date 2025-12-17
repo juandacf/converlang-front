@@ -4,6 +4,7 @@ import "./UserChat.css";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../../context/SocketContext";
+import { API_URL } from "../../config/api";
 
 export function UserChat() {
   const token = localStorage.getItem("token");
@@ -18,14 +19,12 @@ export function UserChat() {
 
   const configMenuRef = useRef(null);
   const navigate = useNavigate();
+  const API_BACKEND = API_URL
 
   // 👉 Socket global proveniente del provider
   const socket = useSocket();
 
-  // =====================================================
-  // 🚨 MUY IMPORTANTE:
-  // Si el socket aún no está listo, no renderizamos nada para evitar errores
-  // =====================================================
+
   if (!socket) {
     return (
       <div style={{ textAlign: "center", marginTop: "2rem" }}>
@@ -38,7 +37,7 @@ export function UserChat() {
   // 1. Obtener lista de chats del usuario
   // =====================================================
   useEffect(() => {
-    fetch(`http://localhost:3000/chats/list/${decodedToken.sub}`)
+    fetch(`${API_BACKEND}/chats/list/${decodedToken.sub}`)
       .then((res) => res.json())
       .then((data) => setChatList(data));
   }, [decodedToken.sub]);
@@ -53,7 +52,7 @@ export function UserChat() {
 
 
 
-    fetch(`http://localhost:3000/chats/${selectedMatch.match_id}`)
+    fetch(`${API_BACKEND}/chats/${selectedMatch.match_id}`)
       .then((res) => res.json())
       .then((data) => setMessages(data));
 
@@ -130,7 +129,7 @@ export function UserChat() {
       const user2 = Number(selectedMatch.other_user_id);
 
       const res = await fetch(
-        `http://localhost:3000/matches/deleteMatch?user_1=${user1}&user_2=${user2}`,
+        `${API_BACKEND}/matches/deleteMatch?user_1=${user1}&user_2=${user2}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
@@ -188,7 +187,7 @@ export function UserChat() {
                   className="userPhoto purpleMargin"
                   src={
                     chat.profile_photo
-                      ? `http://localhost:3000${chat.profile_photo}`
+                      ? `${API_BACKEND}${chat.profile_photo}`
                       : "../../../public/assets/user.png"
                   }
                   alt=""
@@ -214,7 +213,7 @@ export function UserChat() {
                     className="userPhoto purpleMargin"
                     src={
                       selectedMatch?.profile_photo
-                        ? `http://localhost:3000${selectedMatch.profile_photo}`
+                        ? `${API_BACKEND}${selectedMatch.profile_photo}`
                         : "../../../public/assets/user.png"
                     }
                     alt=""
