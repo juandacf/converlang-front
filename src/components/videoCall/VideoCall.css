@@ -232,3 +232,37 @@
 .messageText {
   margin: 0;
 }
+
+/* ========================================= */
+/*  BOTÓN TERMINAR LLAMADA */
+/* ========================================= */
+
+.endCallBtn {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-pill);
+  border: none;
+
+  background: #ef4444;
+  color: white;
+  font-weight: 600;
+  font-size: 0.85rem;
+
+  cursor: pointer;
+  z-index: 30;
+
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.endCallBtn:hover {
+  background: #dc2626;
+  transform: scale(1.05);
+}
+
+.endCallBtn:active {
+  transform: scale(0.95);
+}
