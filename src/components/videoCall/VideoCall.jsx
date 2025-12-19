@@ -20,6 +20,9 @@ export default function VideoCall() {
   const isCallerRef = useRef(false);
   const hasLocalOfferRef = useRef(false);
 
+  // ⬇️ GUARDA CUÁNDO EMPIEZA LA LLAMADA
+  const callStartTimeRef = useRef(null);
+
   const [messages, setMessages] = useState([]);
   const [draft, setDraft] = useState("");
 
@@ -44,11 +47,9 @@ export default function VideoCall() {
     Number(m?.sender_id ?? m?.senderId ?? m?.senderID);
 
   /* ======================================================
-     Cleanup llamada (CLAVE)
+     Cleanup llamada
   ====================================================== */
   function cleanupCall() {
-    console.log("🧹 Cleanup call");
-
     if (peerRef.current) {
       peerRef.current.ontrack = null;
       peerRef.current.onicecandidate = null;
@@ -68,10 +69,49 @@ export default function VideoCall() {
     hasLocalOfferRef.current = false;
   }
 
-  function endCall() {
+  /* ======================================================
+     ENVÍO A BACKEND (POST /call)
+  ====================================================== */
+async function persistSession() {
+  const startTime =
+    callStartTimeRef.current ?? new Date().toISOString();
+
+  const idUser2 = selectedMatch?.other_user_id;
+
+  if (!idUser2) {
+    console.error("idUser2 inválido", selectedMatch);
+    return;
+  }
+
+  await fetch(`${API_BACKEND}/call`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      idUser1: userId,
+      idUser2,
+      startTime,
+      endTime: new Date().toISOString(),
+      sessionNotes: "Videollamada finalizada",
+    }),
+  });
+}
+
+
+
+  /* ======================================================
+     Terminar llamada (botón)
+  ====================================================== */
+  async function endCall() {
     socket.emit("endCall", { matchId: numericMatchId });
+
+    // ⬇️ PERSISTE SESIÓN
+    await persistSession("completed");
+
     cleanupCall();
-    navigate(-1); // volver atrás
+    navigate(-1);
   }
 
   /* ======================================================
@@ -139,6 +179,11 @@ export default function VideoCall() {
       audio: true,
     });
 
+    // ⬇️ MARCA INICIO DE LLAMADA
+    if (!callStartTimeRef.current) {
+      callStartTimeRef.current = new Date().toISOString();
+    }
+
     localStreamRef.current = stream;
     localVideoRef.current.srcObject = stream;
 
@@ -187,19 +232,27 @@ export default function VideoCall() {
     } catch {}
   }
 
-  async function startCallAsCaller() {
-    const pc = peerRef.current;
-    if (hasLocalOfferRef.current || pc.signalingState !== "stable") return;
-
-    const offer = await pc.createOffer();
-    await pc.setLocalDescription(offer);
-    hasLocalOfferRef.current = true;
-
-    socket.emit("webrtcOffer", {
-      matchId: numericMatchId,
-      offer,
-    });
+async function startCallAsCaller() {
+  if (!peerRef.current) {
+    createPeerConnection();
   }
+
+  const pc = peerRef.current;
+
+  if (!pc) return; // ultra defensivo
+
+  if (hasLocalOfferRef.current || pc.signalingState !== "stable") return;
+
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+  hasLocalOfferRef.current = true;
+
+  socket.emit("webrtcOffer", {
+    matchId: numericMatchId,
+    offer,
+  });
+}
+
 
   /* ======================================================
      Señalización llamada
@@ -227,8 +280,11 @@ export default function VideoCall() {
     socket.on("webrtcAnswer", handleAnswer);
     socket.on("webrtcIceCandidate", handleIce);
 
-    socket.on("callEnded", () => {
+    socket.on("callEnded", async () => {
       alert("La otra persona terminó la llamada");
+
+      await persistSession("completed");
+
       cleanupCall();
       navigate(-1);
     });
@@ -244,13 +300,27 @@ export default function VideoCall() {
   }, [socket]);
 
   /* ======================================================
-     Cleanup al cerrar pestaña
+     Cierre de pestaña
   ====================================================== */
   useEffect(() => {
     const onUnload = () => {
       socket.emit("endCall", { matchId: numericMatchId });
+
+      // ⚠️ sendBeacon para no bloquear cierre
+      navigator.sendBeacon(
+        `${API_BACKEND}/call`,
+        JSON.stringify({
+          idUser1: userId,
+          idUser2: selectedMatch.id_user,
+          startTime: callStartTimeRef.current,
+          endTime: new Date().toISOString(),
+          sessionStatus: "completed",
+        })
+      );
+
       cleanupCall();
     };
+
     window.addEventListener("beforeunload", onUnload);
     return () => window.removeEventListener("beforeunload", onUnload);
   }, [numericMatchId]);
@@ -285,73 +355,66 @@ export default function VideoCall() {
      UI
   ====================================================== */
   return (
-   <div className="videoCallMainContainer">
-  <div className="videoArea">
-    <div className="videoWrapper">
-      <video
-        className="videoBox"
-        ref={remoteVideoRef}
-        autoPlay
-        playsInline
-      />
+    <div className="videoCallMainContainer">
+      <div className="videoArea">
+        <div className="videoWrapper">
+          <video
+            className="videoBox"
+            ref={remoteVideoRef}
+            autoPlay
+            playsInline
+          />
 
-      <video
-        className="pipVideo"
-        ref={localVideoRef}
-        autoPlay
-        muted
-        playsInline
-      />
+          <video
+            className="pipVideo"
+            ref={localVideoRef}
+            autoPlay
+            muted
+            playsInline
+          />
 
-      <button
-        className="endCallBtn"
-        onClick={endCall}
-      >
-        🔴 Terminar llamada
-      </button>
+          <button className="endCallBtn" onClick={endCall}>
+            🔴 Terminar llamada
+          </button>
+        </div>
+      </div>
+
+      <div className="videoChatContainer">
+        <h3 className="videoChatTitle">
+          Chat con {selectedMatch?.full_name}
+        </h3>
+
+        <div className="videoChatMessages">
+          {messages.map((m) => {
+            const isMe = getMsgSenderId(m) === userId;
+            return (
+              <div
+                key={m.message_id}
+                className={isMe ? "selfVideoMessage" : "otherVideoMessage"}
+                style={m.__pending ? { opacity: 0.6 } : undefined}
+              >
+                <div className="messageMeta">
+                  {isMe ? "Tú" : selectedMatch?.full_name}
+                </div>
+                <p>{m.message}</p>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="videoChatInputArea">
+          <input
+            className="videoChatInput"
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+            placeholder="Escribe un mensaje..."
+          />
+          <button className="videoChatSendBtn" onClick={sendMessage}>
+            Enviar
+          </button>
+        </div>
+      </div>
     </div>
-  </div>
-
-  <div className="videoChatContainer">
-    <h3 className="videoChatTitle">
-      Chat con {selectedMatch?.full_name}
-    </h3>
-
-    <div className="videoChatMessages">
-      {messages.map((m) => {
-        const isMe = getMsgSenderId(m) === userId;
-        return (
-          <div
-            key={m.message_id}
-            className={isMe ? "selfVideoMessage" : "otherVideoMessage"}
-            style={m.__pending ? { opacity: 0.6 } : undefined}
-          >
-            <div className="messageMeta">
-              {isMe ? "Tú" : selectedMatch?.full_name}
-            </div>
-            <p>{m.message}</p>
-          </div>
-        );
-      })}
-    </div>
-
-    <div className="videoChatInputArea">
-      <input
-        className="videoChatInput"
-        value={draft}
-        onChange={(e) => setDraft(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-        placeholder="Escribe un mensaje..."
-      />
-      <button
-        className="videoChatSendBtn"
-        onClick={sendMessage}
-      >
-        Enviar
-      </button>
-    </div>
-  </div>
-</div>
-
   );
 }
