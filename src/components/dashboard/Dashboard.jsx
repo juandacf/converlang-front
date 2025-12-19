@@ -184,7 +184,7 @@ if (!response.ok) {
         className="matchPhoto"
         src={
           u.profile_photo
-            ? `http://localhost:3000${u.profile_photo}`
+            ? `${API_BACKEND}${u.profile_photo}`
             : "../../../public/assets/user.png"
         }
         alt=""
