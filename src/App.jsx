@@ -7,8 +7,9 @@ import { MatchTeacher } from './components/matchTeacher/MatchTeacher';
 import { UserChat } from './components/userChat/UserChat';
 import { TeacherDashboard } from "./components/teacher-Dashboard/TeacherDashboard";
 import {AdminDashboard}from "./components/adminDashboard/AdminDashboard";
-import { EditProfile } from "./components/editProfile/editProfile";
+import { EditProfile } from "./components/editProfile/EditProfile";
 import VideoCall from "./components/videoCall/VideoCall";
+import UserPreferencesCard from "./components/preferences/Preferences";
 
 export default function App() {
 
@@ -30,6 +31,7 @@ export default function App() {
         <Route path="/adminDashboard" element={<AdminDashboard />} />
         <Route path="/editProfile" element={<EditProfile />} />
         <Route path="/videocall/:match_id" element={<VideoCall />} />
+        <Route path="/preferences" element={<UserPreferencesCard />} />
       </Routes>
     </BrowserRouter>
   )
