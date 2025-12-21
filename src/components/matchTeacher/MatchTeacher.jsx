@@ -1,6 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { NavBar, Footer } from "../dashboard/Dashboard";
 import "./MatchTeacher.css";
+import { jwtDecode } from "jwt-decode";
+import { API_URL } from "../../config/api";
+
 
 const API_USERS = "http://localhost:4000/users";
 const PAGE_SIZE = 6;
@@ -8,6 +11,12 @@ const PAGE_SIZE = 6;
 export function MatchTeacher() {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
+  const [darkMode, setDarkMode] = useState(false);
+  const [language, setLanguage] = useState("ES");
+
+    const API_BACKEND = API_URL
+    const token = localStorage.getItem("token");
+    const decodedToken = jwtDecode(token);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -31,7 +40,37 @@ export function MatchTeacher() {
 
   const goTo = (p) => setPage(Math.min(Math.max(1, p), totalPages));
 
+      useEffect(() => {
+      const fetchPreferences = async () => {
+        try {
+          const res = await fetch(
+            `${API_BACKEND}/preferences/${decodedToken.sub}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+  
+          if (!res.ok) {
+            throw new Error(`Error ${res.status}`);
+          }
+  
+          const data = await res.json();
+  
+          // Backend: theme = true (light) | false (dark)
+          setDarkMode(!data.theme);
+          setLanguage(data.language_code);
+        } catch (error) {
+          console.error("Error cargando preferencias:", error);
+        }
+      };
+  
+      fetchPreferences();
+    }, []);
+
   return (
+    <div className={darkMode ? "dark-mode" : ""}>
     <div className="mainContainer">
       <NavBar />
 
@@ -100,6 +139,7 @@ export function MatchTeacher() {
       </div>
 
       <Footer />
+    </div>
     </div>
   );
 }

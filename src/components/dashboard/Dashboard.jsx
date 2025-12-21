@@ -25,6 +25,8 @@ export function Dashboard({ user }) {
   const [authUser, setAuthUser] = useState({});
   const [photoPreview, setPhotoPreview] = useState(null);
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [language, setLanguage] = useState("ES");
   const Navigate = useNavigate();
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
@@ -85,6 +87,35 @@ export function Dashboard({ user }) {
     return () => controller.abort();
   }, []);
 
+    useEffect(() => {
+    const fetchPreferences = async () => {
+      try {
+        const res = await fetch(
+          `${API_BACKEND}/preferences/${decodedToken.sub}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!res.ok) {
+          throw new Error(`Error ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        // Backend: theme = true (light) | false (dark)
+        setDarkMode(!data.theme);
+        setLanguage(data.language_code);
+      } catch (error) {
+        console.error("Error cargando preferencias:", error);
+      }
+    };
+
+    fetchPreferences();
+  }, []);
+
 const handleDeleteMatch = async (matchedUserId) => {
   const confirmDelete = window.confirm(
     "¿Estás seguro de que deseas eliminar este match?"
@@ -125,6 +156,7 @@ if (!response.ok) {
 
   return (
     <>
+      <div className={darkMode ? "dark-mode" : ""}>
       <NavBar />
       <div className="dashboardMainContainer">
         <div className="dashNavBar">
@@ -142,7 +174,7 @@ if (!response.ok) {
           {showSettingsMenu && (
   <div className="settingsMenu">
     <p onClick={() => Navigate('/editProfile')}>Editar perfil</p>
-    <p onClick={() => console.log("Preferencias")}>Preferencias</p>
+    <p onClick={() => Navigate('/preferences')}>Preferencias</p>
     <p onClick={() => {
       localStorage.removeItem("token");
       window.location.href = "/";
@@ -250,6 +282,7 @@ if (!response.ok) {
         </div>
       </div>
       <Footer />
+      </div>
     </>
   );
 }

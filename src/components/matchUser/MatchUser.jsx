@@ -8,6 +8,8 @@ export function MatchUser() {
   const [users, setUsers] = useState([]);
   const [disappearing, setDisappearing] = useState({});
   const [page, setPage] = useState(1);
+    const [darkMode, setDarkMode] = useState(false);
+  const [language, setLanguage] = useState("ES");
 
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
@@ -45,8 +47,6 @@ export function MatchUser() {
     [users, start]
   );
 
-  console.log(pageItems)
-
   const goTo = (p) => setPage(Math.min(Math.max(1, p), totalPages));
 
   // ---- HANDLE LIKE ----
@@ -82,7 +82,37 @@ export function MatchUser() {
     }
   };
 
+      useEffect(() => {
+      const fetchPreferences = async () => {
+        try {
+          const res = await fetch(
+            `${API_BACKEND}/preferences/${decodedToken.sub}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+  
+          if (!res.ok) {
+            throw new Error(`Error ${res.status}`);
+          }
+  
+          const data = await res.json();
+  
+          // Backend: theme = true (light) | false (dark)
+          setDarkMode(!data.theme);
+          setLanguage(data.language_code);
+        } catch (error) {
+          console.error("Error cargando preferencias:", error);
+        }
+      };
+  
+      fetchPreferences();
+    }, []);
+
   return (
+    <div className={darkMode ? "dark-mode" : ""}>
     <div className="mainContainer">
       <NavBar />
 
@@ -177,6 +207,7 @@ export function MatchUser() {
       </div>
 
       <Footer />
+    </div>
     </div>
   );
 }

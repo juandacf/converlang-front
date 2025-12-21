@@ -140,3 +140,62 @@
     align-items: center;
     justify-content: center;
 }
+
+/* ================================
+   DARK MODE (OVERRIDES)
+================================ */
+.dark-mode .PreferencesContainer {
+  background-color: #0f172a;
+}
+
+.dark-mode .preferences-card {
+  background-color: #1f2937;
+  box-shadow: 0 12px 35px rgba(0,0,0,.45);
+}
+
+.dark-mode .preferences-header h2 {
+  color: #f9fafb;
+}
+
+.dark-mode .preferences-header p {
+  color: #9ca3af;
+}
+
+.dark-mode .label {
+  color: #e5e7eb;
+}
+
+.dark-mode .sub-label {
+  color: #9ca3af;
+}
+
+.dark-mode .toggle {
+  background: #374151;
+}
+
+.dark-mode .toggle.active {
+  background: linear-gradient(135deg, #6366f1, #7c3aed);
+}
+
+.dark-mode .toggle-circle {
+  background: #f9fafb;
+}
+
+.dark-mode .preferences-field label {
+  color: #e5e7eb;
+}
+
+.dark-mode .preferences-field select {
+  background-color: #111827;
+  border-color: #374151;
+  color: #f9fafb;
+}
+
+.dark-mode .preferences-field select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.35);
+}
+
+.dark-mode .save-button {
+  box-shadow: 0 6px 22px rgba(0,0,0,.6);
+}

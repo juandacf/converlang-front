@@ -178,3 +178,61 @@
   align-self:center;
   margin-bottom:5px;
 }
+
+/* ================================
+   DARK MODE (OVERRIDES)
+================================ */
+.dark-mode .mainContainer {
+  background-color: #0f172a;
+}
+
+.dark-mode .matchMainTitlet {
+  background-color: #1e293b;
+}
+
+.dark-mode .potentialMatchContainer {
+  background-color: #1f2937;
+  color: #e5e7eb;
+  box-shadow: 0 10px 25px rgba(0,0,0,.45);
+}
+
+.dark-mode .userName {
+  color: #f9fafb;
+}
+
+.dark-mode .userTitle {
+  color: #fbbf24; /* dorado suave */
+}
+
+.dark-mode .userDescription {
+  color: #d1d5db;
+}
+
+.dark-mode .pageInfo {
+  color: #e5e7eb;
+}
+
+.dark-mode .pageBtn {
+  background: #334155;
+  color: #f9fafb;
+}
+
+.dark-mode .pageBtn:hover:not(:disabled) {
+  background: #475569;
+}
+
+.dark-mode .arrow {
+  filter: brightness(0.85);
+}
+
+.dark-mode .connectButtont {
+  box-shadow: 0 8px 22px rgba(0,0,0,.55);
+}
+
+.dark-mode .connectButtont:hover {
+  box-shadow: 0 12px 30px rgba(0,0,0,.7);
+}
+
+.dark-mode .pagination {
+  background: transparent;
+}

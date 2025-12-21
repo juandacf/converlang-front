@@ -124,3 +124,62 @@ textarea {
 .deletePhotoBtn:hover {
   background-color: #d32f2f;
 }
+
+
+/* ================================
+   DARK MODE (OVERRIDES)
+================================ */
+.dark-mode .preferencesContainer {
+  background-color: #0f172a;
+}
+
+.dark-mode .title {
+  color: #f9fafb;
+}
+
+.dark-mode .preferencesCard {
+  background-color: #1f2937;
+  box-shadow: 0 10px 30px rgba(0,0,0,.45);
+}
+
+.dark-mode .inputGroup label {
+  color: #e5e7eb;
+}
+
+.dark-mode .inputGroup input,
+.dark-mode .inputGroup textarea,
+.dark-mode .inputGroup select {
+  background-color: #111827;
+  border-color: #374151;
+  color: #f9fafb;
+}
+
+.dark-mode .inputGroup input::placeholder,
+.dark-mode .inputGroup textarea::placeholder {
+  color: #9ca3af;
+}
+
+.dark-mode .disabledInput {
+  background-color: #1e293b;
+  color: #9ca3af;
+}
+
+.dark-mode .profilePhotoPreview {
+  box-shadow: 0 6px 18px rgba(0,0,0,.6);
+}
+
+.dark-mode .deletePhotoBtn {
+  background-color: #b91c1c;
+}
+
+.dark-mode .deletePhotoBtn:hover {
+  background-color: #991b1b;
+}
+
+.dark-mode .saveBtn {
+  box-shadow: 0 6px 20px rgba(0,0,0,.6);
+}
+
+.dark-mode textarea {
+  background-color: #111827;
+}

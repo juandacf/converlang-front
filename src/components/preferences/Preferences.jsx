@@ -93,6 +93,7 @@ export default function UserPreferencesCard() {
      UI
   ====================================================== */
   return (
+    <div className={darkMode ? "dark-mode" : ""}>
     <div className="PreferencesContainer">
       <div className="preferences-card">
         <div className="preferences-header">
@@ -146,6 +147,7 @@ export default function UserPreferencesCard() {
 
         <NavBar />
       </div>
+    </div>
     </div>
   );
 }

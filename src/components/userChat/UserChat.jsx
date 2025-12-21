@@ -15,7 +15,10 @@ export function UserChat() {
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [draft, setDraft] = useState("");
   const [search, setSearch] = useState("");
+  const [darkMode, setDarkMode] = useState(false);
+  const [language, setLanguage] = useState("ES");
   const [showConfigMenu, setShowConfigMenu] = useState(false);
+
 
   const configMenuRef = useRef(null);
   const navigate = useNavigate();
@@ -154,12 +157,43 @@ export function UserChat() {
     }
   };
 
+      useEffect(() => {
+      const fetchPreferences = async () => {
+        try {
+          const res = await fetch(
+            `${API_BACKEND}/preferences/${decodedToken.sub}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+  
+          if (!res.ok) {
+            throw new Error(`Error ${res.status}`);
+          }
+  
+          const data = await res.json();
+  
+          // Backend: theme = true (light) | false (dark)
+          setDarkMode(!data.theme);
+          setLanguage(data.language_code);
+        } catch (error) {
+          console.error("Error cargando preferencias:", error);
+        }
+      };
+  
+      fetchPreferences();
+    }, []);
+  
+
   // =====================================================
   //  RENDER
   // =====================================================
 
   return (
     <>
+    <div className={darkMode ? "dark-mode" : ""}>
       <div className="userChatMainContainer">
 
         {/* ========================
@@ -291,6 +325,8 @@ export function UserChat() {
 
       <NavBar />
       <Footer />
+      </div>
     </>
+    
   );
 }

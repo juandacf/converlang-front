@@ -9,6 +9,8 @@ export function EditProfile() {
   const decodedToken = jwtDecode(token);
   const [languages, setLanguages] = useState([]);
   const [photoPreview, setPhotoPreview] = useState(null);
+  const [darkMode, setDarkMode] = useState(false);
+  const [language, setLanguage] = useState("ES");
   const API_BACKEND = API_URL
  
 
@@ -139,9 +141,38 @@ export function EditProfile() {
 
     alert("Perfil actualizado!");
   }
-  console.log(photoPreview);
+  useEffect(() => {
+     const fetchPreferences = async () => {
+       try {
+         const res = await fetch(
+           `${API_BACKEND}/preferences/${decodedToken.sub}`,
+           {
+             headers: {
+               Authorization: `Bearer ${token}`,
+             },
+           }
+         );
+ 
+         if (!res.ok) {
+           throw new Error(`Error ${res.status}`);
+         }
+ 
+         const data = await res.json();
+ 
+         // Backend: theme = true (light) | false (dark)
+         setDarkMode(!data.theme);
+         setLanguage(data.language_code);
+       } catch (error) {
+         console.error("Error cargando preferencias:", error);
+       }
+     };
+ 
+     fetchPreferences();
+   }, []);
+ 
   return (
     <>
+    <div className={darkMode ? "dark-mode" : ""}>
       <NavBar />
       <div className="preferencesContainer">
         <h2 className="title">Modificar Perfil</h2>
@@ -251,6 +282,7 @@ export function EditProfile() {
             Guardar cambios
           </button>
         </form>
+      </div>
       </div>
     </>
   );

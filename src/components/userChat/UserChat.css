@@ -230,3 +230,106 @@ margin-left: 1vh;
 .configMenu .danger:hover {
   background-color: #fdecea;
 }
+
+/* ================================
+   DARK MODE (OVERRIDES)
+================================ */
+.dark-mode .userChatMainContainer {
+  background: #0f172a;
+}
+
+.dark-mode .chatItemsContainer {
+  background: #1f2937;
+  box-shadow: 0 12px 30px rgba(0,0,0,.45);
+}
+
+.dark-mode .chatMatchContainer:hover {
+  background: #273449;
+}
+
+.dark-mode .chatNameContainer p {
+  color: #e5e7eb;
+}
+
+.dark-mode .messagesContainer {
+  background: #1f2937;
+  box-shadow: 0 12px 30px rgba(0,0,0,.45);
+}
+
+.dark-mode .messagesTitle {
+  background: #111827;
+  border-bottom-color: #374151;
+  color: #f9fafb;
+}
+
+.dark-mode .actualMessageContainer {
+  background: #0b1220;
+}
+
+.dark-mode .otherMessage {
+  background: #111827;
+  color: #e5e7eb;
+}
+
+.dark-mode .selfMessage {
+  box-shadow: 0 8px 20px rgba(0,0,0,.6);
+}
+
+.dark-mode .inputContainer {
+  background: #111827;
+  border-top-color: #374151;
+}
+
+.dark-mode .inputChat {
+  background: #0b1220;
+  border-color: #374151;
+  color: #f9fafb;
+}
+
+.dark-mode .inputChat::placeholder {
+  color: #9ca3af;
+}
+
+.dark-mode .inputChat:focus {
+  background: #020617;
+  border-color: #6366f1;
+}
+
+.dark-mode .chatSearchContainer {
+  background: #111827;
+}
+
+.dark-mode .chatSearchInput {
+  background: #0b1220;
+  border-color: #374151;
+  color: #f9fafb;
+}
+
+.dark-mode .chatSearchInput::placeholder {
+  color: #9ca3af;
+}
+
+.dark-mode .configMenu {
+  background: #1f2937;
+  box-shadow: 0 12px 30px rgba(0,0,0,.55);
+}
+
+.dark-mode .configMenu p {
+  color: #e5e7eb;
+}
+
+.dark-mode .configMenu p:hover {
+  background-color: #273449;
+}
+
+.dark-mode .configMenu .danger {
+  color: #f87171;
+}
+
+.dark-mode .configMenu .danger:hover {
+  background-color: rgba(248,113,113,0.15);
+}
+
+.dark-mode .configButton {
+  background-color: white;
+}

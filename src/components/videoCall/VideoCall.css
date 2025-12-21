@@ -266,3 +266,70 @@
 .endCallBtn:active {
   transform: scale(0.95);
 }
+
+
+/* ================================
+   DARK MODE (OVERRIDES)
+================================ */
+.dark-mode .videoCallMainContainer {
+  background: #0f172a;
+}
+
+.dark-mode .videoWrapper {
+  background: #1f2937;
+  box-shadow: 0 12px 30px rgba(0,0,0,.5);
+}
+
+.dark-mode .videoChatContainer {
+  background: #1f2937;
+  box-shadow: 0 12px 30px rgba(0,0,0,.5);
+}
+
+.dark-mode .videoChatTitle {
+  color: #f9fafb;
+  border-bottom-color: #374151;
+}
+
+.dark-mode .videoChatMessages {
+  background: transparent;
+}
+
+.dark-mode .otherVideoMessage {
+  background: #111827;
+  color: #e5e7eb;
+}
+
+.dark-mode .selfVideoMessage {
+  box-shadow: 0 8px 20px rgba(0,0,0,.6);
+}
+
+.dark-mode .videoChatInputArea {
+  background: transparent;
+}
+
+.dark-mode .videoChatInput {
+  background: #0b1220;
+  border-color: #374151;
+  color: #f9fafb;
+}
+
+.dark-mode .videoChatInput::placeholder {
+  color: #9ca3af;
+}
+
+.dark-mode .videoChatInput:focus {
+  background: #020617;
+  border-color: #6366f1;
+}
+
+.dark-mode .videoChatSendBtn {
+  box-shadow: 0 6px 20px rgba(0,0,0,.6);
+}
+
+.dark-mode .pipVideo {
+  border-color: #1f2937;
+}
+
+.dark-mode .endCallBtn {
+  box-shadow: 0 8px 24px rgba(0,0,0,.6);
+}

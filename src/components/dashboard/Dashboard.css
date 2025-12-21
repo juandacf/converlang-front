@@ -17,6 +17,22 @@
 }
 
 /* ================================
+   DARK MODE (OVERRIDES)
+================================ */
+
+.dark-mode {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --card-soft: #1a2236;
+  --text: #e5e7eb;
+  --text-light: #9ca3af;
+
+  --shadow: 0 10px 25px rgba(0,0,0,.6);
+  --shadow-soft: 0 4px 14px rgba(0,0,0,.5);
+}
+
+
+/* ================================
    SIDEBAR
 ================================ */
 .navBar {
@@ -334,3 +350,110 @@
   transform: scale(1.1);
 }
 
+.dark-mode .navBar {
+  background: linear-gradient(210deg,#1e293b, #0f172a 55%, #020617 100%);
+  box-shadow: 5px 0 40px rgba(0,0,0,.8);
+}
+
+.dark-mode .navBarImage {
+  opacity: .85;
+}
+
+.dark-mode .navBarImage:hover {
+  opacity: 1;
+}
+
+.dark-mode .dashboardMainContainer {
+  background: var(--bg);
+}
+.dark-mode .navBarElement:hover {
+  background: rgba(255,255,255,.08);
+}
+.dark-mode .greetingContainer {
+  background: var(--card);
+}
+
+.dark-mode .actualPic {
+  border-color: #020617;
+}
+
+.dark-mode .bigGreeting {
+  color: var(--text);
+}
+
+.dark-mode .smallGreeting {
+  color: var(--text-light);
+}
+.dark-mode .recentMatch {
+  background: var(--card-soft);
+}
+
+.dark-mode .recentMatch:hover {
+  background: #1f2937;
+}
+
+.dark-mode .recentMatchItems::-webkit-scrollbar-thumb {
+  background: #374151;
+}
+
+.dark-mode .carrouselContainer {
+  background: var(--card);
+}
+
+.dark-mode .matchContainer {
+  box-shadow: var(--shadow-soft);
+}
+
+.dark-mode .matchButton {
+  box-shadow: 0 8px 24px rgba(0,0,0,.7);
+}
+
+.dark-mode .buttonPremium {
+  box-shadow: 0 8px 22px rgba(184,134,11,.6);
+}
+.dark-mode .footerContainer {
+  background: var(--card);
+  box-shadow: 0 -4px 14px rgba(0,0,0,.7);
+}
+.dark-mode .settingsMenu {
+  background: #020617;
+}
+
+.dark-mode .settingsMenu p {
+  color: var(--text);
+}
+
+.dark-mode .settingsMenu p:hover {
+  background: #1e293b;
+}
+.dark-mode .deleteMatchBtn {
+  color: #f87171;
+}
+
+.dark-mode .deleteMatchBtn:hover {
+  color: #ef4444;
+}
+.dark-mode .recentMatchTitle {
+  color: white;
+}
+
+.dark-mode .carrouselTitle {
+  color: white
+}
+
+.dark-mode  .footerSection {
+  color:white
+}
+
+.dark-mode   .navBarElement {
+  background-color:white ;
+}
+
+.dark-mode   .socialMediaIcon {
+  background-color:white ;
+  border-radius: 15%;
+}
+
+.dark-mode   .recentMatch {
+  color: white;
+}

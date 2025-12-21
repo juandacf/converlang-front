@@ -6,6 +6,10 @@ import { jwtDecode } from "jwt-decode";
 import { API_URL } from "../../config/api";
 
 export default function VideoCall() {
+  const [darkMode, setDarkMode] = useState(false);
+  const [language, setLanguage] = useState("ES");
+  const token1 = localStorage.getItem("token");
+  const decodedToken = jwtDecode(token1);
   const { match_id } = useParams();
   const navigate = useNavigate();
   const socket = useSocket();
@@ -299,6 +303,35 @@ async function startCallAsCaller() {
     };
   }, [socket]);
 
+        useEffect(() => {
+      const fetchPreferences = async () => {
+        try {
+          const res = await fetch(
+            `${API_BACKEND}/preferences/${decodedToken.sub}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+  
+          if (!res.ok) {
+            throw new Error(`Error ${res.status}`);
+          }
+  
+          const data = await res.json();
+  
+          // Backend: theme = true (light) | false (dark)
+          setDarkMode(!data.theme);
+          setLanguage(data.language_code);
+        } catch (error) {
+          console.error("Error cargando preferencias:", error);
+        }
+      };
+  
+      fetchPreferences();
+    }, []);
+
   /* ======================================================
      Cierre de pestaña
   ====================================================== */
@@ -355,6 +388,7 @@ async function startCallAsCaller() {
      UI
   ====================================================== */
   return (
+    <div className={darkMode ? "dark-mode" : ""}>
     <div className="videoCallMainContainer">
       <div className="videoArea">
         <div className="videoWrapper">
@@ -415,6 +449,7 @@ async function startCallAsCaller() {
           </button>
         </div>
       </div>
+    </div>
     </div>
   );
 }
