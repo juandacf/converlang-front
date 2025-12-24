@@ -13,11 +13,13 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
+import { Translations } from "../../translations/translations";
 
 
 
 const API_STATISTICS = "http://localhost:4000/datachart";
 const API_BACKEND = API_URL
+const translations = Translations
 
 export function Dashboard({ user }) {
   const [users, setUsers] = useState([]);
@@ -79,7 +81,6 @@ export function Dashboard({ user }) {
       })
       .then((json) => {
         const userStatistics = Array.isArray(json) ? json : json.users ?? [];
-        console.log("SESSIONS SETEADA:", userStatistics);
         setSessions(userStatistics);
       })
       .catch((err) => console.log(err.message));
@@ -118,7 +119,7 @@ export function Dashboard({ user }) {
 
 const handleDeleteMatch = async (matchedUserId) => {
   const confirmDelete = window.confirm(
-    "¿Estás seguro de que deseas eliminar este match?"
+  translations[language].dashboard.matchSection.deleteMatchWarning
   );
   if (!confirmDelete) return;
 
@@ -151,9 +152,7 @@ if (!response.ok) {
     alert(err.message);
   }
 };
-
-
-
+translations[language].dashboard.matchSection.deleteMatchWarning
   return (
     <>
       <div className={darkMode ? "dark-mode" : ""}>
