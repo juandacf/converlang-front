@@ -172,12 +172,12 @@ translations[language].dashboard.matchSection.deleteMatchWarning
           />
           {showSettingsMenu && (
   <div className="settingsMenu">
-    <p onClick={() => Navigate('/editProfile')}>Editar perfil</p>
-    <p onClick={() => Navigate('/preferences')}>Preferencias</p>
+    <p onClick={() => Navigate('/editProfile')}>{translations[language].dashboard.settingMenu.editProfile}</p>
+    <p onClick={() => Navigate('/preferences')}>{translations[language].dashboard.settingMenu.preferences}</p>
     <p onClick={() => {
       localStorage.removeItem("token");
       window.location.href = "/";
-    }}>Log out</p>
+    }}>{translations[language].dashboard.settingMenu.logOut}</p>
   </div>
 )}
 
@@ -192,9 +192,9 @@ translations[language].dashboard.matchSection.deleteMatchWarning
           </div>
           <div className="greeting">
             <h3 className="bigGreeting">
-              Hola, {authUser.first_name + " " + authUser.last_name}
+              {translations[language].dashboard.mainBox.greeting} { authUser.first_name + " " + authUser.last_name}
             </h3>
-            <h3 className="smallGreeting">¡Empecemos!</h3>
+            <h3 className="smallGreeting">{translations[language].dashboard.mainBox.letUsBegin}</h3>
           </div>
         </div>
         <div className="recentMatchContainer">

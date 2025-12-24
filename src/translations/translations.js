@@ -7,7 +7,7 @@ export const Translations = {
                 "logOut": "Cerrar Sesión"                
             },
         "mainBox": {
-            "greeting": "Hola, ",
+            "greeting": "Hola,  ",
             "letUsBegin": "¡Empecemos!"
         },
 
