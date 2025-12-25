@@ -3,6 +3,7 @@ import "./Preferences.css";
 import { NavBar } from "../dashboard/Dashboard";
 import { API_URL } from "../../config/api";
 import { jwtDecode } from "jwt-decode";
+import { Translations } from "../../translations/translations";
 
 export default function UserPreferencesCard() {
   // 🌙 Frontend: true = dark mode
@@ -12,6 +13,7 @@ export default function UserPreferencesCard() {
   const [languages, setLanguages] = useState([]);
 
   const API_BACKEND = API_URL;
+  const translations = Translations
 
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
@@ -80,10 +82,10 @@ export default function UserPreferencesCard() {
         throw new Error(`Error ${res.status}`);
       }
 
-      alert("Preferencias actualizadas correctamente");
+      alert( translations[language].preferences.preferencesSuccess);
     } catch (error) {
       console.error("Error guardando preferencias:", error);
-      alert("No se pudieron guardar las preferencias");
+      alert(translations[language].preferences.preferencesNotSuccess);
     } finally {
       setLoading(false);
     }
@@ -97,16 +99,16 @@ export default function UserPreferencesCard() {
     <div className="PreferencesContainer">
       <div className="preferences-card">
         <div className="preferences-header">
-          <h2>Preferencias</h2>
-          <p>Personaliza tu experiencia</p>
+          <h2>{translations[language].preferences.preferencesMainTitle}</h2>
+          <p>{translations[language].preferences.preferencesSubTitle}</p>
         </div>
 
         {/* 🌙 Tema oscuro */}
         <div className="preferences-row">
           <div>
-            <span className="label">Tema oscuro</span>
+            <span className="label">{translations[language].preferences.darkModeTitle}</span>
             <span className="sub-label">
-              Cambia el aspecto de la aplicación
+              {translations[language].preferences.darkModeSubtitle}
             </span>
           </div>
 
@@ -120,7 +122,7 @@ export default function UserPreferencesCard() {
 
         {/* 🌍 Idioma */}
 <div className="preferences-field">
-  <label>Idioma</label>
+  <label>{translations[language].preferences.languagesTitle}</label>
   <select
     value={language}
     onChange={(e) => setLanguage(e.target.value)}
@@ -142,7 +144,7 @@ export default function UserPreferencesCard() {
           onClick={handleSave}
           disabled={loading}
         >
-          {loading ? "Guardando..." : "Guardar cambios"}
+          {loading ? translations[language].preferences.loadingSaveButton : translations[language].preferences.saveButton}
         </button>
 
         <NavBar />

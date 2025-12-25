@@ -19,7 +19,7 @@ import { Translations } from "../../translations/translations";
 
 const API_STATISTICS = "http://localhost:4000/datachart";
 const API_BACKEND = API_URL
-const translations = Translations
+
 
 export function Dashboard({ user }) {
   const [users, setUsers] = useState([]);
