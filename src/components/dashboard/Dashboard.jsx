@@ -198,7 +198,7 @@ translations[language].dashboard.matchSection.deleteMatchWarning
           </div>
         </div>
         <div className="recentMatchContainer">
-          <h3 className="recentMatchTitle">Match recientes</h3>
+          <h3 className="recentMatchTitle">{translations[language].dashboard.matchSection.recentMatches}</h3>
 <div className="recentMatchItems">
   {users.map((u) => (
     <div className="recentMatch" key={u.matched_user_id}>
@@ -229,12 +229,12 @@ translations[language].dashboard.matchSection.deleteMatchWarning
         </div>
         <div className="carrouselStatistics">
           <div className="carrouselContainer">
-            <div className="carrouselTitle">Iniciar Match</div>
+            <div className="carrouselTitle">{translations[language].dashboard.servicesSection.matchServiceTitle}</div>
             <div className="matchContainer">
               <div>
                 <a href="/matchUser">
                   {" "}
-                  <button className="matchButton">Match</button>
+                  <button className="matchButton">{translations[language].dashboard.servicesSection.matchButton}</button>
                 </a>
               </div>
             </div>
@@ -242,7 +242,7 @@ translations[language].dashboard.matchSection.deleteMatchWarning
 
           <div className="carrouselContainer">
             <div className="carrouselTitle">
-              Tus sesiones (últimos 30 días):
+              {translations[language].dashboard.servicesSection.sessionsGraphicTitle}
             </div>
             <div className="matchContainer matchStatistics">
               <ResponsiveContainer
@@ -268,12 +268,12 @@ translations[language].dashboard.matchSection.deleteMatchWarning
             </div>
           </div>
           <div className="carrouselContainer">
-            <div className="carrouselTitle">Contratar a un profesor</div>
+            <div className="carrouselTitle">{translations[language].dashboard.servicesSection.hireATeacherTitle}</div>
             <div className="matchContainer">
               <div>
                 <a href="/matchTeacher">
                   {" "}
-                  <button className="matchButton buttonPremium">Premium</button>
+                  <button className="matchButton buttonPremium">{translations[language].dashboard.servicesSection.premium}</button>
                 </a>
               </div>
             </div>
@@ -324,6 +324,40 @@ export function NavBar() {
 }
 
 export function Footer() {
+
+  const [language, setLanguage] = useState("ES");
+  const [darkMode, setDarkMode] = useState(false);
+  const token = localStorage.getItem("token");
+  const decodedToken = jwtDecode(token);
+      useEffect(() => {
+    const fetchPreferences = async () => {
+      try {
+        const res = await fetch(
+          `${API_BACKEND}/preferences/${decodedToken.sub}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!res.ok) {
+          throw new Error(`Error ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        // Backend: theme = true (light) | false (dark)
+        setDarkMode(!data.theme);
+        setLanguage(data.language_code);
+      } catch (error) {
+        console.error("Error cargando preferencias:", error);
+      }
+    };
+
+    fetchPreferences();
+  }, []);
+
   return (
     <footer className="footerContainer">
       <div className="footerSection" id="socialMedia">
@@ -357,19 +391,19 @@ export function Footer() {
         </a>
       </div>
       <div className="aboutUs footerSection">
-        <h3>Sobre nosotros</h3>
-        <p>Misión</p>
-        <p>Eficacia</p>
+        <h3>{translations[language].dashboard.footer.aboutUs}</h3>
+        <p>{translations[language].dashboard.footer.mission}</p>
+        <p>{translations[language].dashboard.footer.efficacy}</p>
       </div>
       <div className="helpSupport footerSection">
-        <h3>Ayuda y soporte</h3>
-        <p>Contacto</p>
-        <p>Preguntas</p>
+        <h3>{translations[language].dashboard.footer.helpAndSupport}</h3>
+        <p>{translations[language].dashboard.footer.contact}</p>
+        <p>{translations[language].dashboard.footer.helpAndSupport}</p>
       </div>
       <div className="termsPrivacy footerSection">
-        <h3>Términos y Privacidad</h3>
-        <p>Blog de la comunidad</p>
-        <p>Términos</p>
+        <h3>{translations[language].dashboard.footer.termsAndPrivacy}</h3>
+        <p>{translations[language].dashboard.footer.communityBlog}</p>
+        <p>{translations[language].dashboard.footer.tems}</p>
       </div>
     </footer>
   );

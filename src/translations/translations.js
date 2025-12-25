@@ -1,95 +1,91 @@
 export const Translations = {
-    "ES": {
-        "dashboard": {
-            "settingMenu": {
-                "editProfile" : "Editar Perfil",
-                "preferences" : "Preferencias",
-                "logOut": "Cerrar Sesión"                
-            },
-        "mainBox": {
-            "greeting": "Hola,  ",
-            "letUsBegin": "¡Empecemos!"
-        },
-
-        "matchSection": {
-            "recentMatches": "Matches Recientes:",
-            "deleteMatchWarning": "¿Estás seguro de que deseas eliminar este match?"
-        },
-
-        "servicesSection": {
-            "matchServiceTitle": "Iniciar Match",
-            "matchButton": "Match",
-            "sessionsGraphicTitle": "Tus sesiones (ùltimos 30 dìas):",
-            "hireATeacherTitle": "Contratar a un profesor",
-            "premium": "Premium"
-        },
-
-        "footer":{
-            "aboutUs": "Sobre nosotros",
-            "mission": "Misión",
-            "efficacy": "Eficacia",
-            "termsAndPrivacy": "Términos y Privacidad",
-            "communityBlog": "Blog de la comunidad",
-            "terms": "Términos"
-        }
-        },
-        "preferences": {
-            "preferencesMainTitle": "Preferencias",
-            "preferencesSubTitle": "Personaliza tu experiencia",
-            "darkModeTitle": "Tema oscuro",
-            "darkModeSubtitle": "Cambia el aspecto de la aplicación",
-            "languagesTitle": "Idioma",
-            "loadingSaveButton": "Guardando...",
-            "saveButton": "Guardar cambios",
-            "preferencesSuccess": "Preferencias actualizadas correctamente",
-            "preferencesNotSuccess": "No se pudieron guardar las preferencias"
-        },
-        "editProfile": {
-            "errorDeletePhoto": "Error al eliminar la foto",
-            "successDeletePhoto" : "Foto eliminada!",
-            "errorUploadPhoto" : "Error al subir la foto",
-            "successUploadPhoto": "Foto actualizada!",
-            "errorUploadProfile": "Error al actualizar",
-            "sucessUpdateProfile": "Perfil actualizado!",
-            "modifyProfileTitle": "Modificar Perfil",
-            "changePhoto": "Cambiar foto",
-            "name" : "Nombre",
-            "lastname": "Apellido",
-            "email": "Email",
-            "nativeLanguage": "Idioma Nativo",
-            "targetLanguage": "Idioma a aprender",
-            "birthDate" : "Fecha de nacimiento",
-            "description": "Descripción",
-            "saveChanges": "Guardar Cambios"
-
-        },
-        "matchModule":{
-            "matchModuleTitle": "Hagamos Match",
-            "matchButton": "Like"
-        },
-        "teacherMatchModule": {
-            "teacherModuleTitle": "Contrata un profesor!",
-            "hireButton": "Contratar"
-        },
-
-        "chatModule": {
-            "searchBarPlaceholder": "Buscar...",
-            "sendMessagePlaceholder":
-            "Escribe un mensaje...",
-            "startACall": "Iniciar llamada",
-            "deleteMatch": "Eliminar match"
-        },
-        "videoModule": {
-            "chatTitle": "Chat con ",
-            "endCallAlert": "La otra persona terminó la llamada",
-            "you": "Tú",
-            "endCallButton": "Terminar la llamada",
-            "sendAMessageButton": "Enviar",
-            "messageInputPlaceholder": "Escribe un mensaje..."
-        }
-
+  "ES": {
+    "dashboard": {
+      "settingMenu": {
+        "editProfile": "Editar Perfil",
+        "preferences": "Preferencias",
+        "logOut": "Cerrar Sesión"
+      },
+      "mainBox": {
+        "greeting": "Hola,  ",
+        "letUsBegin": "¡Empecemos!"
+      },
+      "matchSection": {
+        "recentMatches": "Matches Recientes:",
+        "deleteMatchWarning": "¿Estás seguro de que deseas eliminar este match?"
+      },
+      "servicesSection": {
+        "matchServiceTitle": "Iniciar Match",
+        "matchButton": "Match",
+        "sessionsGraphicTitle": "Tus sesiones (ùltimos 30 dìas):",
+        "hireATeacherTitle": "Contratar a un profesor",
+        "premium": "Premium"
+      },
+      "footer": {
+        "aboutUs": "Sobre nosotros",
+        "mission": "Misión",
+        "efficacy": "Eficacia",
+        "termsAndPrivacy": "Términos y Privacidad",
+        "communityBlog": "Blog de la comunidad",
+        "terms": "Términos",
+        "helpAndSupport": "Ayuda y soporte",
+        "contact": "Contacto",
+        "questions": "Preguntas"
+      }
     },
-    
+    "preferences": {
+      "preferencesMainTitle": "Preferencias",
+      "preferencesSubTitle": "Personaliza tu experiencia",
+      "darkModeTitle": "Tema oscuro",
+      "darkModeSubtitle": "Cambia el aspecto de la aplicación",
+      "languagesTitle": "Idioma",
+      "loadingSaveButton": "Guardando...",
+      "saveButton": "Guardar cambios",
+      "preferencesSuccess": "Preferencias actualizadas correctamente",
+      "preferencesNotSuccess": "No se pudieron guardar las preferencias"
+    },
+    "editProfile": {
+      "errorDeletePhoto": "Error al eliminar la foto",
+      "successDeletePhoto": "Foto eliminada!",
+      "errorUploadPhoto": "Error al subir la foto",
+      "successUploadPhoto": "Foto actualizada!",
+      "errorUploadProfile": "Error al actualizar",
+      "sucessUpdateProfile": "Perfil actualizado!",
+      "modifyProfileTitle": "Modificar Perfil",
+      "changePhoto": "Cambiar foto",
+      "name": "Nombre",
+      "lastname": "Apellido",
+      "email": "Email",
+      "nativeLanguage": "Idioma Nativo",
+      "targetLanguage": "Idioma a aprender",
+      "birthDate": "Fecha de nacimiento",
+      "description": "Descripción",
+      "saveChanges": "Guardar Cambios"
+    },
+    "matchModule": {
+      "matchModuleTitle": "Hagamos Match",
+      "matchButton": "Like"
+    },
+    "teacherMatchModule": {
+      "teacherModuleTitle": "Contrata un profesor!",
+      "hireButton": "Contratar"
+    },
+    "chatModule": {
+      "searchBarPlaceholder": "Buscar...",
+      "sendMessagePlaceholder": "Escribe un mensaje...",
+      "startACall": "Iniciar llamada",
+      "deleteMatch": "Eliminar match"
+    },
+    "videoModule": {
+      "chatTitle": "Chat con ",
+      "endCallAlert": "La otra persona terminó la llamada",
+      "you": "Tú",
+      "endCallButton": "Terminar la llamada",
+      "sendAMessageButton": "Enviar",
+      "messageInputPlaceholder": "Escribe un mensaje..."
+    }
+  },
+
   "EN": {
     "dashboard": {
       "settingMenu": {
@@ -118,7 +114,10 @@ export const Translations = {
         "efficacy": "Effectiveness",
         "termsAndPrivacy": "Terms & Privacy",
         "communityBlog": "Community Blog",
-        "terms": "Terms"
+        "terms": "Terms",
+        "helpAndSupport": "Help & Support",
+        "contact": "Contact",
+        "questions": "Questions"
       }
     },
     "preferences": {
@@ -173,7 +172,8 @@ export const Translations = {
       "messageInputPlaceholder": "Type a message..."
     }
   },
-     "FR": {
+
+  "FR": {
     "dashboard": {
       "settingMenu": {
         "editProfile": "Modifier le profil",
@@ -201,7 +201,10 @@ export const Translations = {
         "efficacy": "Efficacité",
         "termsAndPrivacy": "Conditions et confidentialité",
         "communityBlog": "Blog de la communauté",
-        "terms": "Conditions"
+        "terms": "Conditions",
+        "helpAndSupport": "Aide et support",
+        "contact": "Contact",
+        "questions": "Questions"
       }
     },
     "preferences": {
@@ -256,6 +259,7 @@ export const Translations = {
       "messageInputPlaceholder": "Écrivez un message..."
     }
   },
+
   "PT": {
     "dashboard": {
       "settingMenu": {
@@ -284,7 +288,10 @@ export const Translations = {
         "efficacy": "Eficácia",
         "termsAndPrivacy": "Termos e Privacidade",
         "communityBlog": "Blog da comunidade",
-        "terms": "Termos"
+        "terms": "Termos",
+        "helpAndSupport": "Ajuda e suporte",
+        "contact": "Contato",
+        "questions": "Perguntas"
       }
     },
     "preferences": {
@@ -339,7 +346,8 @@ export const Translations = {
       "messageInputPlaceholder": "Escreva uma mensagem..."
     }
   },
-   "DE": {
+
+  "DE": {
     "dashboard": {
       "settingMenu": {
         "editProfile": "Profil bearbeiten",
@@ -367,7 +375,10 @@ export const Translations = {
         "efficacy": "Wirksamkeit",
         "termsAndPrivacy": "Nutzungsbedingungen & Datenschutz",
         "communityBlog": "Community-Blog",
-        "terms": "Nutzungsbedingungen"
+        "terms": "Nutzungsbedingungen",
+        "helpAndSupport": "Hilfe & Support",
+        "contact": "Kontakt",
+        "questions": "Fragen"
       }
     },
     "preferences": {
@@ -422,5 +433,4 @@ export const Translations = {
       "messageInputPlaceholder": "Nachricht schreiben..."
     }
   }
-
-}
+};
