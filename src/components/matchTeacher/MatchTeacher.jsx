@@ -77,9 +77,6 @@ export function MatchTeacher() {
       <NavBar />
 
       <div className="matchHeader">
-        <a className="goBackContainer" href="/dashboard">
-          <img className="arrow" src="../../../public/assets/left-arrow.png" alt="Volver" />
-        </a>
         <div className="matchMainTitlet">
           <h1 className="mainTitlet">             {translations[language].teacherMatchModule.teacherModuleTitle}</h1>
         </div>
@@ -127,7 +124,7 @@ export function MatchTeacher() {
         </button>
 
         <span className="pageInfo">
-          Página {page} de {totalPages}
+           {page}/{totalPages}
         </span>
 
         <button

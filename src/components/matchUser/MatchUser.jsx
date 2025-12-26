@@ -119,13 +119,6 @@ export function MatchUser() {
       <NavBar />
 
       <div className="matchHeader">
-        <a className="goBackContainer" href="/dashboard">
-          <img
-            className="arrow"
-            src="../../../public/assets/left-arrow.png"
-            alt="Volver"
-          />
-        </a>
         <div className="matchMainTitle">
           <h1 className="mainTitle">             {translations[language].matchModule.matchModuleTitle}</h1>
         </div>
