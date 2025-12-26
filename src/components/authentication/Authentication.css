@@ -104,3 +104,18 @@ body{background:var(--bg); color:var(--text); font-family: ui-sans-serif, system
   .smallContainer{flex-direction:column; min-height:auto;}
   .loginLeft{height:200px;}
 }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .signUpForm {
+    grid-template-columns: 1fr;
+  }
+
+  .navButtons {
+    flex-direction: column;
+  }
+
+  .loginRight{
+    width: 100vw;
+  }
+}
