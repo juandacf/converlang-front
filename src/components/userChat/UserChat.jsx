@@ -5,11 +5,13 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../../context/SocketContext";
 import { API_URL } from "../../config/api";
+import { Translations } from "../../translations/translations";
+
 
 export function UserChat() {
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
-
+  const translations = Translations
   const [chatList, setChatList] = useState([]);
   const [messages, setMessages] = useState([]);
   const [selectedMatch, setSelectedMatch] = useState(null);
@@ -18,13 +20,10 @@ export function UserChat() {
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("ES");
   const [showConfigMenu, setShowConfigMenu] = useState(false);
-
-
   const configMenuRef = useRef(null);
   const navigate = useNavigate();
   const API_BACKEND = API_URL
 
-  // 👉 Socket global proveniente del provider
   const socket = useSocket();
 
 
@@ -204,7 +203,7 @@ export function UserChat() {
             <input
               type="text"
               className="chatSearchInput"
-              placeholder="Buscar..."
+              placeholder={translations[language].chatModule.searchBarPlaceholder}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -272,11 +271,11 @@ export function UserChat() {
                         })
                       }
                     >
-                      📞 Iniciar llamada
+                      📞 {translations[language].chatModule.startACall}
                     </p>
 
                     <p className="danger" onClick={handleDeleteMatch}>
-                      ❌ Eliminar match
+                      ❌ {translations[language].chatModule.deleteMatch}
                     </p>
                   </div>
                 )}
@@ -304,7 +303,7 @@ export function UserChat() {
                   onChange={(e) => setDraft(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                   className="inputChat"
-                  placeholder="Escribe un mensaje..."
+                  placeholder={translations[language].chatModule.sendMessagePlaceholder}
                 />
 
                 <img

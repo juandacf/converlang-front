@@ -3,10 +3,12 @@ import { NavBar, Footer } from "../dashboard/Dashboard";
 import "./MatchTeacher.css";
 import { jwtDecode } from "jwt-decode";
 import { API_URL } from "../../config/api";
+import { Translations } from "../../translations/translations";
 
 
 const API_USERS = "http://localhost:4000/users";
 const PAGE_SIZE = 6;
+const translations = Translations;
 
 export function MatchTeacher() {
   const [users, setUsers] = useState([]);
@@ -79,7 +81,7 @@ export function MatchTeacher() {
           <img className="arrow" src="../../../public/assets/left-arrow.png" alt="Volver" />
         </a>
         <div className="matchMainTitlet">
-          <h1 className="mainTitlet">¡Contrata a un profesor!</h1>
+          <h1 className="mainTitlet">             {translations[language].teacherMatchModule.teacherModuleTitle}</h1>
         </div>
       </div>
 
@@ -107,7 +109,7 @@ export function MatchTeacher() {
                 <img src="../../../public/assets/star.png" alt="" className="star" />
               </div>
               <button className="connectButtont">
-                <p className="buttonText">Contratar</p>
+                <p className="buttonText">             {translations[language].teacherMatchModule.hireButton}</p>
               </button>
             </div>
           </div>

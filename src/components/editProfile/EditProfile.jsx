@@ -3,7 +3,9 @@ import { jwtDecode } from "jwt-decode";
 import { NavBar } from "../dashboard/Dashboard";
 import "./editProfile.css";
 import { API_URL } from "../../config/api";
+import { Translations } from "../../translations/translations";
 
+const translations = Translations
 export function EditProfile() {
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
@@ -34,14 +36,14 @@ export function EditProfile() {
     );
 
     if (!res.ok) {
-      alert("Error al eliminar la foto");
+      alert(translations[language].editProfile.errorDeletePhoto);
       return;
     }
 
     setPhotoPreview(null);
     setForm({ ...form, profile_photo: null });
 
-    alert("Foto eliminada!");
+    alert(translations[language].editProfile.successDeletePhoto);
   }
 
   const initialForm = editableFields.reduce(
@@ -105,7 +107,7 @@ export function EditProfile() {
     );
 
     if (!res.ok) {
-      alert("Error al subir la foto");
+      alert(translations[language].editProfile.errorUploadPhoto);
       return;
     }
 
@@ -115,7 +117,7 @@ export function EditProfile() {
     setPhotoPreview(`${API_BACKEND}${json.path}`);
     setForm({ ...form, profile_photo: json.path });
 
-    alert("Foto actualizada!");
+    alert(translations[language].editProfile.successUploadPhoto);
   }
 
   async function handleSubmit(e) {
@@ -135,11 +137,11 @@ export function EditProfile() {
     });
 
     if (!res.ok) {
-      alert("Error al actualizar");
+      alert(translations[language].editProfile.errorUploadProfile);
       return;
     }
 
-    alert("Perfil actualizado!");
+    alert(translations[language].editProfile.successUpdateProfile);
   }
   useEffect(() => {
      const fetchPreferences = async () => {
@@ -175,7 +177,7 @@ export function EditProfile() {
     <div className={darkMode ? "dark-mode" : ""}>
       <NavBar />
       <div className="preferencesContainer">
-        <h2 className="title">Modificar Perfil</h2>
+        <h2 className="title">{translations[language].editProfile.modifyProfileTitle}</h2>
 
         <form className="preferencesCard" onSubmit={handleSubmit}>
           <img
@@ -184,7 +186,7 @@ export function EditProfile() {
           />
 
           <div className="inputGroup fullWidth">
-            <label>Cambiar foto</label>
+            <label>{translations[language].editProfile.changePhoto}</label>
             <input type="file" accept="image/*" onChange={handlePhotoChange} />
           </div>
           {photoPreview && (
@@ -193,12 +195,12 @@ export function EditProfile() {
               className="deletePhotoBtn"
               onClick={handleDeletePhoto}
             >
-              Eliminar foto
+             {translations[language].editProfile.deletePhoto}
             </button>
           )}
 
           <div className="inputGroup">
-            <label>Nombre</label>
+            <label>             {translations[language].editProfile.name}</label>
             <input
               name="first_name"
               value={form.first_name}
@@ -207,7 +209,7 @@ export function EditProfile() {
           </div>
 
           <div className="inputGroup">
-            <label>Apellido</label>
+            <label>             {translations[language].editProfile.lastname}</label>
             <input
               name="last_name"
               value={form.last_name}
@@ -216,7 +218,7 @@ export function EditProfile() {
           </div>
 
           <div className="inputGroup">
-            <label>Email</label>
+            <label>             {translations[language].editProfile.email}</label>
             <input
               name="email"
               type="email"
@@ -226,7 +228,7 @@ export function EditProfile() {
           </div>
 
           <div className="inputGroup">
-            <label>Idioma nativo</label>
+            <label>             {translations[language].editProfile.nativeLanguage}</label>
             <select
               name="native_lang_id"
               value={form.native_lang_id}
@@ -242,7 +244,7 @@ export function EditProfile() {
           </div>
 
           <div className="inputGroup">
-            <label>Idioma a aprender</label>
+            <label>             {translations[language].editProfile.targetLanguage}</label>
             <select
               name="target_lang_id"
               value={form.target_lang_id}
@@ -260,7 +262,7 @@ export function EditProfile() {
           </div>
 
           <div className="inputGroup">
-            <label>Fecha de nacimiento</label>
+            <label>             {translations[language].editProfile.birthDate}</label>
             <input
               type="date"
               name="birth_date"
@@ -270,7 +272,7 @@ export function EditProfile() {
           </div>
 
           <div className="inputGroup">
-            <label>Descripción</label>
+            <label>             {translations[language].editProfile.description}</label>
             <textarea
               name="description"
               value={form.description}
@@ -279,7 +281,7 @@ export function EditProfile() {
           </div>
 
           <button className="saveBtn" type="submit">
-            Guardar cambios
+                         {translations[language].editProfile.saveChanges}
           </button>
         </form>
       </div>

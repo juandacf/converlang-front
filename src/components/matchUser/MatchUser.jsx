@@ -3,8 +3,10 @@ import { NavBar, Footer } from "../dashboard/Dashboard";
 import "./MatchUser.css";
 import { jwtDecode } from "jwt-decode";
 import { API_URL } from "../../config/api";
+import { Translations } from "../../translations/translations";
 
 export function MatchUser() {
+  const translations = Translations
   const [users, setUsers] = useState([]);
   const [disappearing, setDisappearing] = useState({});
   const [page, setPage] = useState(1);
@@ -125,7 +127,7 @@ export function MatchUser() {
           />
         </a>
         <div className="matchMainTitle">
-          <h1 className="mainTitle">¡Hagamos Match!</h1>
+          <h1 className="mainTitle">             {translations[language].matchModule.matchModuleTitle}</h1>
         </div>
       </div>
 
@@ -175,7 +177,7 @@ export function MatchUser() {
                 className="connectButton"
                 onClick={() => handleLike(u.id_user)}
               >
-                <p className="buttonText">Match</p>
+                <p className="buttonText">             {translations[language].matchModule.matchButton}</p>
               </button>
             </div>
           </div>
@@ -193,7 +195,7 @@ export function MatchUser() {
         </button>
 
         <span className="pageInfo">
-          Página {page} de {totalPages}
+           {page} / {totalPages}
         </span>
 
         <button

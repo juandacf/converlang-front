@@ -4,6 +4,7 @@ import { useSocket } from "../../context/SocketContext";
 import "./videoCall.css";
 import { jwtDecode } from "jwt-decode";
 import { API_URL } from "../../config/api";
+import { Translations } from "../../translations/translations";
 
 export default function VideoCall() {
   const [darkMode, setDarkMode] = useState(false);
@@ -15,7 +16,7 @@ export default function VideoCall() {
   const socket = useSocket();
   const location = useLocation();
   const selectedMatch = location.state?.selectedMatch;
-
+  const translations = Translations
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
   const peerRef = useRef(null);
@@ -285,7 +286,7 @@ async function startCallAsCaller() {
     socket.on("webrtcIceCandidate", handleIce);
 
     socket.on("callEnded", async () => {
-      alert("La otra persona terminó la llamada");
+      alert(translations[language].videoModule.endCallAlert);
 
       await persistSession("completed");
 
@@ -408,14 +409,14 @@ async function startCallAsCaller() {
           />
 
           <button className="endCallBtn" onClick={endCall}>
-            🔴 Terminar llamada
+            🔴 {translations[language].videoModule.endCallButton}
           </button>
         </div>
       </div>
 
       <div className="videoChatContainer">
         <h3 className="videoChatTitle">
-          Chat con {selectedMatch?.full_name}
+          {translations[language].videoModule.chatTitle} {selectedMatch?.full_name}
         </h3>
 
         <div className="videoChatMessages">
@@ -428,7 +429,7 @@ async function startCallAsCaller() {
                 style={m.__pending ? { opacity: 0.6 } : undefined}
               >
                 <div className="messageMeta">
-                  {isMe ? "Tú" : selectedMatch?.full_name}
+                  {isMe ? translations[language].videoModule.you : selectedMatch?.full_name}
                 </div>
                 <p>{m.message}</p>
               </div>
@@ -442,10 +443,10 @@ async function startCallAsCaller() {
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-            placeholder="Escribe un mensaje..."
+            placeholder={translations[language].videoModule.messageInputPlaceholder}
           />
           <button className="videoChatSendBtn" onClick={sendMessage}>
-            Enviar
+            {translations[language].videoModule.sendAMessageButton}
           </button>
         </div>
       </div>
