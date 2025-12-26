@@ -118,12 +118,16 @@
 }
 
 /* Responsive */
-@media (max-width: 520px) {
+@media (max-width: 768px) {
   .signUpForm {
     grid-template-columns: 1fr;
   }
 
   .navButtons {
     flex-direction: column;
+  }
+
+  .loginRight{
+    width: 100vw;
   }
 }
