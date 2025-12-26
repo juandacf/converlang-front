@@ -1,3 +1,13 @@
+/* ====== RESET / BASE ====== */
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 /* ====== Tokens visuales ====== */
 :root {
   --bg: #f4f6fb;
@@ -9,47 +19,56 @@
   --shadow-md: 0 12px 28px rgba(17, 24, 39, 0.08);
   --grad-1: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
   --grad-self: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+
+  /* ✅ Sidebar width estable en desktop (no uses vh) */
+  --sidebar-width: 88px;
 }
 
 /* ====== Layout general ====== */
 .userChatMainContainer {
   min-height: 100vh;
   background: var(--bg);
-  padding: 2rem 2rem 2rem calc(8vh + 2rem); /* 👈 deja espacio para la navbar */
+
+  /* ✅ en lugar de calc(8vh + 2rem) */
+  padding: 2rem 2rem 2rem calc(var(--sidebar-width) + 2rem);
+
   display: flex;
   gap: 2rem;
-  box-sizing: border-box;
 }
 
-
-/* ====== Panel lateral (lista de chats) ====== */
+/* =====================================================
+   Panel lateral (lista de chats)
+===================================================== */
 .chatItemsContainer {
-  width: 22vw;
+  width: min(360px, 28vw);
+  min-width: 280px;
+
   background: var(--card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   padding: 1rem;
+
   overflow-y: auto;
   height: 90vh;
 }
 
-.messagesTitle{
-  display: flex;
-  justify-content: space-between;
+.chatSearchContainer {
+  padding: 10px;
+  background: #f8f8f8;
+  border-radius: 12px;
+  margin-bottom: 10px;
 }
 
-.configMatch{
-align-self: self-end}
-
-.chatName{
-align-self: center;
-margin-left: 1vh;
+.chatSearchInput {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 14px;
 }
 
-.configButton:hover{
-  cursor:pointer
-}
-
+/* Chat item */
 .chatMatchContainer {
   display: flex;
   align-items: center;
@@ -73,10 +92,9 @@ margin-left: 1vh;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid transparent;
-  
 }
 
-.purpleMargin{
+.purpleMargin {
   background: linear-gradient(#fff, #fff) padding-box, var(--grad-1) border-box;
 }
 
@@ -86,39 +104,106 @@ margin-left: 1vh;
   margin: 0;
 }
 
-/* ====== Panel principal (mensajes) ====== */
+/* =====================================================
+   Panel principal (mensajes)
+===================================================== */
 .messagesContainer {
   flex: 1;
   background: var(--card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
+
   display: flex;
   flex-direction: column;
+
   height: 90vh;
+  min-height: 520px; /* opcional */
 }
 
-/* Header */
+/* Header del chat */
 .messagesTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
   padding: 1.2rem 1.5rem;
   border-bottom: 1px solid #e5e7eb;
   font-weight: 700;
   font-size: 1.1rem;
   color: var(--ink);
   background: #fafaff;
+
+  /* ✅ para anclar configMenu */
+  position: relative;
 }
 
-/* Lista de mensajes */
+.chatName {
+  align-self: center;
+  margin-left: 1vh;
+}
+
+/* Config button */
+.configButton {
+  cursor: pointer;
+}
+
+.configButton:hover {
+  cursor: pointer;
+}
+
+/* Config menu */
+.configMenu {
+  position: absolute;
+  top: 60px;
+  right: 20px;
+
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  width: 180px;
+}
+
+.configMenu p {
+  margin: 0;
+  padding: 12px 15px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.configMenu p:hover {
+  background-color: #f2f2f2;
+}
+
+.configMenu .danger {
+  color: #d9534f;
+}
+
+.configMenu .danger:hover {
+  background-color: #fdecea;
+}
+
+/* =====================================================
+   Lista de mensajes (SCROLL)
+===================================================== */
 .actualMessageContainer {
   flex: 1;
   padding: 1.25rem;
   overflow-y: auto;
+
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+
   background: #f7f7ff;
+
+  /* 🔥 muy importante para scroll con flex */
+  min-height: 0;
 }
 
-/* ====== BURBUJAS ====== */
+/* =====================================================
+   Burbuja mensajes
+===================================================== */
 .selfMessage,
 .otherMessage {
   max-width: 60%;
@@ -146,13 +231,16 @@ margin-left: 1vh;
   border-bottom-left-radius: 0.2rem;
 }
 
-/* ====== Input abajo ====== */
+/* =====================================================
+   Input abajo
+===================================================== */
 .inputContainer {
   padding: 1rem;
   display: flex;
   gap: 1rem;
   background: #fff;
   border-top: 1px solid #ececff;
+  flex-shrink: 0;
 }
 
 .inputChat {
@@ -183,54 +271,6 @@ margin-left: 1vh;
   transform: scale(1.12);
 }
 
-.chatSearchContainer {
-  padding: 10px;
-  background: #f8f8f8;
-}
-
-.chatSearchInput {
-  width: 95%;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  outline: none;
-  font-size: 14px;
-}
-
-.configButton {
-  cursor: pointer;
-}
-
-.configMenu {
-  position: absolute;
-  top: 60px;
-  right: 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  z-index: 100;
-  width: 180px;
-}
-
-.configMenu p {
-  margin: 0;
-  padding: 12px 15px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.configMenu p:hover {
-  background-color: #f2f2f2;
-}
-
-.configMenu .danger {
-  color: #d9534f;
-}
-
-.configMenu .danger:hover {
-  background-color: #fdecea;
-}
-
 /* ================================
    DARK MODE (OVERRIDES)
 ================================ */
@@ -240,7 +280,7 @@ margin-left: 1vh;
 
 .dark-mode .chatItemsContainer {
   background: #1f2937;
-  box-shadow: 0 12px 30px rgba(0,0,0,.45);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
 }
 
 .dark-mode .chatMatchContainer:hover {
@@ -253,7 +293,7 @@ margin-left: 1vh;
 
 .dark-mode .messagesContainer {
   background: #1f2937;
-  box-shadow: 0 12px 30px rgba(0,0,0,.45);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
 }
 
 .dark-mode .messagesTitle {
@@ -272,7 +312,7 @@ margin-left: 1vh;
 }
 
 .dark-mode .selfMessage {
-  box-shadow: 0 8px 20px rgba(0,0,0,.6);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
 }
 
 .dark-mode .inputContainer {
@@ -311,7 +351,7 @@ margin-left: 1vh;
 
 .dark-mode .configMenu {
   background: #1f2937;
-  box-shadow: 0 12px 30px rgba(0,0,0,.55);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
 }
 
 .dark-mode .configMenu p {
@@ -327,9 +367,90 @@ margin-left: 1vh;
 }
 
 .dark-mode .configMenu .danger:hover {
-  background-color: rgba(248,113,113,0.15);
+  background-color: rgba(248, 113, 113, 0.15);
 }
 
 .dark-mode .configButton {
   background-color: white;
+}
+
+/* =========================================
+   RESPONSIVE USER CHAT
+========================================= */
+
+/* =====================================================
+   Tablet & Mobile
+===================================================== */
+@media (max-width: 900px) {
+  .userChatMainContainer {
+    flex-direction: column;
+    height: calc(100dvh - 72px); /* todo el alto menos navBar */
+    padding: 12px;
+    padding-bottom: 0; /* ya no hace falta */
+  }
+
+  .chatItemsContainer {
+    height: 32vh;
+    overflow-y: auto;
+  }
+
+  .messagesContainer {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .actualMessageContainer {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+  }
+  .chatItemsContainer{
+    width:90vw
+  }
+}
+
+
+
+/* =====================================================
+   Mobile pequeño
+===================================================== */
+@media (max-width: 420px) {
+  .chatItemsContainer {
+    max-height: 34dvh;
+    padding: 0.75rem;
+  }
+
+  .chatMatchContainer {
+    padding: 0.6rem;
+    gap: 0.75rem;
+  }
+
+  .userPhoto {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .messagesTitle {
+    padding: 0.8rem 0.9rem;
+  }
+
+  .actualMessageContainer {
+    padding: 0.9rem;
+
+    /* ✅ fijo también aquí */
+    height: 62vh;
+  }
+
+  .selfMessage,
+  .otherMessage {
+    max-width: 88%;
+    padding: 0.65rem 0.85rem;
+  }
+
+  .configMenu {
+    top: 54px;
+    right: 10px;
+  }
 }
