@@ -32,7 +32,6 @@ export function Dashboard({ user }) {
   const Navigate = useNavigate();
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
-  
   useEffect(() => {
     const controller = new AbortController();
 
@@ -73,7 +72,7 @@ export function Dashboard({ user }) {
   useEffect(() => {
     const controller = new AbortController();
 
-    fetch(API_STATISTICS, { signal: controller.signal })
+    fetch(`${API_BACKEND}/call/${decodedToken.sub}`, { signal: controller.signal })
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
@@ -152,6 +151,8 @@ if (!response.ok) {
   }
 };
 translations[language].dashboard.matchSection.deleteMatchWarning
+
+console.log(sessions)
   return (
     <>
       <div className={darkMode ? "dark-mode" : ""}>
