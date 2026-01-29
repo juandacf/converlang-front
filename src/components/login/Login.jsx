@@ -1,84 +1,116 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import './Login.css'
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { API_URL } from "../../config/api";
+import { InactiveAccountModal } from "./InactiveAccountModal";
 
 
 
-export function Login () {
+
+export function Login() {
     const API_BACKEND = API_URL
     const [formData, setFormData] = useState({
         email: "",
         password: ""
     });
+    const [showInactiveModal, setShowInactiveModal] = useState(false);
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+
+    // Detectar si viene del guard con parámetro ?inactive=true
+    useEffect(() => {
+        if (searchParams.get('inactive') === 'true') {
+            setShowInactiveModal(true);
+            // Limpiar el parámetro de la URL
+            navigate('/', { replace: true });
+        }
+    }, [searchParams, navigate]);
     const handleChange = (e) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setFormData({
             ...formData,
             [name]: value
         });
     };
 
-   
-const handleSubmit = async (e) => {          
-  e.preventDefault();
-  const res = await fetch(`${API_BACKEND}/auth/login`, {           
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(formData),
-  });
-  if (!res.ok) {
-    alert("Correo o contraseña incorrectos");
-    return;
-  }
-  const user = await res.json();
 
-    localStorage.setItem("token", user.access_token);
-    const decoded = jwtDecode(user.access_token);
-    const role = decoded.roles?.[0];
-    if (role === "admin") {
-    navigate("/adminDashboard");
-} 
-else if (role === "teacher") {
-    navigate("/teacherDashboard");
-}
-else {
-    navigate("/dashboard");
-}
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const res = await fetch(`${API_BACKEND}/auth/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+            });
 
-};
+            if (!res.ok) {
+                const errorData = await res.json();
+
+                // Detectar si es un error de cuenta inactiva
+                if (errorData.message && errorData.message.includes('ACCOUNT_INACTIVE')) {
+                    setShowInactiveModal(true);
+                    return;
+                }
+
+                // Error genérico para otros casos
+                alert("Correo o contraseña incorrectos");
+                return;
+            }
+
+            const user = await res.json();
+            localStorage.setItem("token", user.access_token);
+            const decoded = jwtDecode(user.access_token);
+            const role = decoded.roles?.[0];
+
+            if (role === "admin") {
+                navigate("/adminDashboard");
+            } else if (role === "teacher") {
+                navigate("/teacherDashboard");
+            } else {
+                navigate("/dashboard");
+            }
+        } catch (error) {
+            console.error("Error en login:", error);
+            alert("Error al intentar iniciar sesión");
+        }
+    };
 
 
     return (
-        <div className="loginContainer">
-            <h3>Login</h3>
-            <form onSubmit={handleSubmit} className="loginForm">
-                <div>
-                    <label>Email</label>
-                    <input
-                    type="email"
-                    name="email"
-                    value= {formData.email}
-                    onChange={handleChange}
-                    required
-                    />
-                </div>
-                <div>
-                    <label>Password</label>
-                    <input
-                    type="password"
-                    name="password"
-                    value= {formData.password}
-                    onChange={handleChange}
-                    required
-                    />
-                </div>
+        <>
+            <InactiveAccountModal
+                isOpen={showInactiveModal}
+                onClose={() => setShowInactiveModal(false)}
+            />
+            <div className="loginContainer">
+                <h3>Login</h3>
+                <form onSubmit={handleSubmit} className="loginForm">
+                    <div>
+                        <label>Email</label>
+                        <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label>Password</label>
+                        <input
+                            type="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
 
-                <button type="submit">Ingresar</button>
-            </form>
+                    <button type="submit">Ingresar</button>
+                </form>
 
-        </div>
+            </div>
+        </>
     )
 }

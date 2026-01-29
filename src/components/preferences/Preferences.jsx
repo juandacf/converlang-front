@@ -19,7 +19,7 @@ export default function UserPreferencesCard() {
   const decodedToken = jwtDecode(token);
   const user_id = decodedToken.sub;
 
-    useEffect(() => {
+  useEffect(() => {
     fetch(`${API_BACKEND}/languages`)
       .then((res) => res.json())
       .then((data) => setLanguages(data))
@@ -30,6 +30,7 @@ export default function UserPreferencesCard() {
   useEffect(() => {
     const fetchPreferences = async () => {
       try {
+        console.log('Fetching preferences for user:', user_id);
         const res = await fetch(
           `${API_BACKEND}/preferences/${user_id}`,
           {
@@ -39,11 +40,16 @@ export default function UserPreferencesCard() {
           }
         );
 
+        console.log('Preferences response status:', res.status);
+
         if (!res.ok) {
-          throw new Error(`Error ${res.status}`);
+          const errorText = await res.text();
+          console.error('Preferences error response:', errorText);
+          throw new Error(`Error ${res.status}: ${errorText}`);
         }
 
         const data = await res.json();
+        console.log('Preferences data received:', data);
 
         // Backend: theme = true (light) | false (dark)
         setDarkMode(!data.theme);
@@ -82,7 +88,7 @@ export default function UserPreferencesCard() {
         throw new Error(`Error ${res.status}`);
       }
 
-      alert( translations[language].preferences.preferencesSuccess);
+      alert(translations[language].preferences.preferencesSuccess);
     } catch (error) {
       console.error("Error guardando preferencias:", error);
       alert(translations[language].preferences.preferencesNotSuccess);
@@ -96,60 +102,60 @@ export default function UserPreferencesCard() {
   ====================================================== */
   return (
     <div className={darkMode ? "dark-mode" : ""}>
-    <div className="PreferencesContainer">
-      <div className="preferences-card">
-        <div className="preferences-header">
-          <h2>{translations[language].preferences.preferencesMainTitle}</h2>
-          <p>{translations[language].preferences.preferencesSubTitle}</p>
-        </div>
-
-        {/* 🌙 Tema oscuro */}
-        <div className="preferences-row">
-          <div>
-            <span className="label">{translations[language].preferences.darkModeTitle}</span>
-            <span className="sub-label">
-              {translations[language].preferences.darkModeSubtitle}
-            </span>
+      <div className="PreferencesContainer">
+        <div className="preferences-card">
+          <div className="preferences-header">
+            <h2>{translations[language].preferences.preferencesMainTitle}</h2>
+            <p>{translations[language].preferences.preferencesSubTitle}</p>
           </div>
 
+          {/* 🌙 Tema oscuro */}
+          <div className="preferences-row">
+            <div>
+              <span className="label">{translations[language].preferences.darkModeTitle}</span>
+              <span className="sub-label">
+                {translations[language].preferences.darkModeSubtitle}
+              </span>
+            </div>
+
+            <button
+              className={`toggle ${darkMode ? "active" : ""}`}
+              onClick={() => setDarkMode(!darkMode)}
+            >
+              <span className="toggle-circle" />
+            </button>
+          </div>
+
+          {/* 🌍 Idioma */}
+          <div className="preferences-field">
+            <label>{translations[language].preferences.languagesTitle}</label>
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+            >
+              {languages.map((lang) => (
+                <option
+                  key={lang.language_code}
+                  value={lang.language_code}
+                >
+                  {lang.language_name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+
           <button
-            className={`toggle ${darkMode ? "active" : ""}`}
-            onClick={() => setDarkMode(!darkMode)}
+            className="save-button"
+            onClick={handleSave}
+            disabled={loading}
           >
-            <span className="toggle-circle" />
+            {loading ? translations[language].preferences.loadingSaveButton : translations[language].preferences.saveButton}
           </button>
+
+          <NavBar />
         </div>
-
-        {/* 🌍 Idioma */}
-<div className="preferences-field">
-  <label>{translations[language].preferences.languagesTitle}</label>
-  <select
-    value={language}
-    onChange={(e) => setLanguage(e.target.value)}
-  >
-    {languages.map((lang) => (
-      <option
-        key={lang.language_code}
-        value={lang.language_code}
-      >
-        {lang.language_name}
-      </option>
-    ))}
-  </select>
-</div>
-
-
-        <button
-          className="save-button"
-          onClick={handleSave}
-          disabled={loading}
-        >
-          {loading ? translations[language].preferences.loadingSaveButton : translations[language].preferences.saveButton}
-        </button>
-
-        <NavBar />
       </div>
-    </div>
     </div>
   );
 }

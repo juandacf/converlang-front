@@ -33,11 +33,24 @@ class ApiService {
    */
   async handleResponse(response) {
     if (!response.ok) {
-      // Si es 401, el token expiró o es inválido
+      // Si es 401, puede ser token expirado o cuenta inactiva
       if (response.status === 401) {
+        // Intentar obtener el mensaje de error
+        const errorData = await response.json().catch(() => ({ message: '' }));
+
+        // Si el mensaje contiene ACCOUNT_INACTIVE, es un usuario bloqueado
+        if (errorData.message && errorData.message.includes('ACCOUNT_INACTIVE')) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          // Redirigir al login con estado para mostrar el modal de cuenta inactiva
+          window.location.href = '/?inactive=true';
+          throw new Error('Tu cuenta ha sido desactivada. Por favor contacta a converlang@gmail.com');
+        }
+
+        // Si no es ACCOUNT_INACTIVE, es sesión expirada normal
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        window.location.href = '/login';
+        window.location.href = '/';
         throw new Error('Sesión expirada. Por favor, inicia sesión nuevamente.');
       }
 

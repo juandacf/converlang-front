@@ -10,7 +10,7 @@ export function MatchUser() {
   const [users, setUsers] = useState([]);
   const [disappearing, setDisappearing] = useState({});
   const [page, setPage] = useState(1);
-    const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("ES");
 
   const token = localStorage.getItem("token");
@@ -26,9 +26,29 @@ export function MatchUser() {
   useEffect(() => {
     const controller = new AbortController();
 
-    fetch(API_USERS, { signal: controller.signal })
+    fetch(API_USERS, {
+      signal: controller.signal,
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        if (!r.ok) {
+          // Si es 401, verificar si es cuenta inactiva
+          if (r.status === 401) {
+            return r.json().then(errorData => {
+              if (errorData.message && errorData.message.includes('ACCOUNT_INACTIVE')) {
+                localStorage.clear();
+                window.location.href = '/?inactive=true';
+              } else {
+                localStorage.clear();
+                window.location.href = '/';
+              }
+              throw new Error('Sesión inválida');
+            });
+          }
+          throw new Error(`HTTP ${r.status}`);
+        }
         return r.json();
       })
       .then((json) => {
@@ -63,11 +83,25 @@ export function MatchUser() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify(body),
       });
 
       if (!res.ok) {
+        // Si es 401, verificar si es cuenta inactiva
+        if (res.status === 401) {
+          const errorData = await res.json().catch(() => ({ message: '' }));
+          if (errorData.message && errorData.message.includes('ACCOUNT_INACTIVE')) {
+            localStorage.clear();
+            window.location.href = '/?inactive=true';
+            return;
+          } else {
+            localStorage.clear();
+            window.location.href = '/';
+            return;
+          }
+        }
         const error = await res.text();
         throw new Error(error);
       }
@@ -84,125 +118,124 @@ export function MatchUser() {
     }
   };
 
-      useEffect(() => {
-      const fetchPreferences = async () => {
-        try {
-          const res = await fetch(
-            `${API_BACKEND}/preferences/${decodedToken.sub}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-  
-          if (!res.ok) {
-            throw new Error(`Error ${res.status}`);
+  useEffect(() => {
+    const fetchPreferences = async () => {
+      try {
+        const res = await fetch(
+          `${API_BACKEND}/preferences/${decodedToken.sub}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-  
-          const data = await res.json();
-  
-          // Backend: theme = true (light) | false (dark)
-          setDarkMode(!data.theme);
-          setLanguage(data.language_code);
-        } catch (error) {
-          console.error("Error cargando preferencias:", error);
+        );
+
+        if (!res.ok) {
+          throw new Error(`Error ${res.status}`);
         }
-      };
-  
-      fetchPreferences();
-    }, []);
+
+        const data = await res.json();
+
+        // Backend: theme = true (light) | false (dark)
+        setDarkMode(!data.theme);
+        setLanguage(data.language_code);
+      } catch (error) {
+        console.error("Error cargando preferencias:", error);
+      }
+    };
+
+    fetchPreferences();
+  }, []);
 
   return (
     <div className={darkMode ? "dark-mode" : ""}>
-    <div className="mainContainer">
-      <NavBar />
+      <div className="mainContainer">
+        <NavBar />
 
-      <div className="matchHeader">
-        <div className="matchMainTitle">
-          <h1 className="mainTitle">             {translations[language].matchModule.matchModuleTitle}</h1>
-        </div>
-      </div>
-
-      <div className="matchMainContainer">
-        {pageItems.map((u) => (
-          <div
-            className={`potentialMatchContainer ${
-              disappearing[u.id_user] ? "fadeOut" : ""
-            }`}
-            key={u.id_user}
-            id={u.id_user}
-          >
-            <div className="photoNameContainer">
-              <div className="photoContainer">
-                <img
-                  src={u.profile_photo ? `${API_BACKEND}${u.profile_photo}`: "../../../public/assets/user.png" }
-                  alt=""
-                  className="matchPhotoo"
-                />
-              </div>
-              <div className="matchName">
-                <p className="userName">
-                  {u.first_name} {u.last_name} {`(${u.age})`}
-                </p>
-              </div>
-            </div>
-
-            <div className="userDescriptionContainer">
-              <p className="userDescription">{u.description}</p>
-            </div>
-
-            <div className="connectRateContainer">
-              <div className="rateContainer">
-                <p className="ratingNumber">{u.country_id}</p>
-                <img
-                  src={
-                    u.country_id
-                      ? `../../../public/assets/flag_pics/${u.country_id}.png`
-                      : `../../../public/assets/flag_picslanguages.png`
-                  }
-                  alt=""
-                  className="star"
-                />
-              </div>
-
-              <button
-                className="connectButton"
-                onClick={() => handleLike(u.id_user)}
-              >
-                <p className="buttonText">             {translations[language].matchModule.matchButton}</p>
-              </button>
-            </div>
+        <div className="matchHeader">
+          <div className="matchMainTitle">
+            <h1 className="mainTitle">             {translations[language].matchModule.matchModuleTitle}</h1>
           </div>
-        ))}
+        </div>
+
+        <div className="matchMainContainer">
+          {pageItems.map((u) => (
+            <div
+              className={`potentialMatchContainer ${disappearing[u.id_user] ? "fadeOut" : ""
+                }`}
+              key={u.id_user}
+              id={u.id_user}
+            >
+              <div className="photoNameContainer">
+                <div className="photoContainer">
+                  <img
+                    src={u.profile_photo ? `${API_BACKEND}${u.profile_photo}` : "../../../public/assets/user.png"}
+                    alt=""
+                    className="matchPhotoo"
+                  />
+                </div>
+                <div className="matchName">
+                  <p className="userName">
+                    {u.first_name} {u.last_name} {`(${u.age})`}
+                  </p>
+                </div>
+              </div>
+
+              <div className="userDescriptionContainer">
+                <p className="userDescription">{u.description}</p>
+              </div>
+
+              <div className="connectRateContainer">
+                <div className="rateContainer">
+                  <p className="ratingNumber">{u.country_id}</p>
+                  <img
+                    src={
+                      u.country_id
+                        ? `../../../public/assets/flag_pics/${u.country_id}.png`
+                        : `../../../public/assets/flag_picslanguages.png`
+                    }
+                    alt=""
+                    className="star"
+                  />
+                </div>
+
+                <button
+                  className="connectButton"
+                  onClick={() => handleLike(u.id_user)}
+                >
+                  <p className="buttonText">             {translations[language].matchModule.matchButton}</p>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="pagination">
+          <button
+            className="pageBtn"
+            onClick={() => goTo(page - 1)}
+            disabled={page === 1}
+            aria-label="Anterior"
+          >
+            ‹
+          </button>
+
+          <span className="pageInfo">
+            {page} / {totalPages}
+          </span>
+
+          <button
+            className="pageBtn"
+            onClick={() => goTo(page + 1)}
+            disabled={page === totalPages}
+            aria-label="Siguiente"
+          >
+            ›
+          </button>
+        </div>
+
+        <Footer />
       </div>
-
-      <div className="pagination">
-        <button
-          className="pageBtn"
-          onClick={() => goTo(page - 1)}
-          disabled={page === 1}
-          aria-label="Anterior"
-        >
-          ‹
-        </button>
-
-        <span className="pageInfo">
-           {page} / {totalPages}
-        </span>
-
-        <button
-          className="pageBtn"
-          onClick={() => goTo(page + 1)}
-          disabled={page === totalPages}
-          aria-label="Siguiente"
-        >
-          ›
-        </button>
-      </div>
-
-      <Footer />
-    </div>
     </div>
   );
 }

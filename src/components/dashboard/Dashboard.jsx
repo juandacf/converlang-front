@@ -35,19 +35,26 @@ export function Dashboard({ user }) {
   useEffect(() => {
     const controller = new AbortController();
 
-    fetch(`${API_BACKEND}/users/${decodedToken.sub}`)
+    fetch(`${API_BACKEND}/users/${decodedToken.sub}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        if (!r.ok) {
+          console.error('Error fetching user data:', r.status, r.statusText);
+          throw new Error(`HTTP ${r.status}`);
+        }
         return r.json();
       })
       .then((json) => {
         setAuthUser(json);
 
-            if (json.profile_photo) {
+        if (json.profile_photo) {
           setPhotoPreview(`${API_BACKEND}${json.profile_photo}`);
         }
       })
-      .catch((err) => console.log(err.message));
+      .catch((err) => console.error('User fetch error:', err.message));
   }, []);
 
   useEffect(() => {
@@ -55,16 +62,22 @@ export function Dashboard({ user }) {
 
     fetch(`${API_BACKEND}/users/getCurrentMatches/${decodedToken.sub}`, {
       signal: controller.signal,
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     })
       .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        if (!r.ok) {
+          console.error('Error fetching matches:', r.status, r.statusText);
+          throw new Error(`HTTP ${r.status}`);
+        }
         return r.json();
       })
       .then((json) => {
         const userData = Array.isArray(json) ? json : json.users ?? [];
         setUsers(userData);
       })
-      .catch((err) => console.log(err.message));
+      .catch((err) => console.error('Matches fetch error:', err.message));
 
     return () => controller.abort();
   }, []);
@@ -72,7 +85,12 @@ export function Dashboard({ user }) {
   useEffect(() => {
     const controller = new AbortController();
 
-    fetch(`${API_BACKEND}/call/${decodedToken.sub}`, { signal: controller.signal })
+    fetch(`${API_BACKEND}/call/${decodedToken.sub}`, {
+      signal: controller.signal,
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
@@ -86,7 +104,7 @@ export function Dashboard({ user }) {
     return () => controller.abort();
   }, []);
 
-    useEffect(() => {
+  useEffect(() => {
     const fetchPreferences = async () => {
       try {
         const res = await fetch(
@@ -115,172 +133,172 @@ export function Dashboard({ user }) {
     fetchPreferences();
   }, []);
 
-const handleDeleteMatch = async (matchedUserId) => {
-  const confirmDelete = window.confirm(
-  translations[language].dashboard.matchSection.deleteMatchWarning
-  );
-  if (!confirmDelete) return;
+  const handleDeleteMatch = async (matchedUserId) => {
+    const confirmDelete = window.confirm(
+      translations[language].dashboard.matchSection.deleteMatchWarning
+    );
+    if (!confirmDelete) return;
 
-  const user1 = decodedToken.sub;
-  const user2 = matchedUserId;
+    const user1 = decodedToken.sub;
+    const user2 = matchedUserId;
 
-  try {
-    const response = await fetch(
-      `${API_BACKEND}/matches/deleteMatch?user_1=${user1}&user_2=${user2}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    try {
+      const response = await fetch(
+        `${API_BACKEND}/matches/deleteMatch?user_1=${user1}&user_2=${user2}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const text = await response.text();
+        console.error("BACKEND ERROR:", text);
+        throw new Error(text || "Error al eliminar el match");
       }
-    );
-
-if (!response.ok) {
-  const text = await response.text();
-  console.error("BACKEND ERROR:", text);
-  throw new Error(text || "Error al eliminar el match");
-}
 
 
-    // actualizar UI
-    setUsers((prev) =>
-      prev.filter((u) => u.matched_user_id !== matchedUserId)
-    );
-  } catch (err) {
-    alert(err.message);
-  }
-};
-translations[language].dashboard.matchSection.deleteMatchWarning
+      // actualizar UI
+      setUsers((prev) =>
+        prev.filter((u) => u.matched_user_id !== matchedUserId)
+      );
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+  translations[language].dashboard.matchSection.deleteMatchWarning
 
-console.log(sessions)
+  console.log(sessions)
   return (
     <>
       <div className={darkMode ? "dark-mode" : ""}>
-      <NavBar />
-      <div className="dashboardMainContainer">
-        <div className="dashNavBar">
-          <img
-            className="navBarElement"
-            src="../../../public/assets/notification.png"
-            alt=""
-          />
-          <img
-            className="navBarElement"
-            src="../../../public/assets/setting.png"
-            alt="settings"
-            onClick={() => setShowSettingsMenu(!showSettingsMenu)}
-          />
-          {showSettingsMenu && (
-  <div className="settingsMenu">
-    <p onClick={() => Navigate('/editProfile')}>{translations[language].dashboard.settingMenu.editProfile}</p>
-    <p onClick={() => Navigate('/preferences')}>{translations[language].dashboard.settingMenu.preferences}</p>
-    <p onClick={() => {
-      localStorage.removeItem("token");
-      window.location.href = "/";
-    }}>{translations[language].dashboard.settingMenu.logOut}</p>
-  </div>
-)}
-
-        </div>
-        <div className="greetingContainer">
-          <div className="UserPic">
+        <NavBar />
+        <div className="dashboardMainContainer">
+          <div className="dashNavBar">
             <img
-              className="actualPic"
-              src={photoPreview || "../../../public/assets/user.png"}
+              className="navBarElement"
+              src="../../../public/assets/notification.png"
               alt=""
             />
-          </div>
-          <div className="greeting">
-            <h3 className="bigGreeting">
-              {translations[language].dashboard.mainBox.greeting} { authUser.first_name + " " + authUser.last_name}
-            </h3>
-            <h3 className="smallGreeting">{translations[language].dashboard.mainBox.letUsBegin}</h3>
-          </div>
-        </div>
-        <div className="recentMatchContainer">
-          <h3 className="recentMatchTitle">{translations[language].dashboard.matchSection.recentMatches}</h3>
-<div className="recentMatchItems">
-  {users.map((u) => (
-    <div className="recentMatch" key={u.matched_user_id}>
-      
-
-      <button
-        className="deleteMatchBtn"
-        onClick={() => handleDeleteMatch(u.matched_user_id)}
-      >
-        ✕
-      </button>
-
-      <img
-        className="matchPhoto"
-        src={
-          u.profile_photo
-            ? `${API_BACKEND}${u.profile_photo}`
-            : "../../../public/assets/user.png"
-        }
-        alt=""
-      />
-      <p>{u.first_name}</p>
-      <p>{u.last_name}</p>
-    </div>
-  ))}
-</div>
-
-        </div>
-        <div className="carrouselStatistics">
-          <div className="carrouselContainer">
-            <div className="carrouselTitle">{translations[language].dashboard.servicesSection.matchServiceTitle}</div>
-            <div className="matchContainer">
-              <div>
-                <a href="/matchUser">
-                  {" "}
-                  <button className="matchButton">{translations[language].dashboard.servicesSection.matchButton}</button>
-                </a>
+            <img
+              className="navBarElement"
+              src="../../../public/assets/setting.png"
+              alt="settings"
+              onClick={() => setShowSettingsMenu(!showSettingsMenu)}
+            />
+            {showSettingsMenu && (
+              <div className="settingsMenu">
+                <p onClick={() => Navigate('/editProfile')}>{translations[language].dashboard.settingMenu.editProfile}</p>
+                <p onClick={() => Navigate('/preferences')}>{translations[language].dashboard.settingMenu.preferences}</p>
+                <p onClick={() => {
+                  localStorage.removeItem("token");
+                  window.location.href = "/";
+                }}>{translations[language].dashboard.settingMenu.logOut}</p>
               </div>
+            )}
+
+          </div>
+          <div className="greetingContainer">
+            <div className="UserPic">
+              <img
+                className="actualPic"
+                src={photoPreview || "../../../public/assets/user.png"}
+                alt=""
+              />
+            </div>
+            <div className="greeting">
+              <h3 className="bigGreeting">
+                {translations[language].dashboard.mainBox.greeting} {authUser.first_name + " " + authUser.last_name}
+              </h3>
+              <h3 className="smallGreeting">{translations[language].dashboard.mainBox.letUsBegin}</h3>
             </div>
           </div>
+          <div className="recentMatchContainer">
+            <h3 className="recentMatchTitle">{translations[language].dashboard.matchSection.recentMatches}</h3>
+            <div className="recentMatchItems">
+              {users.map((u) => (
+                <div className="recentMatch" key={u.matched_user_id}>
 
-          <div className="carrouselContainer">
-            <div className="carrouselTitle">
-              {translations[language].dashboard.servicesSection.sessionsGraphicTitle}
-            </div>
-            <div className="matchContainer matchStatistics">
-              <ResponsiveContainer
-                className="recentSessions"
-                width="90%"
-                height={150}
-              >
-                <LineChart data={sessions}>
-                  <CartesianGrid stroke="#D88484FF" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="sesiones"
-                    stroke="#8884d8"
-                    strokeWidth={2}
+
+                  <button
+                    className="deleteMatchBtn"
+                    onClick={() => handleDeleteMatch(u.matched_user_id)}
+                  >
+                    ✕
+                  </button>
+
+                  <img
+                    className="matchPhoto"
+                    src={
+                      u.profile_photo
+                        ? `${API_BACKEND}${u.profile_photo}`
+                        : "../../../public/assets/user.png"
+                    }
+                    alt=""
                   />
-                </LineChart>
-              </ResponsiveContainer>
-
-              <div></div>
+                  <p>{u.first_name}</p>
+                  <p>{u.last_name}</p>
+                </div>
+              ))}
             </div>
+
           </div>
-          <div className="carrouselContainer">
-            <div className="carrouselTitle">{translations[language].dashboard.servicesSection.hireATeacherTitle}</div>
-            <div className="matchContainer">
-              <div>
-                <a href="/matchTeacher">
-                  {" "}
-                  <button className="matchButton buttonPremium">{translations[language].dashboard.servicesSection.premium}</button>
-                </a>
+          <div className="carrouselStatistics">
+            <div className="carrouselContainer">
+              <div className="carrouselTitle">{translations[language].dashboard.servicesSection.matchServiceTitle}</div>
+              <div className="matchContainer">
+                <div>
+                  <a href="/matchUser">
+                    {" "}
+                    <button className="matchButton">{translations[language].dashboard.servicesSection.matchButton}</button>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div className="carrouselContainer">
+              <div className="carrouselTitle">
+                {translations[language].dashboard.servicesSection.sessionsGraphicTitle}
+              </div>
+              <div className="matchContainer matchStatistics">
+                <ResponsiveContainer
+                  className="recentSessions"
+                  width="90%"
+                  height={150}
+                >
+                  <LineChart data={sessions}>
+                    <CartesianGrid stroke="#D88484FF" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Line
+                      type="monotone"
+                      dataKey="sesiones"
+                      stroke="#8884d8"
+                      strokeWidth={2}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+
+                <div></div>
+              </div>
+            </div>
+            <div className="carrouselContainer">
+              <div className="carrouselTitle">{translations[language].dashboard.servicesSection.hireATeacherTitle}</div>
+              <div className="matchContainer">
+                <div>
+                  <a href="/matchTeacher">
+                    {" "}
+                    <button className="matchButton buttonPremium">{translations[language].dashboard.servicesSection.premium}</button>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <Footer />
+        <Footer />
       </div>
     </>
   );
@@ -329,7 +347,7 @@ export function Footer() {
   const [darkMode, setDarkMode] = useState(false);
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
-      useEffect(() => {
+  useEffect(() => {
     const fetchPreferences = async () => {
       try {
         const res = await fetch(

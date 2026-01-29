@@ -14,7 +14,7 @@ export function EditProfile() {
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("ES");
   const API_BACKEND = API_URL
- 
+
 
   const editableFields = [
     "first_name",
@@ -32,7 +32,12 @@ export function EditProfile() {
   async function handleDeletePhoto() {
     const res = await fetch(
       `${API_BACKEND}/users/photo/${decodedToken.sub}`,
-      { method: "DELETE" }
+      {
+        method: "DELETE",
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
     );
 
     if (!res.ok) {
@@ -54,11 +59,15 @@ export function EditProfile() {
     { match_quantity: 10 }
   );
 
-   const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState(initialForm);
 
   // Cargar usuario
   useEffect(() => {
-    fetch(`${API_BACKEND}/users/${decodedToken.sub}`)
+    fetch(`${API_BACKEND}/users/${decodedToken.sub}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then((r) => r.json())
       .then((data) => {
         const filtered = {};
@@ -103,6 +112,9 @@ export function EditProfile() {
       {
         method: "PATCH",
         body: formData,
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       }
     );
 
@@ -132,7 +144,10 @@ export function EditProfile() {
 
     const res = await fetch(`${API_BACKEND}/users/${decodedToken.sub}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
       body: JSON.stringify(dataToSend),
     });
 
@@ -144,147 +159,147 @@ export function EditProfile() {
     alert(translations[language].editProfile.successUpdateProfile);
   }
   useEffect(() => {
-     const fetchPreferences = async () => {
-       try {
-         const res = await fetch(
-           `${API_BACKEND}/preferences/${decodedToken.sub}`,
-           {
-             headers: {
-               Authorization: `Bearer ${token}`,
-             },
-           }
-         );
- 
-         if (!res.ok) {
-           throw new Error(`Error ${res.status}`);
-         }
- 
-         const data = await res.json();
- 
-         // Backend: theme = true (light) | false (dark)
-         setDarkMode(!data.theme);
-         setLanguage(data.language_code);
-       } catch (error) {
-         console.error("Error cargando preferencias:", error);
-       }
-     };
- 
-     fetchPreferences();
-   }, []);
- 
+    const fetchPreferences = async () => {
+      try {
+        const res = await fetch(
+          `${API_BACKEND}/preferences/${decodedToken.sub}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!res.ok) {
+          throw new Error(`Error ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        // Backend: theme = true (light) | false (dark)
+        setDarkMode(!data.theme);
+        setLanguage(data.language_code);
+      } catch (error) {
+        console.error("Error cargando preferencias:", error);
+      }
+    };
+
+    fetchPreferences();
+  }, []);
+
   return (
     <>
-    <div className={darkMode ? "dark-mode" : ""}>
-      <NavBar />
-      <div className="preferencesContainer">
-        <h2 className="title">{translations[language].editProfile.modifyProfileTitle}</h2>
+      <div className={darkMode ? "dark-mode" : ""}>
+        <NavBar />
+        <div className="preferencesContainer">
+          <h2 className="title">{translations[language].editProfile.modifyProfileTitle}</h2>
 
-        <form className="preferencesCard" onSubmit={handleSubmit}>
-          <img
-            src={photoPreview}
-            className="profilePhotoPreview"
-          />
-
-          <div className="inputGroup fullWidth">
-            <label>{translations[language].editProfile.changePhoto}</label>
-            <input type="file" accept="image/*" onChange={handlePhotoChange} />
-          </div>
-          {photoPreview && (
-            <button
-              type="button"
-              className="deletePhotoBtn"
-              onClick={handleDeletePhoto}
-            >
-             {translations[language].editProfile.deletePhoto}
-            </button>
-          )}
-
-          <div className="inputGroup">
-            <label>             {translations[language].editProfile.name}</label>
-            <input
-              name="first_name"
-              value={form.first_name}
-              onChange={handleChange}
+          <form className="preferencesCard" onSubmit={handleSubmit}>
+            <img
+              src={photoPreview}
+              className="profilePhotoPreview"
             />
-          </div>
 
-          <div className="inputGroup">
-            <label>             {translations[language].editProfile.lastname}</label>
-            <input
-              name="last_name"
-              value={form.last_name}
-              onChange={handleChange}
-            />
-          </div>
+            <div className="inputGroup fullWidth">
+              <label>{translations[language].editProfile.changePhoto}</label>
+              <input type="file" accept="image/*" onChange={handlePhotoChange} />
+            </div>
+            {photoPreview && (
+              <button
+                type="button"
+                className="deletePhotoBtn"
+                onClick={handleDeletePhoto}
+              >
+                {translations[language].editProfile.deletePhoto}
+              </button>
+            )}
 
-          <div className="inputGroup">
-            <label>             {translations[language].editProfile.email}</label>
-            <input
-              name="email"
-              type="email"
-              value={form.email}
-              onChange={handleChange}
-            />
-          </div>
+            <div className="inputGroup">
+              <label>             {translations[language].editProfile.name}</label>
+              <input
+                name="first_name"
+                value={form.first_name}
+                onChange={handleChange}
+              />
+            </div>
 
-          <div className="inputGroup">
-            <label>             {translations[language].editProfile.nativeLanguage}</label>
-            <select
-              name="native_lang_id"
-              value={form.native_lang_id}
-              onChange={handleChange}
-            >
-              <option value="">Selecciona</option>
-              {languages.map((l) => (
-                <option key={l.language_code} value={l.language_code}>
-                  {l.language_name}
-                </option>
-              ))}
-            </select>
-          </div>
+            <div className="inputGroup">
+              <label>             {translations[language].editProfile.lastname}</label>
+              <input
+                name="last_name"
+                value={form.last_name}
+                onChange={handleChange}
+              />
+            </div>
 
-          <div className="inputGroup">
-            <label>             {translations[language].editProfile.targetLanguage}</label>
-            <select
-              name="target_lang_id"
-              value={form.target_lang_id}
-              onChange={handleChange}
-            >
-              <option value="">Selecciona</option>
-              {languages
-                .filter((l) => l.language_code !== form.native_lang_id)
-                .map((l) => (
+            <div className="inputGroup">
+              <label>             {translations[language].editProfile.email}</label>
+              <input
+                name="email"
+                type="email"
+                value={form.email}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="inputGroup">
+              <label>             {translations[language].editProfile.nativeLanguage}</label>
+              <select
+                name="native_lang_id"
+                value={form.native_lang_id}
+                onChange={handleChange}
+              >
+                <option value="">Selecciona</option>
+                {languages.map((l) => (
                   <option key={l.language_code} value={l.language_code}>
                     {l.language_name}
                   </option>
                 ))}
-            </select>
-          </div>
+              </select>
+            </div>
 
-          <div className="inputGroup">
-            <label>             {translations[language].editProfile.birthDate}</label>
-            <input
-              type="date"
-              name="birth_date"
-              value={form.birth_date?.split("T")[0] || ""}
-              readOnly
-            />
-          </div>
+            <div className="inputGroup">
+              <label>             {translations[language].editProfile.targetLanguage}</label>
+              <select
+                name="target_lang_id"
+                value={form.target_lang_id}
+                onChange={handleChange}
+              >
+                <option value="">Selecciona</option>
+                {languages
+                  .filter((l) => l.language_code !== form.native_lang_id)
+                  .map((l) => (
+                    <option key={l.language_code} value={l.language_code}>
+                      {l.language_name}
+                    </option>
+                  ))}
+              </select>
+            </div>
 
-          <div className="inputGroup">
-            <label>             {translations[language].editProfile.description}</label>
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-            />
-          </div>
+            <div className="inputGroup">
+              <label>             {translations[language].editProfile.birthDate}</label>
+              <input
+                type="date"
+                name="birth_date"
+                value={form.birth_date?.split("T")[0] || ""}
+                readOnly
+              />
+            </div>
 
-          <button className="saveBtn" type="submit">
-                         {translations[language].editProfile.saveChanges}
-          </button>
-        </form>
-      </div>
+            <div className="inputGroup">
+              <label>             {translations[language].editProfile.description}</label>
+              <textarea
+                name="description"
+                value={form.description}
+                onChange={handleChange}
+              />
+            </div>
+
+            <button className="saveBtn" type="submit">
+              {translations[language].editProfile.saveChanges}
+            </button>
+          </form>
+        </div>
       </div>
     </>
   );

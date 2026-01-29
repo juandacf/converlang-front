@@ -6,7 +6,7 @@ import { MatchUser } from './components/matchUser/MatchUser';
 import { MatchTeacher } from './components/matchTeacher/MatchTeacher';
 import { UserChat } from './components/userChat/UserChat';
 import { TeacherDashboard } from "./components/teacher-Dashboard/TeacherDashboard";
-import {AdminDashboard}from "./components/adminDashboard/AdminDashboard";
+import { AdminDashboard } from "./components/adminDashboard/AdminDashboard";
 import { EditProfile } from "./components/editProfile/EditProfile";
 import VideoCall from "./components/videoCall/VideoCall";
 import UserPreferencesCard from "./components/preferences/Preferences";
@@ -18,9 +18,8 @@ export default function App() {
     lastname: "Caballero"
   }
 
-
   return (
-      <BrowserRouter>
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<Authentication />} />
         <Route path="/dashboard" element={<Dashboard user={userExample} />} />

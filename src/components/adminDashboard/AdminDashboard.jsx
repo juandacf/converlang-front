@@ -1,48 +1,90 @@
-
+/**
+ * AdminDashboard - Panel de Administración Completo
+ * 
+ * Características principales:
+ * - CRUD completo de usuarios con modales
+ * - Estadísticas en tiempo real
+ * - Gráficos interactivos (Recharts)
+ * - Diseño profesional estilo Power BI
+ * - Responsive design
+ * - Integración con servicios del backend
+ * - Sistema de notificaciones Toast
+ * - Validaciones de formularios
+ * - Manejo robusto de errores
+ * 
+ * Seguridad:
+ * - Verificación de autenticación
+ * - Validación de rol de administrador
+ * - Protección de rutas
+ * 
+ * @author ConverLang Team
+ * @version 2.0
+ */
 
 import React, { useState, useEffect } from 'react';
-import { 
-  Users, 
-  Activity, 
-  MessageSquare, 
-  TrendingUp, 
-  Eye, 
-  LogIn, 
-  Clock, 
-  Star, 
-  Search, 
-  Edit2, 
-  Trash2, 
-  Plus, 
-  Filter, 
-  Download, 
+import { useNavigate } from 'react-router-dom';
+import {
+  Users,
+  Activity,
+  MessageSquare,
+  TrendingUp,
+  Eye,
+  LogIn,
+  Clock,
+  Star,
+  Search,
+  Edit2,
+  Trash2,
+  Plus,
+  Filter,
+  Download,
   RefreshCw,
   Globe,
   Menu,
   Bell,
-  BarChart2
+  BarChart2,
+  User,
+  Settings,
+  LogOut,
+  ChevronDown,
+  Lock
 } from 'lucide-react';
-import { 
-  LineChart, 
-  Line, 
-  AreaChart, 
-  Area, 
-  BarChart, 
-  Bar, 
-  PieChart, 
-  Pie, 
-  Cell, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer 
+import {
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
 } from 'recharts';
-import { dashboardService } from '../../adminServices/dashboardService';
-import { usersService } from '../../adminServices/usersService';
-// --- CONFIGURACIÓN Y CONSTANTES (Del código nuevo) ---
 
+// Importar servicios actualizados
+import {
+  dashboardService,
+  usersService,
+  constants
+} from '../../adminServices';
+
+// Importar componentes de modales
+import { CreateUserModal } from './modals/CreateUserModal';
+import { EditUserModal } from './modals/EditUserModal';
+import { ChangePasswordModal } from './modals/ChangePasswordModal';
+import { DeleteConfirmModal } from './modals/DeleteConfirmModal';
+import { ActivateConfirmModal } from './modals/ActivateConfirmModal';
+import { Toast } from './components/Toast';
+
+/**
+ * Paleta de colores estilo Power BI
+ */
 const COLORS = {
   primary: '#0078D4',
   secondary: '#2B88D8',
@@ -51,13 +93,16 @@ const COLORS = {
   danger: '#D13438',
   purple: '#8764B8',
   teal: '#00BCF2',
-  pink: '#E3008C',
-  gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+  pink: '#E3008C'
 };
 
-// --- COMPONENTES DEL CÓDIGO PROPORCIONADO (Adaptados al Layout) ---
+// ========================================
+// COMPONENTES VISUALES
+// ========================================
 
-// 1. COMPONENTE DE TARJETA DE ESTADÍSTICA MEJORADO
+/**
+ * Tarjeta de estadística con gradiente y animación
+ */
 const StatCard = ({ title, value, icon: Icon, trend, color = "blue", subtitle }) => {
   const colorClasses = {
     blue: { bg: 'from-blue-500 to-blue-600', icon: 'bg-blue-100 text-blue-600' },
@@ -69,7 +114,7 @@ const StatCard = ({ title, value, icon: Icon, trend, color = "blue", subtitle })
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-slate-100 group">
+    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-slate-100 group" style={{ userSelect: 'none' }}>
       <div className={`h-1 bg-gradient-to-r ${colorClasses[color].bg}`}></div>
       <div className="p-5">
         <div className="flex items-start justify-between">
@@ -79,14 +124,7 @@ const StatCard = ({ title, value, icon: Icon, trend, color = "blue", subtitle })
             {subtitle && (
               <p className="text-xs text-slate-400">{subtitle}</p>
             )}
-            {trend && (
-              <div className={`flex items-center gap-1 mt-3 ${trend > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                <TrendingUp size={14} className={trend < 0 ? 'rotate-180' : ''} />
-                <span className="text-xs font-semibold">
-                  {Math.abs(trend)}% vs mes anterior
-                </span>
-              </div>
-            )}
+
           </div>
           <div className={`${colorClasses[color].icon} p-3 rounded-lg group-hover:scale-110 transition-transform duration-300`}>
             <Icon size={24} />
@@ -97,153 +135,267 @@ const StatCard = ({ title, value, icon: Icon, trend, color = "blue", subtitle })
   );
 };
 
-// 2. GRÁFICO DE LÍNEAS ESTILO POWER BI
-const ActivityLineChart = ({ data }) => {
+/**
+ * Componente contenedor seguro para gráficos Recharts
+ * Renderiza el gráfico solo cuando el contenedor tiene dimensiones válidas
+ * Soluciona el error "width(-1)" monitoreando el tamaño real del DOM
+ */
+const SafeChartContainer = ({ children, height = 300, className = "" }) => {
+  const containerRef = React.useRef(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      // Usar requestAnimationFrame para suavidad y evitar loops
+      requestAnimationFrame(() => {
+        if (!Array.isArray(entries) || !entries.length) return;
+
+        const entry = entries[0];
+        const { width, height } = entry.contentRect;
+
+        // Solo actualizar si las dimensiones son válidas y han cambiado
+        if (width > 0 && height > 0) {
+          setDimensions(prev => {
+            if (Math.abs(prev.width - width) < 1 && Math.abs(prev.height - height) < 1) {
+              return prev;
+            }
+            return { width, height };
+          });
+        }
+      });
+    });
+
+    resizeObserver.observe(containerRef.current);
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  // Preparar hijos con dimensiones explícitas
+  const childrenWithProps = React.Children.map(children, child => {
+    if (React.isValidElement(child) && dimensions.width > 0) {
+      return React.cloneElement(child, {
+        width: dimensions.width,
+        height: dimensions.height
+      });
+    }
+    return null;
+  });
+
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+    <div
+      ref={containerRef}
+      style={{ width: '100%', height: `${height}px`, minHeight: `${height}px`, userSelect: 'none' }}
+      className={`relative ${className}`}
+    >
+      {dimensions.width > 0 ? (
+        childrenWithProps
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-50 rounded-lg">
+          <div className="w-8 h-8 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+/**
+ * Gráfico de área para actividad semanal
+ */
+const ActivityLineChart = ({ data, onRefresh }) => {
+  // Validar que hay datos antes de renderizar
+  if (!data || data.length === 0) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-lg font-bold text-slate-800">Actividad en Tiempo Real</h3>
+            <p className="text-sm text-slate-500 mt-1">Matches y sesiones de los últimos 7 días</p>
+          </div>
+        </div>
+        <div className="h-[300px] flex items-center justify-center">
+          <p className="text-slate-400">No hay datos de actividad disponibles</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6" style={{ userSelect: 'none' }}>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-lg font-bold text-slate-800">Actividad en Tiempo Real</h3>
           <p className="text-sm text-slate-500 mt-1">Matches y sesiones de los últimos 7 días</p>
         </div>
-        <button className="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors">
+        <button
+          onClick={onRefresh}
+          className="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors"
+        >
           <RefreshCw size={14} />
           <span className="text-xs font-semibold">Actualizar</span>
         </button>
       </div>
-      <div className="h-[300px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data}>
-            <defs>
-              <linearGradient id="colorMatches" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#0078D4" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="#0078D4" stopOpacity={0}/>
-              </linearGradient>
-              <linearGradient id="colorSesiones" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#107C10" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="#107C10" stopOpacity={0}/>
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-            <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} axisLine={false} tickLine={false} />
-            <YAxis stroke="#94a3b8" fontSize={12} axisLine={false} tickLine={false} />
-            <Tooltip 
-              contentStyle={{ 
-                backgroundColor: '#fff', 
-                border: 'none', 
-                borderRadius: '8px', 
-                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' 
-              }} 
-            />
-            <Legend wrapperStyle={{ fontSize: '12px', fontWeight: '500' }} />
-            <Area 
-              type="monotone" 
-              dataKey="matches" 
-              stroke="#0078D4" 
-              strokeWidth={3}
-              fillOpacity={1} 
-              fill="url(#colorMatches)" 
-              name="Matches"
-            />
-            <Area 
-              type="monotone" 
-              dataKey="sesiones" 
-              stroke="#107C10" 
-              strokeWidth={3}
-              fillOpacity={1} 
-              fill="url(#colorSesiones)" 
-              name="Sesiones"
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
+      <SafeChartContainer height={300}>
+        <AreaChart data={data}>
+          <defs>
+            <linearGradient id="colorMatches" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#0078D4" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="#0078D4" stopOpacity={0} />
+            </linearGradient>
+            <linearGradient id="colorSesiones" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#107C10" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="#107C10" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+          <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} axisLine={false} tickLine={false} />
+          <YAxis stroke="#94a3b8" fontSize={12} axisLine={false} tickLine={false} />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: '#fff',
+              border: 'none',
+              borderRadius: '8px',
+              boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+            }}
+          />
+          <Legend wrapperStyle={{ fontSize: '12px', fontWeight: '500' }} />
+          <Area
+            type="monotone"
+            dataKey="matches"
+            stroke="#0078D4"
+            strokeWidth={3}
+            fillOpacity={1}
+            fill="url(#colorMatches)"
+            name="Matches"
+          />
+          <Area
+            type="monotone"
+            dataKey="sesiones"
+            stroke="#107C10"
+            strokeWidth={3}
+            fillOpacity={1}
+            fill="url(#colorSesiones)"
+            name="Sesiones"
+          />
+        </AreaChart>
+      </SafeChartContainer>
     </div>
   );
 };
 
-// 3. GRÁFICO DE BARRAS COMPARATIVO
-const ComparisonBarChart = ({ data }) => {
-  return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
-      <h3 className="text-lg font-bold text-slate-800 mb-2">Comparación Semanal</h3>
-      <p className="text-sm text-slate-500 mb-6">Actividad por tipo de sesión</p>
-      <div className="h-[280px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-            <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} axisLine={false} tickLine={false} />
-            <YAxis stroke="#94a3b8" fontSize={12} axisLine={false} tickLine={false} />
-            <Tooltip 
-              contentStyle={{ 
-                backgroundColor: '#fff', 
-                border: 'none', 
-                borderRadius: '8px', 
-                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' 
-              }} 
-            />
-            <Legend wrapperStyle={{ fontSize: '12px', fontWeight: '500' }} />
-            <Bar dataKey="matches" fill="#0078D4" radius={[4, 4, 0, 0]} name="Matches" />
-            <Bar dataKey="sesiones" fill="#107C10" radius={[4, 4, 0, 0]} name="Sesiones" />
-          </BarChart>
-        </ResponsiveContainer>
+/**
+ * Gráfico de barras para crecimiento de usuarios
+ */
+const UserGrowthChart = ({ data }) => {
+  // Validar que hay datos antes de renderizar
+  if (!data || data.length === 0) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6" style={{ userSelect: 'none' }}>
+        <h3 className="text-lg font-bold text-slate-800 mb-2">Crecimiento de Usuarios</h3>
+        <p className="text-sm text-slate-500 mb-6">Nuevos registros por día</p>
+        <div className="h-[280px] flex items-center justify-center">
+          <p className="text-slate-400">No hay datos de crecimiento disponibles</p>
+        </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6" style={{ userSelect: 'none' }}>
+      <h3 className="text-lg font-bold text-slate-800 mb-2">Crecimiento de Usuarios</h3>
+      <p className="text-sm text-slate-500 mb-6">Nuevos registros por día</p>
+      <SafeChartContainer height={280}>
+        <BarChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+          <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} axisLine={false} tickLine={false} />
+          <YAxis stroke="#94a3b8" fontSize={12} axisLine={false} tickLine={false} />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: '#fff',
+              border: 'none',
+              borderRadius: '8px',
+              boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+            }}
+          />
+          <Legend wrapperStyle={{ fontSize: '12px', fontWeight: '500' }} />
+          <Bar dataKey="nuevos_usuarios" fill="#8764B8" radius={[4, 4, 0, 0]} name="Nuevos Usuarios" />
+        </BarChart>
+      </SafeChartContainer>
     </div>
   );
 };
 
-// 4. GRÁFICO DE DONA (PIE CHART)
-const UserDistributionChart = () => {
-  const data = [
-    { name: 'Usuarios Activos', value: 89, color: '#107C10' },
-    { name: 'Usuarios Inactivos', value: 34, color: '#D13438' },
-    { name: 'Teachers', value: 23, color: '#0078D4' },
-    { name: 'Administradores', value: 10, color: '#8764B8' }
-  ];
+/**
+ * Gráfico de dona para distribución de usuarios
+ */
+const UserDistributionChart = ({ data }) => {
+  // Configuración de colores por defecto
+  const COLORS = {
+    'Usuarios Activos': '#107C10',
+    'Usuarios Inactivos': '#D13438',
+    'Teachers': '#0078D4',
+    'Administradores': '#8764B8'
+  };
+
+  // Si no hay datos, mostrar estado vacío o loading
+  if (!data || data.length === 0) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col items-center justify-center h-[380px]">
+        <p className="text-slate-400">No hay datos de distribución disponibles</p>
+      </div>
+    );
+  }
+
+  // Asegurar que cada entrada tenga su color
+  const processedData = data.map(entry => ({
+    ...entry,
+    color: entry.color || COLORS[entry.name] || '#8884d8'
+  }));
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6" style={{ userSelect: 'none' }}>
       <h3 className="text-lg font-bold text-slate-800 mb-2">Distribución</h3>
       <p className="text-sm text-slate-500 mb-6">Por rol y estado</p>
-      <div className="h-[280px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              innerRadius={60}
-              outerRadius={80}
-              paddingAngle={5}
-              dataKey="value"
-            >
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
-            </Pie>
-            <Tooltip 
-              contentStyle={{ 
-                backgroundColor: '#fff', 
-                border: 'none', 
-                borderRadius: '8px', 
-                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' 
-              }} 
-            />
-            <Legend 
-              verticalAlign="bottom" 
-              height={36}
-              wrapperStyle={{ fontSize: '12px', fontWeight: '500' }}
-            />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
+      <SafeChartContainer height={280}>
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            innerRadius={60}
+            outerRadius={80}
+            paddingAngle={5}
+            dataKey="value"
+          >
+            {processedData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color} />
+            ))}
+          </Pie>
+          <Tooltip
+            contentStyle={{
+              backgroundColor: '#fff',
+              border: 'none',
+              borderRadius: '8px',
+              boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+            }}
+          />
+          <Legend
+            verticalAlign="bottom"
+            height={36}
+            wrapperStyle={{ fontSize: '12px', fontWeight: '500' }}
+          />
+        </PieChart>
+      </SafeChartContainer>
     </div>
   );
 };
 
-// 5. COMPONENTE DE RESEÑAS MEJORADO
+/**
+ * Sección de reseñas recientes
+ */
 const ReviewsSection = ({ reviews }) => {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 h-full">
+    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 h-full" style={{ userSelect: 'none' }}>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h3 className="text-lg font-bold text-slate-800">Reseñas Recientes</h3>
@@ -255,47 +407,57 @@ const ReviewsSection = ({ reviews }) => {
         </div>
       </div>
       <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-        {reviews.map((review, index) => (
-          <div key={index} className="border border-slate-100 rounded-lg p-4 hover:bg-slate-50 transition-colors">
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold">
-                  {review.user_name.charAt(0)}
+        {reviews.length === 0 ? (
+          <p className="text-center text-slate-400 py-8">No hay reseñas disponibles</p>
+        ) : (
+          reviews.map((review, index) => (
+            <div key={index} className="border border-slate-100 rounded-lg p-4 hover:bg-slate-50 transition-colors">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold">
+                    {review.user_name?.charAt(0) || 'U'}
+                  </div>
+                  <div>
+                    <span className="font-semibold text-slate-800 text-sm block">{review.user_name}</span>
+                    <span className="text-xs text-slate-400">ID: {review.session_id}</span>
+                  </div>
                 </div>
-                <div>
-                  <span className="font-semibold text-slate-800 text-sm block">{review.user_name}</span>
-                  <span className="text-xs text-slate-400">ID: {review.session_id}</span>
+                <div className="flex items-center gap-0.5">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      size={12}
+                      className={i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-slate-200"}
+                    />
+                  ))}
                 </div>
               </div>
-              <div className="flex items-center gap-0.5">
-                {[...Array(5)].map((_, i) => (
-                  <Star 
-                    key={i} 
-                    size={12} 
-                    className={i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-slate-200"}
-                  />
-                ))}
-              </div>
+              <p className="text-xs text-slate-600 leading-relaxed italic">"{review.comment || "Sin comentarios"}"</p>
             </div>
-            <p className="text-xs text-slate-600 leading-relaxed italic">"{review.comment || "Sin comentarios"}"</p>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
 };
 
-// 6. TABLA DE USUARIOS MEJORADA (Con Filtros)
-const UsersTable = ({ users, onEdit, onDelete }) => {
+/**
+ * Tabla de usuarios con filtros y búsqueda
+ */
+const UsersTable = ({ users, onEdit, onDelete, onActivate, onCreate }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('all');
-   
+  const [filterStatus, setFilterStatus] = useState('active'); // 'active', 'inactive', 'all'
+
   const filteredUsers = users.filter(user => {
-    const matchesSearch = user.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          user.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          user.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = user.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRole = filterRole === 'all' || user.role_code === filterRole;
-    return matchesSearch && matchesRole;
+    const matchesStatus = filterStatus === 'all' ||
+      (filterStatus === 'active' && user.is_active) ||
+      (filterStatus === 'inactive' && !user.is_active);
+    return matchesSearch && matchesRole && matchesStatus;
   });
 
   return (
@@ -306,6 +468,37 @@ const UsersTable = ({ users, onEdit, onDelete }) => {
           <p className="text-sm text-slate-500 mt-1">{filteredUsers.length} registros encontrados</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
+          {/* Filtro de Estado */}
+          <div className="flex bg-slate-100 rounded-lg p-1">
+            <button
+              onClick={() => setFilterStatus('active')}
+              className={`px-3 py-1.5 text-xs font-medium rounded transition-colors ${filterStatus === 'active'
+                ? 'bg-green-600 text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900'
+                }`}
+            >
+              Activos
+            </button>
+            <button
+              onClick={() => setFilterStatus('inactive')}
+              className={`px-3 py-1.5 text-xs font-medium rounded transition-colors ${filterStatus === 'inactive'
+                ? 'bg-red-600 text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900'
+                }`}
+            >
+              Inactivos
+            </button>
+            <button
+              onClick={() => setFilterStatus('all')}
+              className={`px-3 py-1.5 text-xs font-medium rounded transition-colors ${filterStatus === 'all'
+                ? 'bg-indigo-600 text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900'
+                }`}
+            >
+              Todos
+            </button>
+          </div>
+
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={16} />
             <input
@@ -326,7 +519,10 @@ const UsersTable = ({ users, onEdit, onDelete }) => {
             <option value="teacher">Teachers</option>
             <option value="user">Users</option>
           </select>
-          <button className="flex items-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
+          <button
+            onClick={onCreate}
+            className="flex items-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
+          >
             <Plus size={16} />
             <span className="hidden sm:inline">Nuevo</span>
           </button>
@@ -345,60 +541,76 @@ const UsersTable = ({ users, onEdit, onDelete }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {filteredUsers.map((user) => (
-              <tr key={user.id_user} className="hover:bg-slate-50 transition-colors">
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-xs">
-                      {user.first_name.charAt(0)}{user.last_name.charAt(0)}
-                    </div>
-                    <div>
-                      <div className="font-medium text-slate-900">{user.first_name} {user.last_name}</div>
-                      <div className="text-xs text-slate-400">ID: {user.id_user}</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-xs font-mono">{user.email}</td>
-                <td className="px-6 py-4">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-                    user.role_code === 'admin' ? 'bg-purple-50 text-purple-700 border-purple-200' :
-                    user.role_code === 'teacher' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                    'bg-slate-50 text-slate-700 border-slate-200'
-                  }`}>
-                    {user.role_code}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    user.is_active ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
-                  }`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${user.is_active ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                    {user.is_active ? 'Activo' : 'Inactivo'}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-xs">
-                  {user.last_login ? new Date(user.last_login).toLocaleDateString() : 'Nunca'}
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <button
-                      onClick={() => onEdit(user)}
-                      className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
-                      title="Editar"
-                    >
-                      <Edit2 size={16} />
-                    </button>
-                    <button
-                      onClick={() => onDelete(user.id_user)}
-                      className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                      title="Eliminar"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
+            {filteredUsers.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="px-6 py-12 text-center text-slate-400">
+                  No se encontraron usuarios
                 </td>
               </tr>
-            ))}
+            ) : (
+              filteredUsers.map((user) => (
+                <tr key={user.id_user} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-xs">
+                        {user.first_name?.charAt(0)}{user.last_name?.charAt(0)}
+                      </div>
+                      <div>
+                        <div className="font-medium text-slate-900">{user.first_name} {user.last_name}</div>
+                        <div className="text-xs text-slate-400">ID: {user.id_user}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-xs font-mono">{user.email}</td>
+                  <td className="px-6 py-4">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${user.role_code === 'admin' ? 'bg-purple-50 text-purple-700 border-purple-200' :
+                      user.role_code === 'teacher' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                        'bg-slate-50 text-slate-700 border-slate-200'
+                      }`}>
+                      {constants.ROLE_LABELS[user.role_code] || user.role_code}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${user.is_active ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+                      }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${user.is_active ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                      {user.is_active ? 'Activo' : 'Inactivo'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-xs">
+                    {user.last_login ? new Date(user.last_login).toLocaleDateString() : 'Nunca'}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => onEdit(user)}
+                        className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+                        title="Editar"
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      {user.is_active ? (
+                        <button
+                          onClick={() => onDelete(user)}
+                          className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                          title="Inactivar"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => onActivate(user)}
+                          className="p-1.5 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded transition-colors"
+                          title="Reactivar"
+                        >
+                          <RefreshCw size={16} />
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
@@ -406,27 +618,41 @@ const UsersTable = ({ users, onEdit, onDelete }) => {
   );
 };
 
-// 7. SECCIÓN DE MÉTRICAS ADICIONALES
-const MetricsPanel = () => {
-  const metrics = [
-    { label: 'Tasa de Conversión', value: '7.1%', trend: '+2.3%', color: 'text-green-600' },
-    { label: 'Usuarios Verificados', value: '92%', trend: '+5.1%', color: 'text-blue-600' },
-    { label: 'Sesiones Completadas', value: '456', trend: '+12.4%', color: 'text-purple-600' },
-    { label: 'Tiempo Promedio', value: '45min', trend: '-3.2%', color: 'text-orange-600' }
+/**
+ * Panel de métricas adicionales
+ */
+const MetricsPanel = ({ metrics }) => {
+  // Si no hay métricas, mostrar estado de carga
+  if (!metrics) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 h-full" style={{ userSelect: 'none' }}>
+        <h3 className="text-lg font-bold text-slate-800 mb-6">Métricas Clave</h3>
+        <div className="flex items-center justify-center h-32">
+          <div className="w-8 h-8 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Convertir el objeto de métricas a un array para mapear
+  const metricsArray = [
+    metrics.conversion_rate,
+    metrics.verified_users,
+    metrics.completed_sessions,
+    metrics.average_time
   ];
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 h-full">
+    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 h-full" style={{ userSelect: 'none' }}>
       <h3 className="text-lg font-bold text-slate-800 mb-6">Métricas Clave</h3>
       <div className="space-y-6">
-        {metrics.map((metric, index) => (
+        {metricsArray.map((metric, index) => (
           <div key={index} className="flex items-center justify-between p-2 hover:bg-slate-50 rounded-lg transition-colors">
             <span className="text-slate-600 font-medium text-sm">{metric.label}</span>
             <div className="flex items-center gap-3">
               <span className={`text-xl font-bold ${metric.color}`}>{metric.value}</span>
-              <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                metric.trend.startsWith('+') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
-              }`}>
+              <span className={`text-xs font-semibold px-2 py-1 rounded-full ${metric.trend.startsWith('+') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+                }`}>
                 {metric.trend}
               </span>
             </div>
@@ -437,79 +663,247 @@ const MetricsPanel = () => {
   );
 };
 
-// --- APP PRINCIPAL (Combina Layout Anterior + Lógica Nueva) ---
+// ========================================
+// COMPONENTE PRINCIPAL
+// ========================================
 
+/**
+ * AdminDashboard - Componente principal del panel de administración
+ */
 export function AdminDashboard() {
-  // ESTADO DEL LAYOUT (Sidebar)
+  // ========================================
+  // ESTADO DE LA APLICACIÓN
+  // ========================================
+
+  // Layout
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard');
 
-  // ESTADO DE DATOS (Del código nuevo)
+  // Datos del dashboard
   const [stats, setStats] = useState(null);
   const [activityData, setActivityData] = useState([]);
+  const [userDistribution, setUserDistribution] = useState([]);
+  const [userGrowthData, setUserGrowthData] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [users, setUsers] = useState([]);
+  const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // LÓGICA DE CARGA (Del código nuevo)
-// En AdminDashboard.jsx
+  // Modales
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showActivateModal, setShowActivateModal] = useState(false);
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
-const loadDashboardData = async () => {
-  try {
-    setLoading(true);
-    
-    // 1. Llamar a los servicios reales en paralelo
-    const [statsData, activityData, reviewsData, usersData] = await Promise.all([
-      dashboardService.getStats(),
-      dashboardService.getActivity(),
-      dashboardService.getRecentReviews(),
-      usersService.getAllUsers() 
-    ]);
+  // Notificaciones
+  const [toast, setToast] = useState(null);
 
-    // 2. Asignar los datos del backend al estado
-    // Nota: dashboardService ya maneja el catch y devuelve mocks si falla,
-    // así que aquí recibiremos datos reales o los mocks del servicio.
-    setStats(statsData);
-    setActivityData(activityData);
-    setReviews(reviewsData);
-    
-    // Nota: usersService devuelve la respuesta cruda de api.get.
-    // Asegúrate de que tu backend devuelve un array directo en 'usersData'
-    // o si viene dentro de una propiedad (ej. usersData.data).
-    // Basado en tu admin.service.ts, parece devolver el array directo.
-    setUsers(usersData);
+  // ========================================
+  // SEGURIDAD Y AUTENTICACIÓN
+  // ========================================
 
-  } catch (error) {
-    console.error('Error cargando datos en el Dashboard:', error);
-  } finally {
-    setLoading(false);
-  }
-};
-
+  /**
+   * Verifica que el usuario esté autenticado y sea administrador
+   */
   useEffect(() => {
-    loadDashboardData();
-    const interval = setInterval(() => {
-      loadDashboardData();
-    }, 30000);
-    return () => clearInterval(interval);
+    const checkAuth = () => {
+      const user = JSON.parse(localStorage.getItem('user') || 'null');
+      const token = localStorage.getItem('token');
+
+      // Verificar si hay sesión activa
+      if (!user || !token) {
+        console.warn('⚠️ No hay sesión activa. Redirigir a login.');
+        // TODO: Descomentar para producción
+        // navigate('/');
+        return false;
+      }
+
+      // Verificar si es administrador
+      if (user.role_code !== 'admin') {
+        console.error('❌ Usuario no tiene permisos de administrador');
+        showToast('No tienes permisos para acceder a esta sección', 'error');
+        // TODO: Redirigir a página de error o dashboard de usuario
+        return false;
+      }
+
+      console.log('✅ Usuario autenticado como administrador:', user.email);
+      return true;
+    };
+
+    checkAuth();
   }, []);
 
-  const handleEditUser = (user) => {
-    alert(`Editar usuario: ${user.first_name} ${user.last_name}`);
-  };
+  // ========================================
+  // CARGA DE DATOS
+  // ========================================
 
-  const handleDeleteUser = (userId) => {
-    if (window.confirm('¿Estás seguro de eliminar este usuario?')) {
-      setUsers(users.filter(u => u.id_user !== userId));
+  /**
+   * Carga todos los datos del dashboard desde el backend
+   * @param {boolean} isBackgroundUpdate - Si es true, no muestra el spinner de carga general
+   */
+  const loadDashboardData = async (isBackgroundUpdate = false) => {
+    try {
+      if (!isBackgroundUpdate) {
+        setLoading(true);
+      }
+
+      // Cargar datos en paralelo para mejor rendimiento
+      const [statsData, activityData, reviewsData, usersData, distributionData, metricsData, userGrowthData] = await Promise.all([
+        dashboardService.getStats(),
+        dashboardService.getActivity(),
+        dashboardService.getRecentReviews(),
+        usersService.getAllUsers({ includeInactive: true }),
+        dashboardService.getUserDistribution(),
+        dashboardService.getMetrics(),
+        dashboardService.getUserGrowth()
+      ]);
+
+      // Actualizar estado con los datos recibidos
+      setStats(statsData);
+      setActivityData(activityData);
+      setReviews(reviewsData);
+      setUsers(usersData);
+      setUserDistribution(distributionData);
+      setMetrics(metricsData);
+      setUserGrowthData(userGrowthData);
+
+      console.log('✅ Datos del dashboard cargados exitosamente');
+    } catch (error) {
+      console.error('❌ Error cargando datos del dashboard:', error);
+      showToast('Error al cargar datos del dashboard', 'error');
+    } finally {
+      if (!isBackgroundUpdate) {
+        setLoading(false);
+      }
     }
   };
 
-  // Renderizado Condicional del Contenido Principal
+  /**
+   * Carga inicial y actualización periódica cada 30 segundos
+   */
+  useEffect(() => {
+    loadDashboardData();
+
+    // Actualizar datos cada 30 segundos de forma silenciosa
+    const interval = setInterval(() => {
+      loadDashboardData(true);
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // ========================================
+  // HANDLERS DE MODALES Y CRUD
+  // ========================================
+
+  /**
+   * Muestra notificación toast
+   */
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+  };
+
+  /**
+   * Abre modal de creación de usuario
+   */
+  const handleCreateClick = () => {
+    setShowCreateModal(true);
+  };
+
+  /**
+   * Callback después de crear usuario exitosamente
+   */
+  const handleCreateSuccess = (newUser) => {
+    showToast(`Usuario ${newUser.first_name} ${newUser.last_name} creado exitosamente`, 'success');
+    loadDashboardData(); // Recargar datos
+  };
+
+  /**
+   * Abre modal de edición con el usuario seleccionado
+   */
+  const handleEditClick = (user) => {
+    setSelectedUser(user);
+    setShowEditModal(true);
+  };
+
+  /**
+   * Callback después de actualizar usuario exitosamente
+   */
+  const handleEditSuccess = () => {
+    showToast('Usuario actualizado exitosamente', 'success');
+    setSelectedUser(null);
+    loadDashboardData(); // Recargar datos
+  };
+
+  /**
+   * Abre modal de confirmación de eliminación
+   */
+  const handleDeleteClick = (user) => {
+    setSelectedUser(user);
+    setShowDeleteModal(true);
+  };
+
+  /**
+   * Callback después de eliminar usuario exitosamente
+   */
+  const handleDeleteSuccess = () => {
+    showToast('Usuario inactivado exitosamente', 'success');
+    setSelectedUser(null);
+    loadDashboardData(); // Recargar datos
+  };
+
+  /**
+   * Callback después de cambiar contraseña exitosamente
+   */
+  const handleChangePasswordSuccess = () => {
+    showToast('Contraseña actualizada exitosamente', 'success');
+  };
+
+  /**
+   * Abre modal de confirmación de reactivación
+   */
+  const handleActivateClick = (user) => {
+    setSelectedUser(user);
+    setShowActivateModal(true);
+  };
+
+  /**
+   * Callback después de reactivar usuario exitosamente
+   */
+  const handleActivateSuccess = () => {
+    showToast('Usuario reactivado exitosamente', 'success');
+    setSelectedUser(null);
+    loadDashboardData(); // Recargar datos
+  };
+
+  /**
+   * Cerrar sesión
+   */
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    navigate('/');
+  };
+
+  // ========================================
+  // RENDERIZADO CONDICIONAL POR TAB
+  // ========================================
+
+  /**
+   * Renderiza el contenido según la tab activa
+   */
   const renderContent = () => {
     if (loading) {
       return (
         <div className="flex h-full items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto"></div>
+            <p className="mt-4 text-slate-600 font-medium">Cargando datos...</p>
+          </div>
         </div>
       );
     }
@@ -520,60 +914,80 @@ const loadDashboardData = async () => {
           <div className="space-y-6">
             {/* Grid de Estadísticas */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
-              <StatCard title="Total Usuarios" value={stats.total_users} icon={Users} trend={12} color="blue" subtitle="Registrados" />
-              <StatCard title="Usuarios Activos" value={stats.active_users} icon={Activity} trend={8} color="green" subtitle="Últimas 24h" />
-              <StatCard title="Total Matches" value={stats.total_matches} icon={MessageSquare} trend={-3} color="purple" subtitle="Conexiones" />
-              <StatCard title="Sesiones Totales" value={stats.total_sessions} icon={Clock} trend={15} color="orange" subtitle="Completadas" />
-              <StatCard title="Visitantes" value={stats.visitors_count} icon={Eye} trend={22} color="pink" subtitle="Visitas únicas" />
-              <StatCard title="Logueados" value={stats.logged_in_count} icon={LogIn} trend={5} color="teal" subtitle="En este momento" />
+              <StatCard title="Total Usuarios" value={stats?.total_users} icon={Users} trend={12} color="blue" subtitle="Registrados" />
+              <StatCard title="Usuarios Activos" value={stats?.active_users} icon={Activity} trend={8} color="green" subtitle="Últimas 24h" />
+              <StatCard title="Total Matches" value={stats?.total_matches} icon={MessageSquare} trend={-3} color="purple" subtitle="Conexiones" />
+              <StatCard title="Sesiones Totales" value={stats?.total_sessions} icon={Clock} trend={15} color="orange" subtitle="Completadas" />
+              <StatCard title="Visitantes" value={stats?.visitors_count} icon={Eye} trend={22} color="pink" subtitle="Visitas únicas" />
+              <StatCard title="Logueados" value={stats?.logged_in_count} icon={LogIn} trend={5} color="teal" subtitle="En este momento" />
             </div>
 
             {/* Gráficos Principales */}
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
               <div className="xl:col-span-2">
-                <ActivityLineChart data={activityData} />
+                <ActivityLineChart data={activityData} onRefresh={loadDashboardData} />
               </div>
               <div>
-                <UserDistributionChart />
+                <UserDistributionChart data={userDistribution} />
               </div>
             </div>
 
             {/* Segunda Fila */}
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-              <ComparisonBarChart data={activityData} />
+              <UserGrowthChart data={userGrowthData} />
               <div className="grid grid-cols-1 gap-6">
-                 <MetricsPanel />
-                 <ReviewsSection reviews={reviews} />
+                <MetricsPanel metrics={metrics} />
+                <ReviewsSection reviews={reviews} />
               </div>
             </div>
-            
-            {/* Tabla en Dashboard también (resumen o completa) */}
+
             <div className="mt-6">
-               <UsersTable users={users} onEdit={handleEditUser} onDelete={handleDeleteUser} />
+              <UsersTable
+                users={users}
+                onEdit={handleEditClick}
+                onDelete={handleDeleteClick}
+                onActivate={handleActivateClick}
+                onCreate={handleCreateClick}
+              />
             </div>
           </div>
         );
+
       case 'users':
-        return <UsersTable users={users} onEdit={handleEditUser} onDelete={handleDeleteUser} />;
+        return (
+          <UsersTable
+            users={users}
+            onEdit={handleEditClick}
+            onDelete={handleDeleteClick}
+            onActivate={handleActivateClick}
+            onCreate={handleCreateClick}
+          />
+        );
+
       case 'analytics':
         return (
           <div className="space-y-6">
-             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <ActivityLineChart data={activityData} />
-                <ComparisonBarChart data={activityData} />
-             </div>
-             <MetricsPanel />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <ActivityLineChart data={activityData} />
+              <UserGrowthChart data={userGrowthData} />
+            </div>
+            <MetricsPanel metrics={metrics} />
           </div>
         );
+
       default:
         return null;
     }
   };
 
+  // ========================================
+  // RENDERIZADO PRINCIPAL
+  // ========================================
+
   return (
-    <div className="flex h-screen bg-slate-50 font-sans text-slate-800 overflow-hidden">
-      
-      {/* SIDEBAR (Layout original) */}
+    <div className="flex h-screen bg-slate-50 font-sans text-slate-800 overflow-hidden" style={{ userSelect: 'none' }}>
+
+      {/* SIDEBAR */}
       <aside className={`bg-white border-r border-slate-200 transition-all duration-300 flex flex-col ${sidebarOpen ? 'w-64' : 'w-20'}`}>
         <div className="h-16 flex items-center justify-center border-b border-slate-100">
           <div className="flex items-center gap-2 font-bold text-xl text-indigo-600">
@@ -583,21 +997,21 @@ const loadDashboardData = async () => {
         </div>
 
         <nav className="flex-1 p-4 space-y-2">
-          <button 
+          <button
             onClick={() => setActiveTab('dashboard')}
             className={`w-full flex items-center gap-3 p-3 rounded-lg transition ${activeTab === 'dashboard' ? 'bg-indigo-50 text-indigo-600' : 'text-slate-500 hover:bg-slate-50'}`}
           >
             <Activity size={20} />
             {sidebarOpen && <span>Dashboard</span>}
           </button>
-          <button 
+          <button
             onClick={() => setActiveTab('users')}
             className={`w-full flex items-center gap-3 p-3 rounded-lg transition ${activeTab === 'users' ? 'bg-indigo-50 text-indigo-600' : 'text-slate-500 hover:bg-slate-50'}`}
           >
             <Users size={20} />
             {sidebarOpen && <span>Usuarios</span>}
           </button>
-          <button 
+          <button
             onClick={() => setActiveTab('analytics')}
             className={`w-full flex items-center gap-3 p-3 rounded-lg transition ${activeTab === 'analytics' ? 'bg-indigo-50 text-indigo-600' : 'text-slate-500 hover:bg-slate-50'}`}
           >
@@ -607,15 +1021,53 @@ const loadDashboardData = async () => {
         </nav>
 
         <div className="p-4 border-t border-slate-100">
-           <div className={`flex items-center gap-3 ${!sidebarOpen && 'justify-center'}`}>
-             <div className="w-10 h-10 rounded-full bg-slate-200 flex-shrink-0" />
-             {sidebarOpen && (
-               <div className="overflow-hidden">
-                 <p className="text-sm font-bold truncate">Admin User</p>
-                 <p className="text-xs text-slate-500 truncate">admin@converlang.com</p>
-               </div>
-             )}
-           </div>
+          <div className={`flex items-center gap-3 ${!sidebarOpen && 'justify-center'}`}>
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold flex-shrink-0">
+              A
+            </div>
+            {sidebarOpen && (
+              <div className="flex-1 overflow-hidden">
+                <p className="text-sm font-bold truncate">Admin User</p>
+                <p className="text-xs text-slate-500 truncate">admin@converlang.com</p>
+              </div>
+            )}
+
+            {sidebarOpen && (
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="p-1 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-slate-600"
+                >
+                  <Settings size={20} />
+                </button>
+
+                {/* Dropdown Menu */}
+                {showUserMenu && (
+                  <div className="absolute bottom-full left-0 mb-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
+                    <div className="p-1">
+                      <button
+                        onClick={() => {
+                          setShowUserMenu(false);
+                          setShowChangePasswordModal(true);
+                        }}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg transition-colors"
+                      >
+                        <Lock size={16} />
+                        <span>Cambiar Contraseña</span>
+                      </button>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        <LogOut size={16} />
+                        <span>Cerrar Sesión</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </aside>
 
@@ -626,40 +1078,74 @@ const loadDashboardData = async () => {
           <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 hover:bg-slate-100 rounded-lg text-slate-500">
             <Menu size={20} />
           </button>
-          
-          <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-3 mr-4">
-               <button className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-lg shadow-sm hover:bg-slate-50 transition text-xs font-medium text-slate-600">
-                 <Download size={14} />
-                 <span>Exportar</span>
-               </button>
-               <button className="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 border border-indigo-100 rounded-lg shadow-sm hover:bg-indigo-100 transition text-xs font-medium text-indigo-600">
-                 <Filter size={14} />
-                 <span>Filtros</span>
-               </button>
-            </div>
-            <button className="relative p-2 hover:bg-slate-100 rounded-full text-slate-500">
-              <Bell size={20} />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
-            </button>
-          </div>
         </header>
 
         {/* CONTENIDO SCROLLABLE */}
         <div className="flex-1 overflow-y-auto p-6 bg-slate-50">
           <div className="max-w-7xl mx-auto">
-             <div className="mb-8">
-                <h1 className="text-2xl font-bold text-slate-900 capitalize">
-                  {activeTab === 'dashboard' ? 'Dashboard General' : activeTab}
-                </h1>
-                <p className="text-slate-500 text-sm mt-1">
-                  Resumen de actividad y métricas clave de ConverLang.
-                </p>
-             </div>
-             {renderContent()}
+            <div className="mb-8">
+              <h1 className="text-2xl font-bold text-slate-900 capitalize">
+                {activeTab === 'dashboard' ? 'Dashboard General' : activeTab}
+              </h1>
+            </div>
+            {renderContent()}
           </div>
         </div>
       </main>
+
+      {/* MODALES */}
+      <CreateUserModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={handleCreateSuccess}
+      />
+
+      <EditUserModal
+        isOpen={showEditModal}
+        onClose={() => {
+          setShowEditModal(false);
+          setSelectedUser(null);
+        }}
+        onSuccess={handleEditSuccess}
+        userId={selectedUser?.id_user}
+      />
+
+      <DeleteConfirmModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setSelectedUser(null);
+        }}
+        onSuccess={handleDeleteSuccess}
+        user={selectedUser}
+      />
+
+      <ActivateConfirmModal
+        isOpen={showActivateModal}
+        onClose={() => {
+          setShowActivateModal(false);
+          setSelectedUser(null);
+        }}
+        onSuccess={handleActivateSuccess}
+        user={selectedUser}
+      />
+
+      <ChangePasswordModal
+        isOpen={showChangePasswordModal}
+        onClose={() => setShowChangePasswordModal(false)}
+        onSuccess={handleChangePasswordSuccess}
+        userId={(() => {
+          try {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            return user.id_user;
+          } catch (e) {
+            return null;
+          }
+        })()}
+      />
+
+      {/* TOAST NOTIFICATIONS */}
+      <Toast toast={toast} onClose={() => setToast(null)} />
     </div>
   );
 }
