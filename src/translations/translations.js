@@ -75,7 +75,10 @@ export const Translations = {
       "searchBarPlaceholder": "Buscar...",
       "sendMessagePlaceholder": "Escribe un mensaje...",
       "startACall": "Iniciar llamada",
-      "deleteMatch": "Eliminar match"
+      "deleteMatch": "Eliminar match",
+      "reportUser": "Reportar usuario",
+      "confirmReport": "¿Estás seguro de que deseas reportar a este usuario?",
+      "reportSuccess": "Usuario reportado correctamente"
     },
     "videoModule": {
       "chatTitle": "Chat con ",
@@ -163,7 +166,10 @@ export const Translations = {
       "searchBarPlaceholder": "Search...",
       "sendMessagePlaceholder": "Type a message...",
       "startACall": "Start call",
-      "deleteMatch": "Delete match"
+      "deleteMatch": "Delete match",
+      "reportUser": "Report user",
+      "confirmReport": "Are you sure you want to report this user?",
+      "reportSuccess": "User reported successfully"
     },
     "videoModule": {
       "chatTitle": "Chat with ",
@@ -251,7 +257,10 @@ export const Translations = {
       "searchBarPlaceholder": "Rechercher...",
       "sendMessagePlaceholder": "Écrivez un message...",
       "startACall": "Démarrer un appel",
-      "deleteMatch": "Supprimer le match"
+      "deleteMatch": "Supprimer le match",
+      "reportUser": "Signaler l'utilisateur",
+      "confirmReport": "Êtes-vous sûr(e) de vouloir signaler cet utilisateur ?",
+      "reportSuccess": "Utilisateur signalé avec succès"
     },
     "videoModule": {
       "chatTitle": "Chat avec ",
@@ -339,7 +348,10 @@ export const Translations = {
       "searchBarPlaceholder": "Pesquisar...",
       "sendMessagePlaceholder": "Escreva uma mensagem...",
       "startACall": "Iniciar chamada",
-      "deleteMatch": "Excluir match"
+      "deleteMatch": "Excluir match",
+      "reportUser": "Denunciar usuário",
+      "confirmReport": "Tem certeza de que deseja denunciar este usuário?",
+      "reportSuccess": "Usuário denunciado com sucesso"
     },
     "videoModule": {
       "chatTitle": "Chat com ",
@@ -427,7 +439,10 @@ export const Translations = {
       "searchBarPlaceholder": "Suchen...",
       "sendMessagePlaceholder": "Nachricht schreiben...",
       "startACall": "Anruf starten",
-      "deleteMatch": "Match löschen"
+      "deleteMatch": "Match löschen",
+      "reportUser": "Benutzer melden",
+      "confirmReport": "Bist du sicher, dass du diesen Benutzer melden möchtest?",
+      "reportSuccess": "Benutzer erfolgreich gemeldet"
     },
     "videoModule": {
       "chatTitle": "Chat mit ",

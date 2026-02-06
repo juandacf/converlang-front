@@ -159,5 +159,22 @@ export const usersService = {
   getUsersByRole: async (role = 'all') => {
     console.warn('⚠️ getUsersByRole está deprecado, usar getAllUsers({ role }) en su lugar');
     return await usersService.getAllUsers({ role });
-  }
+  },
+
+  /**
+   * Reportar un usuario por comportamiento inapropiado
+   * POST /users/report/:id
+   * @param {number} userId - ID del usuario a reportar
+   * @returns {Promise<Object>} Datos del reporte
+   */
+  reportUser: async (userId) => {
+    try {
+      const response = await api.post(`/users/report/${userId}`);
+      console.log('✅ Usuario reportado:', response);
+      return response;
+    } catch (error) {
+      console.error(`❌ Error al reportar usuario ${userId}:`, error.message);
+      throw new Error(error.message || 'Error al reportar usuario');
+    }
+  },
 };

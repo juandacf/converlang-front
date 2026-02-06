@@ -50,7 +50,7 @@ export function UserChat() {
   useEffect(() => {
     if (!selectedMatch || !socket) return;
 
-   socket.emit("joinRoom", Number(selectedMatch.match_id));
+    socket.emit("joinRoom", Number(selectedMatch.match_id));
 
 
 
@@ -156,35 +156,88 @@ export function UserChat() {
     }
   };
 
-      useEffect(() => {
-      const fetchPreferences = async () => {
-        try {
-          const res = await fetch(
-            `${API_BACKEND}/preferences/${decodedToken.sub}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-  
-          if (!res.ok) {
-            throw new Error(`Error ${res.status}`);
-          }
-  
-          const data = await res.json();
-  
-          // Backend: theme = true (light) | false (dark)
-          setDarkMode(!data.theme);
-          setLanguage(data.language_code);
-        } catch (error) {
-          console.error("Error cargando preferencias:", error);
+  // =====================================================
+  // 8. Reportar usuario
+  // =====================================================
+  const handleReportUser = async () => {
+    if (!selectedMatch) return;
+
+    const confirmReport = window.confirm(
+      translations[language].chatModule.confirmReport
+    );
+    if (!confirmReport) return;
+
+    try {
+      // 1. Reportar al usuario
+      const res = await fetch(
+        `${API_BACKEND}/users/report/${selectedMatch.other_user_id}`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
         }
-      };
-  
-      fetchPreferences();
-    }, []);
-  
+      );
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Error al reportar usuario");
+      }
+
+      // 2. Eliminar el match para evitar reportes múltiples del mismo usuario
+      const user1 = Number(decodedToken.sub);
+      const user2 = Number(selectedMatch.other_user_id);
+
+      await fetch(
+        `${API_BACKEND}/matches/deleteMatch?user_1=${user1}&user_2=${user2}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      // 3. Actualizar la UI
+      setChatList((prev) =>
+        prev.filter((c) => c.match_id !== selectedMatch.match_id)
+      );
+
+      setSelectedMatch(null);
+      setMessages([]);
+      setShowConfigMenu(false);
+
+      alert(translations[language].chatModule.reportSuccess);
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  useEffect(() => {
+    const fetchPreferences = async () => {
+      try {
+        const res = await fetch(
+          `${API_BACKEND}/preferences/${decodedToken.sub}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!res.ok) {
+          throw new Error(`Error ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        // Backend: theme = true (light) | false (dark)
+        setDarkMode(!data.theme);
+        setLanguage(data.language_code);
+      } catch (error) {
+        console.error("Error cargando preferencias:", error);
+      }
+    };
+
+    fetchPreferences();
+  }, []);
+
 
   // =====================================================
   //  RENDER
@@ -192,140 +245,143 @@ export function UserChat() {
 
   return (
     <>
-    <div className={darkMode ? "dark-mode" : ""}>
-      <div className="userChatMainContainer">
+      <div className={darkMode ? "dark-mode" : ""}>
+        <div className="userChatMainContainer">
 
-        {/* ========================
+          {/* ========================
              LISTA DE CHATS
         ======================== */}
-        <div className="chatItemsContainer">
-          <div className="chatSearchContainer">
-            <input
-              type="text"
-              className="chatSearchInput"
-              placeholder={translations[language].chatModule.searchBarPlaceholder}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-
-          {filteredChats.map((chat) => (
-            <div
-              className="chatMatchContainer"
-              key={chat.match_id}
-              onClick={() => setSelectedMatch(chat)}
-            >
-              <div className="chatPhotoContainer">
-                <img
-                  className="userPhoto purpleMargin"
-                  src={
-                    chat.profile_photo
-                      ? `${API_BACKEND}${chat.profile_photo}`
-                      : "../../../public/assets/user.png"
-                  }
-                  alt=""
-                />
-              </div>
-
-              <div className="chatNameContainer">
-                <p>{chat.full_name}</p>
-              </div>
+          <div className="chatItemsContainer">
+            <div className="chatSearchContainer">
+              <input
+                type="text"
+                className="chatSearchInput"
+                placeholder={translations[language].chatModule.searchBarPlaceholder}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </div>
-          ))}
-        </div>
 
-        {/* ========================
-             VENTANA DE CHAT
-        ======================== */}
-        <div className="messagesContainer">
-          {selectedMatch ? (
-            <>
-              <div className="messagesTitle">
+            {filteredChats.map((chat) => (
+              <div
+                className="chatMatchContainer"
+                key={chat.match_id}
+                onClick={() => setSelectedMatch(chat)}
+              >
                 <div className="chatPhotoContainer">
                   <img
                     className="userPhoto purpleMargin"
                     src={
-                      selectedMatch?.profile_photo
-                        ? `${API_BACKEND}${selectedMatch.profile_photo}`
+                      chat.profile_photo
+                        ? `${API_BACKEND}${chat.profile_photo}`
                         : "../../../public/assets/user.png"
                     }
                     alt=""
                   />
                 </div>
 
-                <p className="chatName">{selectedMatch.full_name}</p>
+                <div className="chatNameContainer">
+                  <p>{chat.full_name}</p>
+                </div>
+              </div>
+            ))}
+          </div>
 
-                <img
-                  className="userPhoto configButton"
-                  src="../../../public/assets/dots.png"
-                  alt=""
-                  onClick={() => setShowConfigMenu((prev) => !prev)}
-                />
+          {/* ========================
+             VENTANA DE CHAT
+        ======================== */}
+          <div className="messagesContainer">
+            {selectedMatch ? (
+              <>
+                <div className="messagesTitle">
+                  <div className="chatPhotoContainer">
+                    <img
+                      className="userPhoto purpleMargin"
+                      src={
+                        selectedMatch?.profile_photo
+                          ? `${API_BACKEND}${selectedMatch.profile_photo}`
+                          : "../../../public/assets/user.png"
+                      }
+                      alt=""
+                    />
+                  </div>
 
-                {showConfigMenu && (
-                  <div className="configMenu" ref={configMenuRef}>
-                    <p
-                      onClick={() =>
-                        navigate(`/videocall/${selectedMatch.match_id}`, {
-                          state: { selectedMatch },
-                        })
+                  <p className="chatName">{selectedMatch.full_name}</p>
+
+                  <img
+                    className="userPhoto configButton"
+                    src="../../../public/assets/dots.png"
+                    alt=""
+                    onClick={() => setShowConfigMenu((prev) => !prev)}
+                  />
+
+                  {showConfigMenu && (
+                    <div className="configMenu" ref={configMenuRef}>
+                      <p
+                        onClick={() =>
+                          navigate(`/videocall/${selectedMatch.match_id}`, {
+                            state: { selectedMatch },
+                          })
+                        }
+                      >
+                        📞 {translations[language].chatModule.startACall}
+                      </p>
+
+                      <p className="danger" onClick={handleDeleteMatch}>
+                        ❌ {translations[language].chatModule.deleteMatch}
+                      </p>
+                      <p className="danger" onClick={handleReportUser}>
+                        ⚠️ {translations[language].chatModule.reportUser}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="actualMessageContainer">
+                  {messages.map((m) => (
+                    <div
+                      key={m.message_id}
+                      className={
+                        m.sender_id === decodedToken.sub
+                          ? "selfMessage"
+                          : "otherMessage"
                       }
                     >
-                      📞 {translations[language].chatModule.startACall}
-                    </p>
+                      <p>{m.message}</p>
+                    </div>
+                  ))}
+                </div>
 
-                    <p className="danger" onClick={handleDeleteMatch}>
-                      ❌ {translations[language].chatModule.deleteMatch}
-                    </p>
-                  </div>
-                )}
-              </div>
+                <div className="inputContainer">
+                  <input
+                    type="text"
+                    value={draft}
+                    onChange={(e) => setDraft(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                    className="inputChat"
+                    placeholder={translations[language].chatModule.sendMessagePlaceholder}
+                  />
 
-              <div className="actualMessageContainer">
-                {messages.map((m) => (
-                  <div
-                    key={m.message_id}
-                    className={
-                      m.sender_id === decodedToken.sub
-                        ? "selfMessage"
-                        : "otherMessage"
-                    }
-                  >
-                    <p>{m.message}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="inputContainer">
-                <input
-                  type="text"
-                  value={draft}
-                  onChange={(e) => setDraft(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                  className="inputChat"
-                  placeholder={translations[language].chatModule.sendMessagePlaceholder}
-                />
-
-                <img
-                  src="../../../public/assets/send.png"
-                  alt="send"
-                  className="sendMessage inputImage"
-                  onClick={sendMessage}
-                />
-              </div>
-            </>
-          ) : (
-            <p style={{ textAlign: "center", marginTop: "20%" }}>
-              Selecciona un chat
-            </p>
-          )}
+                  <img
+                    src="../../../public/assets/send.png"
+                    alt="send"
+                    className="sendMessage inputImage"
+                    onClick={sendMessage}
+                  />
+                </div>
+              </>
+            ) : (
+              <p style={{ textAlign: "center", marginTop: "20%" }}>
+                Selecciona un chat
+              </p>
+            )}
+          </div>
         </div>
-      </div>
 
-      <NavBar />
-      <Footer />
+        <NavBar />
+        <Footer />
       </div>
     </>
-    
+
   );
 }
