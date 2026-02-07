@@ -14,6 +14,7 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { Translations } from "../../translations/translations";
+import { io } from "socket.io-client";
 
 
 
@@ -29,6 +30,12 @@ export function Dashboard({ user }) {
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("ES");
+
+  // Estados para notificaciones
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
   const Navigate = useNavigate();
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
@@ -133,6 +140,96 @@ export function Dashboard({ user }) {
     fetchPreferences();
   }, []);
 
+  // Cargar notificaciones
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await fetch(
+          `${API_BACKEND}/notifications/${decodedToken.sub}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (res.ok) {
+          const data = await res.json();
+          setNotifications(data);
+          setUnreadCount(data.filter(n => !n.is_read).length);
+        }
+      } catch (error) {
+        console.error("Error cargando notificaciones:", error);
+      }
+    };
+
+    fetchNotifications();
+  }, []);
+
+  // Conexión WebSocket para notificaciones en tiempo real
+  useEffect(() => {
+    const socket = io(API_BACKEND);
+
+    socket.emit('joinNotifications', decodedToken.sub);
+
+    socket.on('newNotification', (notification) => {
+      setNotifications(prev => [notification, ...prev]);
+      setUnreadCount(prev => prev + 1);
+    });
+
+    return () => socket.disconnect();
+  }, []);
+
+  // Formatear tiempo relativo
+  const formatTimeAgo = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Ahora';
+    if (diffMins < 60) return `Hace ${diffMins} min`;
+    if (diffHours < 24) return `Hace ${diffHours}h`;
+    return `Hace ${diffDays}d`;
+  };
+
+  // Manejar click en notificación
+  const handleNotificationClick = async (notification) => {
+    // Marcar como leída
+    try {
+      await fetch(
+        `${API_BACKEND}/notifications/${notification.notification_id}/read`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Actualizar estado local
+      setNotifications(prev =>
+        prev.map(n =>
+          n.notification_id === notification.notification_id
+            ? { ...n, is_read: true }
+            : n
+        )
+      );
+      setUnreadCount(prev => Math.max(0, prev - 1));
+    } catch (error) {
+      console.error("Error marcando notificación:", error);
+    }
+
+    // Si es notificación de like, redirigir a match con highlight
+    if (notification.notification_type === 'like_request') {
+      localStorage.setItem('highlightUser', notification.related_entity_id);
+      Navigate('/matchUser');
+    }
+
+    setShowNotifications(false);
+  };
+
   const handleDeleteMatch = async (matchedUserId) => {
     const confirmDelete = window.confirm(
       translations[language].dashboard.matchSection.deleteMatchWarning
@@ -177,11 +274,45 @@ export function Dashboard({ user }) {
         <NavBar />
         <div className="dashboardMainContainer">
           <div className="dashNavBar">
-            <img
-              className="navBarElement"
-              src="../../../public/assets/notification.png"
-              alt=""
-            />
+            <div className="notificationWrapper">
+              <img
+                className="navBarElement"
+                src="../../../public/assets/notification.png"
+                alt="notifications"
+                onClick={() => setShowNotifications(!showNotifications)}
+              />
+              {unreadCount > 0 && (
+                <span className="notificationBadge">{unreadCount}</span>
+              )}
+            </div>
+
+            {showNotifications && (
+              <div className="notificationsPanel">
+                <h4 className="notificationsPanelTitle">
+                  {translations[language]?.dashboard?.notifications?.title || 'Notificaciones'}
+                </h4>
+                {notifications.length === 0 ? (
+                  <p className="noNotifications">
+                    {translations[language]?.dashboard?.notifications?.empty || 'No tienes notificaciones'}
+                  </p>
+                ) : (
+                  notifications.slice(0, 10).map((notif) => (
+                    <div
+                      key={notif.notification_id}
+                      className={`notificationItem ${!notif.is_read ? 'unread' : ''}`}
+                      onClick={() => handleNotificationClick(notif)}
+                    >
+                      <p className="notificationTitle">{notif.title}</p>
+                      <p className="notificationMessage">{notif.message}</p>
+                      <span className="notificationTime">
+                        {formatTimeAgo(notif.created_at)}
+                      </span>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+
             <img
               className="navBarElement"
               src="../../../public/assets/setting.png"

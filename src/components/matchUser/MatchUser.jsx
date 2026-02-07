@@ -12,6 +12,7 @@ export function MatchUser() {
   const [page, setPage] = useState(1);
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("ES");
+  const [highlightedUser, setHighlightedUser] = useState(null);
 
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
@@ -52,7 +53,28 @@ export function MatchUser() {
         return r.json();
       })
       .then((json) => {
-        const userData = Array.isArray(json) ? json : json.users ?? [];
+        let userData = Array.isArray(json) ? json : json.users ?? [];
+
+        // Verificar si hay usuario a resaltar desde notificación
+        const highlightId = localStorage.getItem('highlightUser');
+        if (highlightId) {
+          const highlightIdNum = parseInt(highlightId, 10);
+          setHighlightedUser(highlightIdNum);
+
+          // Reordenar: poner usuario resaltado primero
+          const highlightedIndex = userData.findIndex(u => u.id_user === highlightIdNum);
+          if (highlightedIndex > 0) {
+            const [highlightedUserData] = userData.splice(highlightedIndex, 1);
+            userData = [highlightedUserData, ...userData];
+          }
+
+          // Limpiar localStorage y quitar resaltado después de 5 segundos
+          setTimeout(() => {
+            localStorage.removeItem('highlightUser');
+            setHighlightedUser(null);
+          }, 5000);
+        }
+
         setUsers(userData);
         setPage(1);
       })
@@ -162,7 +184,7 @@ export function MatchUser() {
           {pageItems.map((u) => (
             <div
               className={`potentialMatchContainer ${disappearing[u.id_user] ? "fadeOut" : ""
-                }`}
+                } ${highlightedUser === u.id_user ? "highlighted" : ""}`}
               key={u.id_user}
               id={u.id_user}
             >
