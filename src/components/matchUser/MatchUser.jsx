@@ -13,6 +13,7 @@ export function MatchUser() {
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("ES");
   const [highlightedUser, setHighlightedUser] = useState(null);
+  const [userTitles, setUserTitles] = useState({});
 
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
@@ -77,6 +78,20 @@ export function MatchUser() {
 
         setUsers(userData);
         setPage(1);
+
+        // Fetch del título más reciente para cada usuario
+        userData.forEach((user) => {
+          fetch(`${API_BACKEND}/titles/latest/${user.id_user}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          })
+            .then((r) => r.ok ? r.json() : null)
+            .then((titleData) => {
+              if (titleData) {
+                setUserTitles((prev) => ({ ...prev, [user.id_user]: titleData.title_name }));
+              }
+            })
+            .catch(() => { });
+        });
       })
       .catch((err) => console.log(err.message));
 
@@ -205,6 +220,9 @@ export function MatchUser() {
 
               <div className="userDescriptionContainer">
                 <p className="userDescription">{u.description}</p>
+                {userTitles[u.id_user] && (
+                  <span className="userTitleBadge">🏅 {userTitles[u.id_user]}</span>
+                )}
               </div>
 
               <div className="connectRateContainer">
