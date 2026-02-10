@@ -179,6 +179,7 @@ body {
   background: linear-gradient(135deg, #f59e0b, #d97706);
   border-radius: 20px;
   white-space: nowrap;
+  width: auto;
 }
 
 /* Right block */

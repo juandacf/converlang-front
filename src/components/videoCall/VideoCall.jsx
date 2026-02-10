@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { useSocket } from "../../context/SocketContext";
-import "./videoCall.css";
+import "./VideoCall.css";
 import { jwtDecode } from "jwt-decode";
 import { API_URL } from "../../config/api";
 import { Translations } from "../../translations/translations";
