@@ -796,6 +796,24 @@ export function AdminDashboard() {
     return () => clearInterval(interval);
   }, []);
 
+  // ── Heartbeat: reportar que el admin está activo en su dashboard ──
+  useEffect(() => {
+    const sendHeartbeat = async () => {
+      const t = localStorage.getItem('token');
+      if (!t) return;
+      try {
+        const API_BASE = import.meta.env.VITE_BACKEND_API_URL;
+        await fetch(`${API_BASE}/auth/heartbeat`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${t}` }
+        });
+      } catch (e) { /* silencioso */ }
+    };
+    sendHeartbeat();
+    const interval = setInterval(sendHeartbeat, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
   // ========================================
   // HANDLERS DE MODALES Y CRUD
   // ========================================

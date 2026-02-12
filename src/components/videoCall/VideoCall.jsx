@@ -77,32 +77,32 @@ export default function VideoCall() {
   /* ======================================================
      ENVÍO A BACKEND (POST /call)
   ====================================================== */
-async function persistSession() {
-  const startTime =
-    callStartTimeRef.current ?? new Date().toISOString();
+  async function persistSession() {
+    const startTime =
+      callStartTimeRef.current ?? new Date().toISOString();
 
-  const idUser2 = selectedMatch?.other_user_id;
+    const idUser2 = selectedMatch?.other_user_id;
 
-  if (!idUser2) {
-    console.error("idUser2 inválido", selectedMatch);
-    return;
+    if (!idUser2) {
+      console.error("idUser2 inválido", selectedMatch);
+      return;
+    }
+
+    await fetch(`${API_BACKEND}/call`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        idUser1: userId,
+        idUser2,
+        startTime,
+        endTime: new Date().toISOString(),
+        sessionNotes: "Videollamada finalizada",
+      }),
+    });
   }
-
-  await fetch(`${API_BACKEND}/call`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({
-      idUser1: userId,
-      idUser2,
-      startTime,
-      endTime: new Date().toISOString(),
-      sessionNotes: "Videollamada finalizada",
-    }),
-  });
-}
 
 
 
@@ -234,29 +234,29 @@ async function persistSession() {
   async function handleIce({ candidate }) {
     try {
       await peerRef.current?.addIceCandidate(candidate);
-    } catch {}
+    } catch { }
   }
 
-async function startCallAsCaller() {
-  if (!peerRef.current) {
-    createPeerConnection();
+  async function startCallAsCaller() {
+    if (!peerRef.current) {
+      createPeerConnection();
+    }
+
+    const pc = peerRef.current;
+
+    if (!pc) return; // ultra defensivo
+
+    if (hasLocalOfferRef.current || pc.signalingState !== "stable") return;
+
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    hasLocalOfferRef.current = true;
+
+    socket.emit("webrtcOffer", {
+      matchId: numericMatchId,
+      offer,
+    });
   }
-
-  const pc = peerRef.current;
-
-  if (!pc) return; // ultra defensivo
-
-  if (hasLocalOfferRef.current || pc.signalingState !== "stable") return;
-
-  const offer = await pc.createOffer();
-  await pc.setLocalDescription(offer);
-  hasLocalOfferRef.current = true;
-
-  socket.emit("webrtcOffer", {
-    matchId: numericMatchId,
-    offer,
-  });
-}
 
 
   /* ======================================================
@@ -285,10 +285,8 @@ async function startCallAsCaller() {
     socket.on("webrtcAnswer", handleAnswer);
     socket.on("webrtcIceCandidate", handleIce);
 
-    socket.on("callEnded", async () => {
+    socket.on("callEnded", () => {
       alert(translations[language].videoModule.endCallAlert);
-
-      await persistSession("completed");
 
       cleanupCall();
       navigate(-1);
@@ -304,34 +302,34 @@ async function startCallAsCaller() {
     };
   }, [socket]);
 
-        useEffect(() => {
-      const fetchPreferences = async () => {
-        try {
-          const res = await fetch(
-            `${API_BACKEND}/preferences/${decodedToken.sub}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-  
-          if (!res.ok) {
-            throw new Error(`Error ${res.status}`);
+  useEffect(() => {
+    const fetchPreferences = async () => {
+      try {
+        const res = await fetch(
+          `${API_BACKEND}/preferences/${decodedToken.sub}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-  
-          const data = await res.json();
-  
-          // Backend: theme = true (light) | false (dark)
-          setDarkMode(!data.theme);
-          setLanguage(data.language_code);
-        } catch (error) {
-          console.error("Error cargando preferencias:", error);
+        );
+
+        if (!res.ok) {
+          throw new Error(`Error ${res.status}`);
         }
-      };
-  
-      fetchPreferences();
-    }, []);
+
+        const data = await res.json();
+
+        // Backend: theme = true (light) | false (dark)
+        setDarkMode(!data.theme);
+        setLanguage(data.language_code);
+      } catch (error) {
+        console.error("Error cargando preferencias:", error);
+      }
+    };
+
+    fetchPreferences();
+  }, []);
 
   /* ======================================================
      Cierre de pestaña
@@ -390,67 +388,67 @@ async function startCallAsCaller() {
   ====================================================== */
   return (
     <div className={darkMode ? "dark-mode" : ""}>
-    <div className="videoCallMainContainer">
-      <div className="videoArea">
-        <div className="videoWrapper">
-          <video
-            className="videoBox"
-            ref={remoteVideoRef}
-            autoPlay
-            playsInline
-          />
+      <div className="videoCallMainContainer">
+        <div className="videoArea">
+          <div className="videoWrapper">
+            <video
+              className="videoBox"
+              ref={remoteVideoRef}
+              autoPlay
+              playsInline
+            />
 
-          <video
-            className="pipVideo"
-            ref={localVideoRef}
-            autoPlay
-            muted
-            playsInline
-          />
+            <video
+              className="pipVideo"
+              ref={localVideoRef}
+              autoPlay
+              muted
+              playsInline
+            />
 
-          <button className="endCallBtn" onClick={endCall}>
-            🔴 {translations[language].videoModule.endCallButton}
-          </button>
+            <button className="endCallBtn" onClick={endCall}>
+              🔴 {translations[language].videoModule.endCallButton}
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div className="videoChatContainer">
-        <h3 className="videoChatTitle">
-          {translations[language].videoModule.chatTitle} {selectedMatch?.full_name}
-        </h3>
+        <div className="videoChatContainer">
+          <h3 className="videoChatTitle">
+            {translations[language].videoModule.chatTitle} {selectedMatch?.full_name}
+          </h3>
 
-        <div className="videoChatMessages">
-          {messages.map((m) => {
-            const isMe = getMsgSenderId(m) === userId;
-            return (
-              <div
-                key={m.message_id}
-                className={isMe ? "selfVideoMessage" : "otherVideoMessage"}
-                style={m.__pending ? { opacity: 0.6 } : undefined}
-              >
-                <div className="messageMeta">
-                  {isMe ? translations[language].videoModule.you : selectedMatch?.full_name}
+          <div className="videoChatMessages">
+            {messages.map((m) => {
+              const isMe = getMsgSenderId(m) === userId;
+              return (
+                <div
+                  key={m.message_id}
+                  className={isMe ? "selfVideoMessage" : "otherVideoMessage"}
+                  style={m.__pending ? { opacity: 0.6 } : undefined}
+                >
+                  <div className="messageMeta">
+                    {isMe ? translations[language].videoModule.you : selectedMatch?.full_name}
+                  </div>
+                  <p>{m.message}</p>
                 </div>
-                <p>{m.message}</p>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
 
-        <div className="videoChatInputArea">
-          <input
-            className="videoChatInput"
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-            placeholder={translations[language].videoModule.messageInputPlaceholder}
-          />
-          <button className="videoChatSendBtn" onClick={sendMessage}>
-            {translations[language].videoModule.sendAMessageButton}
-          </button>
+          <div className="videoChatInputArea">
+            <input
+              className="videoChatInput"
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+              placeholder={translations[language].videoModule.messageInputPlaceholder}
+            />
+            <button className="videoChatSendBtn" onClick={sendMessage}>
+              {translations[language].videoModule.sendAMessageButton}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
     </div>
   );
 }

@@ -64,6 +64,23 @@ export function Dashboard({ user }) {
       .catch((err) => console.error('User fetch error:', err.message));
   }, []);
 
+  // ── Heartbeat: reportar que el usuario está activo en su dashboard ──
+  useEffect(() => {
+    const sendHeartbeat = async () => {
+      const t = localStorage.getItem('token');
+      if (!t) return;
+      try {
+        await fetch(`${API_BACKEND}/auth/heartbeat`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${t}` }
+        });
+      } catch (e) { /* silencioso — no interrumpir UX si falla */ }
+    };
+    sendHeartbeat(); // enviar inmediatamente al montar
+    const interval = setInterval(sendHeartbeat, 60000); // cada 60s
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     const controller = new AbortController();
 
