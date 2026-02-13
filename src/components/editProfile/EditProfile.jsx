@@ -154,9 +154,11 @@ export function EditProfile() {
     if (!res.ok) {
       alert(translations[language].editProfile.errorUploadProfile);
       return;
+    } else {
+
+      alert(translations[language].editProfile.sucessUpdateProfile);
     }
 
-    alert(translations[language].editProfile.successUpdateProfile);
   }
   useEffect(() => {
     const fetchPreferences = async () => {
