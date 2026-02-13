@@ -301,34 +301,45 @@ export function Dashboard({ user }) {
               {unreadCount > 0 && (
                 <span className="notificationBadge">{unreadCount}</span>
               )}
-            </div>
 
-            {showNotifications && (
-              <div className="notificationsPanel">
-                <h4 className="notificationsPanelTitle">
-                  {translations[language]?.dashboard?.notifications?.title || 'Notificaciones'}
-                </h4>
-                {notifications.length === 0 ? (
-                  <p className="noNotifications">
-                    {translations[language]?.dashboard?.notifications?.empty || 'No tienes notificaciones'}
-                  </p>
-                ) : (
-                  notifications.slice(0, 10).map((notif) => (
-                    <div
-                      key={notif.notification_id}
-                      className={`notificationItem ${!notif.is_read ? 'unread' : ''}`}
-                      onClick={() => handleNotificationClick(notif)}
+              {showNotifications && (
+                <div className="notificationsPanel">
+                  <div className="notificationsPanelHeader">
+                    <h4 className="notificationsPanelTitle">
+                      {translations[language]?.dashboard?.notifications?.title || 'Notificaciones'}
+                    </h4>
+                    <button
+                      className="closeNotificationsBtn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowNotifications(false);
+                      }}
                     >
-                      <p className="notificationTitle">{notif.title}</p>
-                      <p className="notificationMessage">{notif.message}</p>
-                      <span className="notificationTime">
-                        {formatTimeAgo(notif.created_at)}
-                      </span>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
+                      ✕
+                    </button>
+                  </div>
+                  {notifications.length === 0 ? (
+                    <p className="noNotifications">
+                      {translations[language]?.dashboard?.notifications?.empty || 'No tienes notificaciones'}
+                    </p>
+                  ) : (
+                    notifications.slice(0, 10).map((notif) => (
+                      <div
+                        key={notif.notification_id}
+                        className={`notificationItem ${!notif.is_read ? 'unread' : ''}`}
+                        onClick={() => handleNotificationClick(notif)}
+                      >
+                        <p className="notificationTitle">{notif.title}</p>
+                        <p className="notificationMessage">{notif.message}</p>
+                        <span className="notificationTime">
+                          {formatTimeAgo(notif.created_at)}
+                        </span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
 
             <img
               className="navBarElement"
