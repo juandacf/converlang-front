@@ -1,10 +1,19 @@
 import './Authentication.css';
 import { SignUp } from '../signUP/SignUp';
 import { Login } from '../login/Login';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export function Authentication() {
   const [chosenAuth, setAuth] = useState(0);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   const authenticatorSwitch = () => {
     setAuth(chosenAuth + 1);
@@ -21,7 +30,7 @@ export function Authentication() {
           </button>
 
           {chosenAuth % 2 === 0 ? (
-            <SignUp onSuccess={() => setAuth(1)} /> 
+            <SignUp onSuccess={() => setAuth(1)} />
           ) : (
             <Login />
           )}

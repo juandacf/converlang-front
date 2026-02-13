@@ -184,7 +184,11 @@ export function Dashboard({ user }) {
 
   // Conexión WebSocket para notificaciones en tiempo real
   useEffect(() => {
-    const socket = io(API_BACKEND);
+    const socket = io(API_BACKEND, {
+      auth: {
+        token: token
+      }
+    });
 
     socket.emit('joinNotifications', decodedToken.sub);
 
