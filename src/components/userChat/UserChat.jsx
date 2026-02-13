@@ -39,7 +39,9 @@ export function UserChat() {
   // 1. Obtener lista de chats del usuario
   // =====================================================
   useEffect(() => {
-    fetch(`${API_BACKEND}/chats/list/${decodedToken.sub}`)
+    fetch(`${API_BACKEND}/chats/list/${decodedToken.sub}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
       .then((res) => res.json())
       .then((data) => setChatList(data));
   }, [decodedToken.sub]);
@@ -54,7 +56,9 @@ export function UserChat() {
 
 
 
-    fetch(`${API_BACKEND}/chats/${selectedMatch.match_id}`)
+    fetch(`${API_BACKEND}/chats/${selectedMatch.match_id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
       .then((res) => res.json())
       .then((data) => setMessages(data));
 

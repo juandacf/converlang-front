@@ -93,7 +93,9 @@ export function EditProfile() {
 
   // Cargar lenguajes
   useEffect(() => {
-    fetch(`${API_BACKEND}/languages`)
+    fetch(`${API_BACKEND}/languages`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
       .then((res) => res.json())
       .then((data) => setLanguages(data))
       .catch((error) => console.error(error));

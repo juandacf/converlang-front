@@ -123,213 +123,15 @@ export default function VideoCall() {
      Chat
   ====================================================== */
   useEffect(() => {
-    fetch(`${API_BACKEND}/chats/${numericMatchId}`)
+    fetch(`${API_BACKEND}/chats/${numericMatchId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((r) => r.json())
       .then((d) => setMessages(Array.isArray(d) ? d : []))
       .catch(() => setMessages([]));
   }, [numericMatchId]);
-
-  useEffect(() => {
-    socket.emit("joinRoom", numericMatchId);
-
-    const handler = (msg) => {
-      if (getMsgMatchId(msg) !== numericMatchId) return;
-
-      setMessages((prev) => {
-        const sender = getMsgSenderId(msg);
-        const text = msg.message;
-
-        const filtered = prev.filter(
-          (m) =>
-            !(
-              m.__pending &&
-              getMsgSenderId(m) === sender &&
-              m.message === text
-            )
-        );
-        return [...filtered, msg];
-      });
-    };
-
-    socket.on("newMessage", handler);
-    return () => socket.off("newMessage", handler);
-  }, [socket, numericMatchId]);
-
-  /* ======================================================
-     WebRTC
-  ====================================================== */
-  function createPeerConnection() {
-    if (peerRef.current) return;
-
-    const pc = new RTCPeerConnection(iceServers);
-    peerRef.current = pc;
-
-    pc.ontrack = (e) => {
-      remoteVideoRef.current.srcObject = e.streams[0];
-    };
-
-    pc.onicecandidate = (e) => {
-      if (e.candidate) {
-        socket.emit("webrtcIceCandidate", {
-          matchId: numericMatchId,
-          candidate: e.candidate,
-        });
-      }
-    };
-  }
-
-  async function initCamera() {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true,
-    });
-
-    // ⬇️ MARCA INICIO DE LLAMADA
-    if (!callStartTimeRef.current) {
-      callStartTimeRef.current = new Date().toISOString();
-    }
-
-    localStreamRef.current = stream;
-    localVideoRef.current.srcObject = stream;
-
-    createPeerConnection();
-
-    const pc = peerRef.current;
-    const senders = pc.getSenders().map((s) => s.track);
-    stream.getTracks().forEach((t) => {
-      if (!senders.includes(t)) pc.addTrack(t, stream);
-    });
-  }
-
-  useEffect(() => {
-    initCamera();
-  }, []);
-
-  async function handleOffer({ offer }) {
-    if (isCallerRef.current) return;
-
-    createPeerConnection();
-    const pc = peerRef.current;
-
-    if (pc.signalingState !== "stable") return;
-
-    await pc.setRemoteDescription(offer);
-    const answer = await pc.createAnswer();
-    await pc.setLocalDescription(answer);
-
-    socket.emit("webrtcAnswer", {
-      matchId: numericMatchId,
-      answer,
-    });
-  }
-
-  async function handleAnswer({ answer }) {
-    if (!isCallerRef.current || !hasLocalOfferRef.current) return;
-    const pc = peerRef.current;
-    if (pc.signalingState === "have-local-offer") {
-      await pc.setRemoteDescription(answer);
-    }
-  }
-
-  async function handleIce({ candidate }) {
-    try {
-      await peerRef.current?.addIceCandidate(candidate);
-    } catch { }
-  }
-
-  async function startCallAsCaller() {
-    if (!peerRef.current) {
-      createPeerConnection();
-    }
-
-    const pc = peerRef.current;
-
-    if (!pc) return; // ultra defensivo
-
-    if (hasLocalOfferRef.current || pc.signalingState !== "stable") return;
-
-    const offer = await pc.createOffer();
-    await pc.setLocalDescription(offer);
-    hasLocalOfferRef.current = true;
-
-    socket.emit("webrtcOffer", {
-      matchId: numericMatchId,
-      offer,
-    });
-  }
-
-
-  /* ======================================================
-     Señalización llamada
-  ====================================================== */
-  useEffect(() => {
-    socket.emit("joinCallRoom", numericMatchId);
-
-    isCallerRef.current = true;
-    hasLocalOfferRef.current = false;
-
-    socket.emit("callRequest", {
-      matchId: numericMatchId,
-      caller: { userId },
-    });
-  }, [numericMatchId]);
-
-  useEffect(() => {
-    socket.on("incomingCall", () => {
-      isCallerRef.current = false;
-      socket.emit("callAccepted", { matchId: numericMatchId });
-    });
-
-    socket.on("callAccepted", startCallAsCaller);
-    socket.on("webrtcOffer", handleOffer);
-    socket.on("webrtcAnswer", handleAnswer);
-    socket.on("webrtcIceCandidate", handleIce);
-
-    socket.on("callEnded", () => {
-      alert(translations[language].videoModule.endCallAlert);
-
-      cleanupCall();
-      navigate(-1);
-    });
-
-    return () => {
-      socket.off("incomingCall");
-      socket.off("callAccepted");
-      socket.off("webrtcOffer");
-      socket.off("webrtcAnswer");
-      socket.off("webrtcIceCandidate");
-      socket.off("callEnded");
-    };
-  }, [socket]);
-
-  useEffect(() => {
-    const fetchPreferences = async () => {
-      try {
-        const res = await fetch(
-          `${API_BACKEND}/preferences/${decodedToken.sub}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!res.ok) {
-          throw new Error(`Error ${res.status}`);
-        }
-
-        const data = await res.json();
-
-        // Backend: theme = true (light) | false (dark)
-        setDarkMode(!data.theme);
-        setLanguage(data.language_code);
-      } catch (error) {
-        console.error("Error cargando preferencias:", error);
-      }
-    };
-
-    fetchPreferences();
-  }, []);
 
   /* ======================================================
      Cierre de pestaña
@@ -338,17 +140,22 @@ export default function VideoCall() {
     const onUnload = () => {
       socket.emit("endCall", { matchId: numericMatchId });
 
-      // ⚠️ sendBeacon para no bloquear cierre
-      navigator.sendBeacon(
-        `${API_BACKEND}/call`,
-        JSON.stringify({
+      // ⚠️ Usamos fetch con keepalive en lugar de sendBeacon para enviar headers
+      fetch(`${API_BACKEND}/call`, {
+        method: "POST",
+        keepalive: true,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
           idUser1: userId,
           idUser2: selectedMatch.id_user,
           startTime: callStartTimeRef.current,
           endTime: new Date().toISOString(),
           sessionStatus: "completed",
-        })
-      );
+        }),
+      });
 
       cleanupCall();
     };

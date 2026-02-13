@@ -20,7 +20,9 @@ export default function UserPreferencesCard() {
   const user_id = decodedToken.sub;
 
   useEffect(() => {
-    fetch(`${API_BACKEND}/languages`)
+    fetch(`${API_BACKEND}/languages`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
       .then((res) => res.json())
       .then((data) => setLanguages(data))
       .catch((error) => console.error(error));

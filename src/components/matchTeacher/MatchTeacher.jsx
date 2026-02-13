@@ -16,13 +16,16 @@ export function MatchTeacher() {
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("ES");
 
-    const API_BACKEND = API_URL
-    const token = localStorage.getItem("token");
-    const decodedToken = jwtDecode(token);
+  const API_BACKEND = API_URL
+  const token = localStorage.getItem("token");
+  const decodedToken = jwtDecode(token);
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch(API_USERS, { signal: controller.signal })
+    fetch(API_USERS, {
+      signal: controller.signal,
+      headers: { Authorization: `Bearer ${token}` }
+    })
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
@@ -42,103 +45,103 @@ export function MatchTeacher() {
 
   const goTo = (p) => setPage(Math.min(Math.max(1, p), totalPages));
 
-      useEffect(() => {
-      const fetchPreferences = async () => {
-        try {
-          const res = await fetch(
-            `${API_BACKEND}/preferences/${decodedToken.sub}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-  
-          if (!res.ok) {
-            throw new Error(`Error ${res.status}`);
+  useEffect(() => {
+    const fetchPreferences = async () => {
+      try {
+        const res = await fetch(
+          `${API_BACKEND}/preferences/${decodedToken.sub}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-  
-          const data = await res.json();
-  
-          // Backend: theme = true (light) | false (dark)
-          setDarkMode(!data.theme);
-          setLanguage(data.language_code);
-        } catch (error) {
-          console.error("Error cargando preferencias:", error);
+        );
+
+        if (!res.ok) {
+          throw new Error(`Error ${res.status}`);
         }
-      };
-  
-      fetchPreferences();
-    }, []);
+
+        const data = await res.json();
+
+        // Backend: theme = true (light) | false (dark)
+        setDarkMode(!data.theme);
+        setLanguage(data.language_code);
+      } catch (error) {
+        console.error("Error cargando preferencias:", error);
+      }
+    };
+
+    fetchPreferences();
+  }, []);
 
   return (
     <div className={darkMode ? "dark-mode" : ""}>
-    <div className="mainContainer">
-      <NavBar />
+      <div className="mainContainer">
+        <NavBar />
 
-      <div className="matchHeader">
-        <div className="matchMainTitlet">
-          <h1 className="mainTitlet">             {translations[language].teacherMatchModule.teacherModuleTitle}</h1>
-        </div>
-      </div>
-
-      <div className="matchMainContainer">
-        {pageItems.map((u, i) => (
-          <div
-            className="potentialMatchContainer"
-            key={u.id ?? u._id ?? `${start + i}`}
-          >
-            <div className="photoNameContainer">
-              <div className="photoContainer">
-                <img src="../../../public/assets/mi_pic.png" alt="" className="matchPhotoo" />
-              </div>
-              <div className="matchName">
-                <p className="userName">{u.first_name} {u.last_name}($25)</p>
-              </div>
-            </div>
-            <div className="userDescriptionContainer">
-              <h3 className="userTitle">Título</h3>
-              <p className="userDescription"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean nisl nisl, blandit vel elit et. </p>
-            </div>
-            <div className="connectRateContainer">
-              <div className="rateContainer">
-                <p className="ratingNumber">5.9</p>
-                <img src="../../../public/assets/star.png" alt="" className="star" />
-              </div>
-              <button className="connectButtont">
-                <p className="buttonText">             {translations[language].teacherMatchModule.hireButton}</p>
-              </button>
-            </div>
+        <div className="matchHeader">
+          <div className="matchMainTitlet">
+            <h1 className="mainTitlet">             {translations[language].teacherMatchModule.teacherModuleTitle}</h1>
           </div>
-        ))}
+        </div>
+
+        <div className="matchMainContainer">
+          {pageItems.map((u, i) => (
+            <div
+              className="potentialMatchContainer"
+              key={u.id ?? u._id ?? `${start + i}`}
+            >
+              <div className="photoNameContainer">
+                <div className="photoContainer">
+                  <img src="../../../public/assets/mi_pic.png" alt="" className="matchPhotoo" />
+                </div>
+                <div className="matchName">
+                  <p className="userName">{u.first_name} {u.last_name}($25)</p>
+                </div>
+              </div>
+              <div className="userDescriptionContainer">
+                <h3 className="userTitle">Título</h3>
+                <p className="userDescription"> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean nisl nisl, blandit vel elit et. </p>
+              </div>
+              <div className="connectRateContainer">
+                <div className="rateContainer">
+                  <p className="ratingNumber">5.9</p>
+                  <img src="../../../public/assets/star.png" alt="" className="star" />
+                </div>
+                <button className="connectButtont">
+                  <p className="buttonText">             {translations[language].teacherMatchModule.hireButton}</p>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="pagination">
+          <button
+            className="pageBtn"
+            onClick={() => goTo(page - 1)}
+            disabled={page === 1}
+            aria-label="Anterior"
+          >
+            ‹
+          </button>
+
+          <span className="pageInfo">
+            {page}/{totalPages}
+          </span>
+
+          <button
+            className="pageBtn"
+            onClick={() => goTo(page + 1)}
+            disabled={page === totalPages}
+            aria-label="Siguiente"
+          >
+            ›
+          </button>
+        </div>
+
+        <Footer />
       </div>
-
-      <div className="pagination">
-        <button
-          className="pageBtn"
-          onClick={() => goTo(page - 1)}
-          disabled={page === 1}
-          aria-label="Anterior"
-        >
-          ‹
-        </button>
-
-        <span className="pageInfo">
-           {page}/{totalPages}
-        </span>
-
-        <button
-          className="pageBtn"
-          onClick={() => goTo(page + 1)}
-          disabled={page === totalPages}
-          aria-label="Siguiente"
-        >
-          ›
-        </button>
-      </div>
-
-      <Footer />
-    </div>
     </div>
   );
 }

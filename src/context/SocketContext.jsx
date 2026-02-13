@@ -9,8 +9,10 @@ export function SocketProvider({ children }) {
   const API_BACKEND = API_URL
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
     const newSocket = io(`${API_BACKEND}`, {
       transports: ["websocket"],
+      auth: { token }
     });
 
     newSocket.on("connect", () => {
