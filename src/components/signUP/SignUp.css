@@ -117,6 +117,30 @@
   margin-top: 4px;
 }
 
+.password-strength {
+  font-size: 13px;
+  margin-top: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.strength-low {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.strength-medium {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.strength-high {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .signUpForm {

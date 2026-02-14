@@ -74,6 +74,14 @@ export function SignUp({ onSuccess }) {
 
 
 
+  const getPasswordStrength = (password) => {
+    if (!password) return { label: "", class: "" };
+    const hasSpecialChars = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    if (hasSpecialChars) return { label: "Alta", class: "strength-high" };
+    if (password.length >= 8) return { label: "Media", class: "strength-medium" };
+    return { label: "Baja", class: "strength-low" };
+  };
+
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
     if (errors[name]) {
@@ -238,6 +246,11 @@ export function SignUp({ onSuccess }) {
               </button>
             </div>
             {errors.password && <p className="error">{errors.password}</p>}
+            {formData.password && (
+              <div className={`password-strength ${getPasswordStrength(formData.password).class}`}>
+                Seguridad: <strong>{getPasswordStrength(formData.password).label}</strong>
+              </div>
+            )}
           </div>
           <div>
             <label>Confirmar contraseña</label>
