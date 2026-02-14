@@ -25,7 +25,7 @@ export function SignUp({ onSuccess }) {
     birth_date: "",
     country_id: "",
     gender_id: "",
-    role_code: "",
+    role_code: "user",
     native_lang_id: "",
     target_lang_id: "",
     description: "",
@@ -72,9 +72,7 @@ export function SignUp({ onSuccess }) {
   }, []
   )
 
-  const roles = [
-    { value: "user", label: "Usuario" },
-  ];
+
 
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
@@ -98,9 +96,6 @@ export function SignUp({ onSuccess }) {
     if (currentStep === 2) {
       if (!formData.birth_date) newErrors.birth_date = "Requerido";
       if (!formData.country_id) newErrors.country_id = "Selecciona un país";
-      if (!formData.role_code) newErrors.role_code = "Selecciona un rol"; // 👈 validación
-    }
-    if (currentStep === 3) {
       if (!formData.native_lang_id)
         newErrors.native_lang_id = "Idioma nativo requerido";
       if (!formData.target_lang_id)
@@ -276,27 +271,7 @@ export function SignUp({ onSuccess }) {
               ))}
             </select>
           </div>
-          <div>
-            <label>Rol</label>
-            <select
-              value={formData.role}
-              onChange={(e) => handleChange("role_code", e.target.value)}
-            >
-              <option value="">Selecciona tu rol</option>
-              {roles.map((r) => (
-                <option key={r.value} value={r.value}>
-                  {r.label}
-                </option>
-              ))}
-            </select>
-            {errors.role_code && <p className="error">{errors.role_code}</p>}
-          </div>
-        </div>
-      )}
 
-      {/* Paso 3 */}
-      {currentStep === 3 && (
-        <div className="signUpForm">
           <div>
             <label>Idioma nativo</label>
             <select
@@ -359,7 +334,7 @@ export function SignUp({ onSuccess }) {
             <ChevronLeft size={14} /> Anterior
           </button>
         )}
-        {currentStep < 3 ? (
+        {currentStep < 2 ? (
           <button type="button" onClick={nextStep} className="primaryBtn">
             Siguiente <ChevronRight size={14} />
           </button>
