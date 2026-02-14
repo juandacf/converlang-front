@@ -77,7 +77,7 @@ export function SignUp({ onSuccess }) {
   const getPasswordStrength = (password) => {
     if (!password) return { label: "", class: "" };
     const hasSpecialChars = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    if (hasSpecialChars) return { label: "Alta", class: "strength-high" };
+    if (hasSpecialChars && password.length >= 8) return { label: "Alta", class: "strength-high" };
     if (password.length >= 8) return { label: "Media", class: "strength-medium" };
     return { label: "Baja", class: "strength-low" };
   };
