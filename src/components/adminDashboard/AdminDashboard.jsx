@@ -23,6 +23,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 import {
   Users,
   Activity,
@@ -1154,8 +1155,10 @@ export function AdminDashboard() {
         onSuccess={handleChangePasswordSuccess}
         userId={(() => {
           try {
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
-            return user.id_user;
+            const token = localStorage.getItem('token');
+            if (!token) return null;
+            const decoded = jwtDecode(token);
+            return decoded.sub;
           } catch (e) {
             return null;
           }
