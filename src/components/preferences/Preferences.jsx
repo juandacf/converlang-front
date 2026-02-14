@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./Preferences.css";
 import { NavBar } from "../dashboard/Dashboard";
 import { API_URL } from "../../config/api";
+import { authFetch } from "../../config/authFetch";
 import { jwtDecode } from "jwt-decode";
 import { Translations } from "../../translations/translations";
 
@@ -20,7 +21,7 @@ export default function UserPreferencesCard() {
   const user_id = decodedToken.sub;
 
   useEffect(() => {
-    fetch(`${API_BACKEND}/languages`, {
+    authFetch(`${API_BACKEND}/languages`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then((res) => res.json())
@@ -33,7 +34,7 @@ export default function UserPreferencesCard() {
     const fetchPreferences = async () => {
       try {
         console.log('Fetching preferences for user:', user_id);
-        const res = await fetch(
+        const res = await authFetch(
           `${API_BACKEND}/preferences/${user_id}`,
           {
             headers: {
@@ -71,7 +72,7 @@ export default function UserPreferencesCard() {
     setLoading(true);
 
     try {
-      const res = await fetch(
+      const res = await authFetch(
         `${API_BACKEND}/preferences/${user_id}`,
         {
           method: "PATCH",

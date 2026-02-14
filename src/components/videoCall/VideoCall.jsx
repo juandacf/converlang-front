@@ -4,6 +4,7 @@ import { useSocket } from "../../context/SocketContext";
 import "./VideoCall.css";
 import { jwtDecode } from "jwt-decode";
 import { API_URL } from "../../config/api";
+import { authFetch } from "../../config/authFetch";
 import { Translations } from "../../translations/translations";
 
 export default function VideoCall() {
@@ -88,7 +89,7 @@ export default function VideoCall() {
       return;
     }
 
-    await fetch(`${API_BACKEND}/call`, {
+    await authFetch(`${API_BACKEND}/call`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -123,7 +124,7 @@ export default function VideoCall() {
      Chat
   ====================================================== */
   useEffect(() => {
-    fetch(`${API_BACKEND}/chats/${numericMatchId}`, {
+    authFetch(`${API_BACKEND}/chats/${numericMatchId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

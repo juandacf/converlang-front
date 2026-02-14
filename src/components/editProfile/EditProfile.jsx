@@ -3,6 +3,7 @@ import { jwtDecode } from "jwt-decode";
 import { NavBar } from "../dashboard/Dashboard";
 import "./editProfile.css";
 import { API_URL } from "../../config/api";
+import { authFetch } from "../../config/authFetch";
 import { Translations } from "../../translations/translations";
 
 const translations = Translations
@@ -30,7 +31,7 @@ export function EditProfile() {
   ];
 
   async function handleDeletePhoto() {
-    const res = await fetch(
+    const res = await authFetch(
       `${API_BACKEND}/users/photo/${decodedToken.sub}`,
       {
         method: "DELETE",
@@ -63,7 +64,7 @@ export function EditProfile() {
 
   // Cargar usuario
   useEffect(() => {
-    fetch(`${API_BACKEND}/users/${decodedToken.sub}`, {
+    authFetch(`${API_BACKEND}/users/${decodedToken.sub}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -93,7 +94,7 @@ export function EditProfile() {
 
   // Cargar lenguajes
   useEffect(() => {
-    fetch(`${API_BACKEND}/languages`, {
+    authFetch(`${API_BACKEND}/languages`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then((res) => res.json())
@@ -109,7 +110,7 @@ export function EditProfile() {
     const formData = new FormData();
     formData.append("photo", file);
 
-    const res = await fetch(
+    const res = await authFetch(
       `${API_BACKEND}/users/photo/${decodedToken.sub}`,
       {
         method: "PATCH",
@@ -144,7 +145,7 @@ export function EditProfile() {
 
     dataToSend.match_quantity = 10;
 
-    const res = await fetch(`${API_BACKEND}/users/${decodedToken.sub}`, {
+    const res = await authFetch(`${API_BACKEND}/users/${decodedToken.sub}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -165,7 +166,7 @@ export function EditProfile() {
   useEffect(() => {
     const fetchPreferences = async () => {
       try {
-        const res = await fetch(
+        const res = await authFetch(
           `${API_BACKEND}/preferences/${decodedToken.sub}`,
           {
             headers: {

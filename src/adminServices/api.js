@@ -2,12 +2,24 @@
 // Configuración base para todas las llamadas a la API
 
 import { API_URL } from "../config/api";
+import { isTokenExpired } from "../config/authFetch";
 
 const API_BASE_URL = API_URL
 
 class ApiService {
   constructor() {
     this.baseURL = API_BASE_URL;
+  }
+
+  /**
+   * Verifica si el token es válido antes de hacer una petición
+   */
+  checkAuth() {
+    if (isTokenExpired()) {
+      localStorage.removeItem('token');
+      window.location.href = '/';
+      throw new Error('Token expirado');
+    }
   }
 
   /**
@@ -76,6 +88,7 @@ class ApiService {
    * Método GET
    */
   async get(endpoint) {
+    this.checkAuth();
     try {
       const response = await fetch(`${this.baseURL}${endpoint}`, {
         method: 'GET',
@@ -92,6 +105,7 @@ class ApiService {
    * Método POST
    */
   async post(endpoint, data) {
+    this.checkAuth();
     try {
       const response = await fetch(`${this.baseURL}${endpoint}`, {
         method: 'POST',
@@ -109,6 +123,7 @@ class ApiService {
    * Método PUT
    */
   async put(endpoint, data) {
+    this.checkAuth();
     try {
       const response = await fetch(`${this.baseURL}${endpoint}`, {
         method: 'PUT',
@@ -126,6 +141,7 @@ class ApiService {
    * Método PATCH
    */
   async patch(endpoint, data) {
+    this.checkAuth();
     try {
       const response = await fetch(`${this.baseURL}${endpoint}`, {
         method: 'PATCH',
@@ -143,6 +159,7 @@ class ApiService {
    * Método DELETE
    */
   async delete(endpoint) {
+    this.checkAuth();
     try {
       const response = await fetch(`${this.baseURL}${endpoint}`, {
         method: 'DELETE',

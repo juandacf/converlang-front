@@ -3,6 +3,7 @@ import { NavBar, Footer } from "../dashboard/Dashboard";
 import "./MatchTeacher.css";
 import { jwtDecode } from "jwt-decode";
 import { API_URL } from "../../config/api";
+import { authFetch } from "../../config/authFetch";
 import { Translations } from "../../translations/translations";
 
 
@@ -22,7 +23,7 @@ export function MatchTeacher() {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch(API_USERS, {
+    authFetch(API_USERS, {
       signal: controller.signal,
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -48,7 +49,7 @@ export function MatchTeacher() {
   useEffect(() => {
     const fetchPreferences = async () => {
       try {
-        const res = await fetch(
+        const res = await authFetch(
           `${API_BACKEND}/preferences/${decodedToken.sub}`,
           {
             headers: {

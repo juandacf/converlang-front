@@ -5,6 +5,7 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../../context/SocketContext";
 import { API_URL } from "../../config/api";
+import { authFetch } from "../../config/authFetch";
 import { Translations } from "../../translations/translations";
 
 
@@ -39,7 +40,7 @@ export function UserChat() {
   // 1. Obtener lista de chats del usuario
   // =====================================================
   useEffect(() => {
-    fetch(`${API_BACKEND}/chats/list/${decodedToken.sub}`, {
+    authFetch(`${API_BACKEND}/chats/list/${decodedToken.sub}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then((res) => res.json())
@@ -56,7 +57,7 @@ export function UserChat() {
 
 
 
-    fetch(`${API_BACKEND}/chats/${selectedMatch.match_id}`, {
+    authFetch(`${API_BACKEND}/chats/${selectedMatch.match_id}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then((res) => res.json())
@@ -134,7 +135,7 @@ export function UserChat() {
       const user1 = Number(decodedToken.sub);
       const user2 = Number(selectedMatch.other_user_id);
 
-      const res = await fetch(
+      const res = await authFetch(
         `${API_BACKEND}/matches/deleteMatch?user_1=${user1}&user_2=${user2}`,
         {
           method: "DELETE",
@@ -173,7 +174,7 @@ export function UserChat() {
 
     try {
       // 1. Reportar al usuario
-      const res = await fetch(
+      const res = await authFetch(
         `${API_BACKEND}/users/report/${selectedMatch.other_user_id}`,
         {
           method: "POST",
@@ -190,7 +191,7 @@ export function UserChat() {
       const user1 = Number(decodedToken.sub);
       const user2 = Number(selectedMatch.other_user_id);
 
-      await fetch(
+      await authFetch(
         `${API_BACKEND}/matches/deleteMatch?user_1=${user1}&user_2=${user2}`,
         {
           method: "DELETE",
@@ -216,7 +217,7 @@ export function UserChat() {
   useEffect(() => {
     const fetchPreferences = async () => {
       try {
-        const res = await fetch(
+        const res = await authFetch(
           `${API_BACKEND}/preferences/${decodedToken.sub}`,
           {
             headers: {

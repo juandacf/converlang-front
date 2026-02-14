@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { API_URL } from "../../config/api";
+import { authFetch } from "../../config/authFetch";
 
 export function TeacherDashboard() {
     // ── Heartbeat: reportar que el teacher está activo ──
@@ -8,7 +9,7 @@ export function TeacherDashboard() {
             const token = localStorage.getItem('token');
             if (!token) return;
             try {
-                await fetch(`${API_URL}/auth/heartbeat`, {
+                await authFetch(`${API_URL}/auth/heartbeat`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });

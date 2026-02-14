@@ -3,6 +3,7 @@ import { NavBar, Footer } from "../dashboard/Dashboard";
 import "./MatchUser.css";
 import { jwtDecode } from "jwt-decode";
 import { API_URL } from "../../config/api";
+import { authFetch } from "../../config/authFetch";
 import { Translations } from "../../translations/translations";
 
 export function MatchUser() {
@@ -28,7 +29,7 @@ export function MatchUser() {
   useEffect(() => {
     const controller = new AbortController();
 
-    fetch(API_USERS, {
+    authFetch(API_USERS, {
       signal: controller.signal,
       headers: {
         'Authorization': `Bearer ${token}`
@@ -81,7 +82,7 @@ export function MatchUser() {
 
         // Fetch del título más reciente para cada usuario
         userData.forEach((user) => {
-          fetch(`${API_BACKEND}/titles/latest/${user.id_user}`, {
+          authFetch(`${API_BACKEND}/titles/latest/${user.id_user}`, {
             headers: { 'Authorization': `Bearer ${token}` }
           })
             .then((r) => r.ok ? r.json() : null)
@@ -116,7 +117,7 @@ export function MatchUser() {
         user_2: user2,
       };
 
-      const res = await fetch(API_SEND_LIKE, {
+      const res = await authFetch(API_SEND_LIKE, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -158,7 +159,7 @@ export function MatchUser() {
   useEffect(() => {
     const fetchPreferences = async () => {
       try {
-        const res = await fetch(
+        const res = await authFetch(
           `${API_BACKEND}/preferences/${decodedToken.sub}`,
           {
             headers: {

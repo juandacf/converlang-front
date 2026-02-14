@@ -13,6 +13,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
+import { authFetch } from "../../config/authFetch";
 import { Translations } from "../../translations/translations";
 import { io } from "socket.io-client";
 
@@ -42,7 +43,7 @@ export function Dashboard({ user }) {
   useEffect(() => {
     const controller = new AbortController();
 
-    fetch(`${API_BACKEND}/users/${decodedToken.sub}`, {
+    authFetch(`${API_BACKEND}/users/${decodedToken.sub}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -70,7 +71,7 @@ export function Dashboard({ user }) {
       const t = localStorage.getItem('token');
       if (!t) return;
       try {
-        await fetch(`${API_BACKEND}/auth/heartbeat`, {
+        await authFetch(`${API_BACKEND}/auth/heartbeat`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${t}` }
         });
@@ -84,7 +85,7 @@ export function Dashboard({ user }) {
   useEffect(() => {
     const controller = new AbortController();
 
-    fetch(`${API_BACKEND}/users/getCurrentMatches/${decodedToken.sub}`, {
+    authFetch(`${API_BACKEND}/users/getCurrentMatches/${decodedToken.sub}`, {
       signal: controller.signal,
       headers: {
         'Authorization': `Bearer ${token}`
@@ -109,7 +110,7 @@ export function Dashboard({ user }) {
   useEffect(() => {
     const controller = new AbortController();
 
-    fetch(`${API_BACKEND}/call/${decodedToken.sub}`, {
+    authFetch(`${API_BACKEND}/call/${decodedToken.sub}`, {
       signal: controller.signal,
       headers: {
         'Authorization': `Bearer ${token}`
@@ -131,7 +132,7 @@ export function Dashboard({ user }) {
   useEffect(() => {
     const fetchPreferences = async () => {
       try {
-        const res = await fetch(
+        const res = await authFetch(
           `${API_BACKEND}/preferences/${decodedToken.sub}`,
           {
             headers: {
@@ -161,7 +162,7 @@ export function Dashboard({ user }) {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await fetch(
+        const res = await authFetch(
           `${API_BACKEND}/notifications/${decodedToken.sub}`,
           {
             headers: {
@@ -219,7 +220,7 @@ export function Dashboard({ user }) {
   const handleNotificationClick = async (notification) => {
     // Marcar como leída
     try {
-      await fetch(
+      await authFetch(
         `${API_BACKEND}/notifications/${notification.notification_id}/read`,
         {
           method: 'PUT',
@@ -261,7 +262,7 @@ export function Dashboard({ user }) {
     const user2 = matchedUserId;
 
     try {
-      const response = await fetch(
+      const response = await authFetch(
         `${API_BACKEND}/matches/deleteMatch?user_1=${user1}&user_2=${user2}`,
         {
           method: "DELETE",
@@ -513,7 +514,7 @@ export function Footer() {
   useEffect(() => {
     const fetchPreferences = async () => {
       try {
-        const res = await fetch(
+        const res = await authFetch(
           `${API_BACKEND}/preferences/${decodedToken.sub}`,
           {
             headers: {
