@@ -84,8 +84,16 @@ export function SignUp({ onSuccess }) {
   const validateStep = () => {
     const newErrors = {};
     if (currentStep === 1) {
-      if (!formData.first_name) newErrors.first_name = "Nombre requerido";
-      if (!formData.last_name) newErrors.last_name = "Apellido requerido";
+      if (!formData.first_name) {
+        newErrors.first_name = "Nombre requerido";
+      } else if (formData.first_name.length < 3) {
+        newErrors.first_name = "Mínimo 3 caracteres";
+      }
+      if (!formData.last_name) {
+        newErrors.last_name = "Apellido requerido";
+      } else if (formData.last_name.length < 3) {
+        newErrors.last_name = "Mínimo 3 caracteres";
+      }
       if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/))
         newErrors.email = "Correo inválido";
       if (formData.password.length < 8)
@@ -94,7 +102,23 @@ export function SignUp({ onSuccess }) {
         newErrors.confirmPassword = "Las contraseñas no coinciden";
     }
     if (currentStep === 2) {
-      if (!formData.birth_date) newErrors.birth_date = "Requerido";
+      if (!formData.birth_date) {
+        newErrors.birth_date = "Requerido";
+      } else {
+        const birthDate = new Date(formData.birth_date);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (
+          monthDiff < 0 ||
+          (monthDiff === 0 && today.getDate() < birthDate.getDate())
+        ) {
+          age--;
+        }
+        if (age < 15) {
+          newErrors.birth_date = "Debes tener al menos 15 años";
+        }
+      }
       if (!formData.country_id) newErrors.country_id = "Selecciona un país";
       if (!formData.native_lang_id)
         newErrors.native_lang_id = "Idioma nativo requerido";
@@ -145,7 +169,12 @@ export function SignUp({ onSuccess }) {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Error al crear cuenta");
+      if (!res.ok) {
+        const errorMessage = Array.isArray(data.message)
+          ? data.message.join(", ")
+          : data.message || "Error al crear cuenta";
+        throw new Error(errorMessage);
+      }
 
       alert("¡Cuenta creada con éxito!");
       onSuccess(); // 👈 Llama a la función del padre
