@@ -10,6 +10,8 @@ import { AdminDashboard } from "./components/adminDashboard/AdminDashboard";
 import { EditProfile } from "./components/editProfile/EditProfile";
 import VideoCall from "./components/videoCall/VideoCall";
 import UserPreferencesCard from "./components/preferences/Preferences";
+import { UserRoute } from "./components/guards/UserRoute";
+import { AdminRoute } from "./components/guards/AdminRoute";
 
 export default function App() {
 
@@ -22,15 +24,19 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Authentication />} />
-        <Route path="/dashboard" element={<Dashboard user={userExample} />} />
-        <Route path="/matchUser" element={<MatchUser />} />
-        <Route path="/matchTeacher" element={<MatchTeacher />} />
-        <Route path="/userChat" element={<UserChat />} />
-        <Route path="/teacherDashboard" element={<TeacherDashboard />} />
-        <Route path="/adminDashboard" element={<AdminDashboard />} />
-        <Route path="/editProfile" element={<EditProfile />} />
-        <Route path="/videocall/:match_id" element={<VideoCall />} />
-        <Route path="/preferences" element={<UserPreferencesCard />} />
+
+        {/* Rutas de usuario - admin no puede acceder */}
+        <Route path="/dashboard" element={<UserRoute><Dashboard user={userExample} /></UserRoute>} />
+        <Route path="/matchUser" element={<UserRoute><MatchUser /></UserRoute>} />
+        <Route path="/matchTeacher" element={<UserRoute><MatchTeacher /></UserRoute>} />
+        <Route path="/userChat" element={<UserRoute><UserChat /></UserRoute>} />
+        <Route path="/teacherDashboard" element={<UserRoute><TeacherDashboard /></UserRoute>} />
+        <Route path="/editProfile" element={<UserRoute><EditProfile /></UserRoute>} />
+        <Route path="/videocall/:match_id" element={<UserRoute><VideoCall /></UserRoute>} />
+        <Route path="/preferences" element={<UserRoute><UserPreferencesCard /></UserRoute>} />
+
+        {/* Rutas de admin - usuario no puede acceder */}
+        <Route path="/adminDashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
       </Routes>
     </BrowserRouter>
   )
