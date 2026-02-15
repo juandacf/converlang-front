@@ -10,21 +10,23 @@ import { Translations } from "../../translations/translations";
 export default function VideoCall() {
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("ES");
-  const token1 = localStorage.getItem("token");
-  const decodedToken = jwtDecode(token1);
+
   const { match_id } = useParams();
   const navigate = useNavigate();
   const socket = useSocket();
   const location = useLocation();
   const selectedMatch = location.state?.selectedMatch;
-  const translations = Translations
+  const translations = Translations;
+
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
   const peerRef = useRef(null);
   const localStreamRef = useRef(null);
 
+  // Refs para controlar el estado de la conexión
   const isCallerRef = useRef(false);
   const hasLocalOfferRef = useRef(false);
+  const isNegotiatingRef = useRef(false);
 
   // ⬇️ GUARDA CUÁNDO EMPIEZA LA LLAMADA
   const callStartTimeRef = useRef(null);
@@ -51,6 +53,220 @@ export default function VideoCall() {
     Number(m?.match_id ?? m?.matchId ?? m?.matchID);
   const getMsgSenderId = (m) =>
     Number(m?.sender_id ?? m?.senderId ?? m?.senderID);
+
+  /* ======================================================
+     1. Obtener Media (Cámara/Micrófono) de forma robusta
+  ====================================================== */
+  async function getMedia() {
+    try {
+      // Intenta video + audio
+      return await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    } catch (err1) {
+      console.warn("Fallo al obtener video+audio:", err1);
+      try {
+        // Intenta solo audio
+        return await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+      } catch (err2) {
+        console.warn("Fallo al obtener audio:", err2);
+        try {
+          // Intenta solo video
+          return await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        } catch (err3) {
+          console.error("No se pudo obtener ni video ni audio", err3);
+          return null; // El usuario estará en modo "espectador" (sin tracks locales)
+        }
+      }
+    }
+  }
+
+  /* ======================================================
+     2. Inicializar WebRTC
+  ====================================================== */
+  async function initWebRTC() {
+    // 1. Obtener stream local (puede ser null si no hay disp.)
+    const stream = await getMedia();
+    localStreamRef.current = stream;
+
+    // Mostrar en video local (si hay video track)
+    if (localVideoRef.current && stream) {
+      localVideoRef.current.srcObject = stream;
+      // Truco: a veces hay que mutear el local para evitar eco local (aunque ya esté muted en HTML)
+      localVideoRef.current.muted = true;
+    }
+
+    // 2. Crear PeerConnection
+    peerRef.current = new RTCPeerConnection(iceServers);
+
+    // 3. Agregar tracks locales al Peer
+    if (stream) {
+      stream.getTracks().forEach((track) => {
+        peerRef.current.addTrack(track, stream);
+      });
+    }
+
+    // 4. Manejar tracks remotos (u otros eventos)
+    peerRef.current.ontrack = (event) => {
+      console.log("Track remoto recibido:", event.streams);
+      if (remoteVideoRef.current && event.streams[0]) {
+        remoteVideoRef.current.srcObject = event.streams[0];
+      }
+    };
+
+    // 5. Manejar candidatos ICE
+    peerRef.current.onicecandidate = (event) => {
+      if (event.candidate) {
+        socket.emit("webrtcIceCandidate", {
+          matchId: numericMatchId,
+          candidate: event.candidate,
+        });
+      }
+    };
+  }
+
+  // Helper: Crear oferta
+  async function createOffer() {
+    if (!peerRef.current) return;
+    try {
+      isNegotiatingRef.current = true;
+      const offer = await peerRef.current.createOffer();
+      await peerRef.current.setLocalDescription(offer);
+
+      hasLocalOfferRef.current = true;
+      socket.emit("webrtcOffer", {
+        matchId: numericMatchId,
+        offer: peerRef.current.localDescription
+      });
+    } catch (err) {
+      console.error("Error creando oferta:", err);
+    } finally {
+      isNegotiatingRef.current = false;
+    }
+  }
+
+  // Helper: Crear respuesta
+  async function createAnswer() {
+    if (!peerRef.current) return;
+    try {
+      isNegotiatingRef.current = true;
+      const answer = await peerRef.current.createAnswer();
+      await peerRef.current.setLocalDescription(answer);
+
+      socket.emit("webrtcAnswer", {
+        matchId: numericMatchId,
+        answer: peerRef.current.localDescription,
+      });
+    } catch (err) {
+      console.error("Error creando respuesta:", err);
+    } finally {
+      isNegotiatingRef.current = false;
+    }
+  }
+
+  /* ======================================================
+     3. Ciclo de vida: Join Room + Signal Listeners
+  ====================================================== */
+  useEffect(() => {
+    if (!socket || !numericMatchId) return;
+
+    // A. Inicializar recursos locales
+    initWebRTC().then(() => {
+      // B. Unirse a la sala
+      socket.emit("joinCallRoom", numericMatchId);
+
+      // C. Anunciar "estoy listo" para ver si hay alguien más
+      //    (o esperar a que el otro se una)
+      //    Nota: El backend retransmite 'callRequest' o 'incomingCall'.
+      //    Podemos enviar un 'callRequest' genérico para iniciar el handshake.
+      socket.emit("callRequest", {
+        matchId: numericMatchId,
+        caller: { userId } // data minima
+      });
+
+      callStartTimeRef.current = new Date().toISOString();
+    });
+
+    // --- Listeners de Signaling ---
+
+    // 1. Otro usuario se unió o envió solicitud
+    socket.on("incomingCall", async ({ caller }) => {
+      console.log("Recibida incomingCall de:", caller);
+      // Aceptamos automáticamente para establecer P2P
+      // Decidir quién es Caller basado en ID para evitar colisiones
+      const imCaller = userId > (selectedMatch?.other_user_id || 0);
+      isCallerRef.current = imCaller;
+
+      socket.emit("callAccepted", { matchId: numericMatchId });
+
+      if (imCaller) {
+        console.log("Soy el Caller, crearé oferta...");
+        await createOffer();
+      } else {
+        console.log("Soy el Callee, esperaré oferta...");
+      }
+    });
+
+    // 2. Alguien aceptó mi llamada (o handshake inicial)
+    socket.on("callAccepted", async () => {
+      console.log("callAccepted recibido.");
+      // Si yo soy el caller y aún no he ofertado, oferto.
+      // (La lógica de arriba en incomingCall suele cubrir el inicio, 
+      //  pero esto cubre si el otro usuario ya estaba en la sala y responde a mi join)
+
+      const imCaller = userId > (selectedMatch?.other_user_id || 0);
+      // Solo si soy caller y NO he ofertado aun
+      if (imCaller && !hasLocalOfferRef.current) {
+        console.log("Soy Caller (por callAccepted), creando oferta...");
+        await createOffer();
+      }
+    });
+
+    // 3. Recibir Oferta
+    socket.on("webrtcOffer", async ({ offer }) => {
+      if (!peerRef.current) return;
+      console.log("Oferta recibida");
+
+      // Si recibimos oferta, somos Callee (o collision recovery, WebRTC lo maneja si hay glare)
+      await peerRef.current.setRemoteDescription(new RTCSessionDescription(offer));
+      await createAnswer();
+    });
+
+    // 4. Recibir Respuesta
+    socket.on("webrtcAnswer", async ({ answer }) => {
+      if (!peerRef.current) return;
+      console.log("Respuesta recibida");
+      await peerRef.current.setRemoteDescription(new RTCSessionDescription(answer));
+    });
+
+    // 5. Recibir Candidato ICE
+    socket.on("webrtcIceCandidate", async ({ candidate }) => {
+      if (!peerRef.current) return;
+      try {
+        await peerRef.current.addIceCandidate(new RTCIceCandidate(candidate));
+      } catch (err) {
+        console.error("Error al agregar ICE candidate", err);
+      }
+    });
+
+    // 6. Fin de llamada
+    socket.on("callEnded", () => {
+      console.log("El otro usuario colgó.");
+      cleanupCall();
+      alert("La llamada ha finalizado.");
+      navigate(-1);
+    });
+
+    return () => {
+      socket.off("incomingCall");
+      socket.off("callAccepted");
+      socket.off("webrtcOffer");
+      socket.off("webrtcAnswer");
+      socket.off("webrtcIceCandidate");
+      socket.off("callEnded");
+      cleanupCall();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket, numericMatchId, userId]);
+
 
   /* ======================================================
      Cleanup llamada
