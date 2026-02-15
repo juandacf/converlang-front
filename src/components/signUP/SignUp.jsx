@@ -125,6 +125,8 @@ export function SignUp({ onSuccess }) {
         }
         if (age < 15) {
           newErrors.birth_date = "Debes tener al menos 15 años";
+        } else if (age > 90) {
+          newErrors.birth_date = "La edad máxima permitida es 90 años";
         }
       }
       if (!formData.country_id) newErrors.country_id = "Selecciona un país";
