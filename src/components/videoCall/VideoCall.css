@@ -5,7 +5,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   overflow-x: hidden;
 }
@@ -87,34 +88,70 @@ html, body {
 /* ===============================
    BOTÓN TERMINAR LLAMADA
 ================================ */
-.endCallBtn {
+/* ===============================
+   CONTROLES (Mute, Cam, End)
+================================ */
+.controlsContainer {
   position: absolute;
-  bottom: 1rem;
-  left: 1rem;
+  bottom: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
 
-  padding: 0.6rem 1.2rem;
-  border-radius: var(--radius-pill);
-  border: none;
-
-  background: #ef4444;
-  color: white;
-  font-weight: 600;
-  font-size: 0.85rem;
-
-  cursor: pointer;
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
   z-index: 30;
 
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-  transition: transform 0.15s ease, background 0.15s ease;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  /* Pill shape */
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
-.endCallBtn:hover {
-  background: #dc2626;
+.controlBtn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+.controlBtn:hover {
+  background: rgba(255, 255, 255, 0.3);
   transform: scale(1.05);
 }
 
-.endCallBtn:active {
-  transform: scale(0.95);
+/* Estado "apagado" (rojo) para mic/cam */
+.controlBtn.off {
+  background: #ef4444;
+  color: white;
+  position: relative;
+}
+
+/* Botón de colgar específico */
+.hangupBtn {
+  background: #dc2626;
+  width: 52px;
+  height: 52px;
+  font-size: 1.5rem;
+  margin-left: 0.5rem;
+}
+
+.hangupBtn:hover {
+  background: #b91c1c;
+  transform: scale(1.1);
 }
 
 /* ===============================
@@ -201,7 +238,8 @@ html, body {
   border: 1px solid #dbeafe;
 
   padding-left: 1rem;
-  font-size: 16px; /* ✅ evita zoom iOS */
+  font-size: 16px;
+  /* ✅ evita zoom iOS */
 
   outline: none;
 }
@@ -256,7 +294,8 @@ html, body {
     max-width: none;
     width: 100%;
 
-    aspect-ratio: 16 / 10; /* mejor en móvil */
+    aspect-ratio: 16 / 10;
+    /* mejor en móvil */
   }
 
   .pipVideo {
@@ -281,7 +320,8 @@ html, body {
     padding: 0.9rem;
 
     min-height: 0;
-    overflow: hidden; /* ✅ para que el scroll se quede dentro */
+    overflow: hidden;
+    /* ✅ para que el scroll se quede dentro */
   }
 
   .videoChatMessages {

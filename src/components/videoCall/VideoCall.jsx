@@ -23,6 +23,10 @@ export default function VideoCall() {
   const peerRef = useRef(null);
   const localStreamRef = useRef(null);
 
+  // States para controles de media
+  const [isMicOn, setIsMicOn] = useState(true);
+  const [isCameraOn, setIsCameraOn] = useState(true);
+
   // Refs para controlar el estado de la conexión
   const isCallerRef = useRef(false);
   const hasLocalOfferRef = useRef(false);
@@ -87,6 +91,18 @@ export default function VideoCall() {
     const stream = await getMedia();
     localStreamRef.current = stream;
 
+    // Sincronizar estado inicial de botones con los tracks obtenidos
+    if (stream) {
+      const videoTracks = stream.getVideoTracks();
+      const audioTracks = stream.getAudioTracks();
+
+      setIsCameraOn(videoTracks.length > 0 && videoTracks[0].enabled);
+      setIsMicOn(audioTracks.length > 0 && audioTracks[0].enabled);
+    } else {
+      setIsCameraOn(false);
+      setIsMicOn(false);
+    }
+
     // Mostrar en video local (si hay video track)
     if (localVideoRef.current && stream) {
       localVideoRef.current.srcObject = stream;
@@ -122,6 +138,29 @@ export default function VideoCall() {
       }
     };
   }
+
+  // Funciones para Toggle Hub
+  const toggleMic = () => {
+    const stream = localStreamRef.current;
+    if (stream) {
+      const audioTracks = stream.getAudioTracks();
+      if (audioTracks.length > 0) {
+        audioTracks.forEach(t => t.enabled = !t.enabled);
+        setIsMicOn(audioTracks[0].enabled);
+      }
+    }
+  };
+
+  const toggleCamera = () => {
+    const stream = localStreamRef.current;
+    if (stream) {
+      const videoTracks = stream.getVideoTracks();
+      if (videoTracks.length > 0) {
+        videoTracks.forEach(t => t.enabled = !t.enabled);
+        setIsCameraOn(videoTracks[0].enabled);
+      }
+    }
+  };
 
   // Helper: Crear oferta
   async function createOffer() {
@@ -430,9 +469,32 @@ export default function VideoCall() {
               playsInline
             />
 
-            <button className="endCallBtn" onClick={endCall}>
-              🔴 {translations[language].videoModule.endCallButton}
-            </button>
+            {/* Controles: Mic, Cam, Colgar */}
+            <div className="controlsContainer">
+              <button
+                className={`controlBtn ${!isMicOn ? 'off' : ''}`}
+                onClick={toggleMic}
+                title="Toggle Microphone"
+              >
+                {isMicOn ? '🎤' : '🔇'}
+              </button>
+
+              <button
+                className={`controlBtn ${!isCameraOn ? 'off' : ''}`}
+                onClick={toggleCamera}
+                title="Toggle Camera"
+              >
+                {isCameraOn ? '📷' : '🚫'}
+              </button>
+
+              <button
+                className="controlBtn hangupBtn"
+                onClick={endCall}
+                title="End Call"
+              >
+                🔴
+              </button>
+            </div>
           </div>
         </div>
 
