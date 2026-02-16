@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './App.css'
 import { Authentication } from './components/authentication/Authentication'
+import { Login } from './components/login/Login';
+import { SignUp } from './components/signUP/SignUp';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { MatchUser } from './components/matchUser/MatchUser';
 import { MatchTeacher } from './components/matchTeacher/MatchTeacher';
@@ -24,6 +26,8 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Authentication />} />
+        <Route path="/login" element={<div className="auth-page"><Login /></div>} />
+        <Route path="/signup" element={<div className="auth-page"><SignUp /></div>} />
 
         {/* Rutas de usuario - admin no puede acceder */}
         <Route path="/dashboard" element={<UserRoute><Dashboard user={userExample} /></UserRoute>} />

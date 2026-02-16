@@ -196,75 +196,97 @@ export function SignUp({ onSuccess }) {
 
   return (
     <div className="SignUpContainer">
-      <h3>Registro</h3>
+      <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+        <img src="/assets/img/converlang_horizontal.png" alt="Converlang" style={{ height: '100px', marginBottom: '1rem', mixBlendMode: 'multiply' }} />
+        <h3>Crear cuenta</h3>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Paso {currentStep} de 2</p>
+      </div>
 
       {/* Paso 1 */}
       {currentStep === 1 && (
         <div className="signUpForm">
           <div>
-            <label>Nombre</label>
+            <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>Nombre</label>
             <input
               type="text"
               value={formData.first_name}
               onChange={(e) => handleChange("first_name", e.target.value)}
+              style={{
+                width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #e5e7eb', background: '#f9fafb'
+              }}
             />
-            {errors.first_name && <p className="error">{errors.first_name}</p>}
+            {errors.first_name && <p className="error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '0.25rem' }}>{errors.first_name}</p>}
           </div>
           <div>
-            <label>Apellido</label>
+            <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>Apellido</label>
             <input
               type="text"
               value={formData.last_name}
               onChange={(e) => handleChange("last_name", e.target.value)}
+              style={{
+                width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #e5e7eb', background: '#f9fafb'
+              }}
             />
-            {errors.last_name && <p className="error">{errors.last_name}</p>}
+            {errors.last_name && <p className="error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '0.25rem' }}>{errors.last_name}</p>}
           </div>
-          <div>
-            <label>
-              <Mail size={14} className="icon" /> Correo
+          <div style={{ gridColumn: '1 / -1' }}>
+            <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>
+              <Mail size={14} className="icon" style={{ marginRight: '5px' }} /> Correo
             </label>
             <input
               type="email"
               value={formData.email}
               onChange={(e) => handleChange("email", e.target.value)}
+              style={{
+                width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #e5e7eb', background: '#f9fafb'
+              }}
             />
-            {errors.email && <p className="error">{errors.email}</p>}
+            {errors.email && <p className="error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '0.25rem' }}>{errors.email}</p>}
           </div>
           <div>
-            <label>
-              <Lock size={14} className="icon" /> Contraseña
+            <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>
+              <Lock size={14} className="icon" style={{ marginRight: '5px' }} /> Contraseña
             </label>
-            <div className="passwordField">
+            <div className="passwordField" style={{ position: 'relative' }}>
               <input
                 type={showPassword ? "text" : "password"}
                 value={formData.password}
                 onChange={(e) => handleChange("password", e.target.value)}
+                style={{
+                  width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #e5e7eb', background: '#f9fafb'
+                }}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280'
+                }}
               >
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
-            {errors.password && <p className="error">{errors.password}</p>}
+            {errors.password && <p className="error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '0.25rem' }}>{errors.password}</p>}
             {formData.password && (
-              <div className={`password-strength ${getPasswordStrength(formData.password).class}`}>
+              <div className={`password-strength ${getPasswordStrength(formData.password).class}`} style={{ fontSize: '0.8rem', marginTop: '0.5rem' }}>
                 Seguridad: <strong>{getPasswordStrength(formData.password).label}</strong>
               </div>
             )}
           </div>
           <div>
-            <label>Confirmar contraseña</label>
+            <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>Confirmar contraseña</label>
             <input
               type="password"
               value={formData.confirmPassword}
               onChange={(e) =>
                 handleChange("confirmPassword", e.target.value)
               }
+              style={{
+                width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #e5e7eb', background: '#f9fafb'
+              }}
             />
             {errors.confirmPassword && (
-              <p className="error">{errors.confirmPassword}</p>
+              <p className="error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '0.25rem' }}>{errors.confirmPassword}</p>
             )}
           </div>
         </div>
@@ -274,23 +296,29 @@ export function SignUp({ onSuccess }) {
       {currentStep === 2 && (
         <div className="signUpForm">
           <div>
-            <label>
-              <Calendar size={14} className="icon" /> Fecha de nacimiento
+            <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>
+              <Calendar size={14} className="icon" style={{ marginRight: '5px' }} /> Fecha de nacimiento
             </label>
             <input
               type="date"
               value={formData.birth_date}
               onChange={(e) => handleChange("birth_date", e.target.value)}
+              style={{
+                width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #e5e7eb', background: '#f9fafb'
+              }}
             />
-            {errors.birth_date && <p className="error">{errors.birth_date}</p>}
+            {errors.birth_date && <p className="error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '0.25rem' }}>{errors.birth_date}</p>}
           </div>
           <div>
-            <label>
-              <MapPin size={14} className="icon" /> País
+            <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>
+              <MapPin size={14} className="icon" style={{ marginRight: '5px' }} /> País
             </label>
             <select
               value={formData.country_id}
               onChange={(e) => handleChange("country_id", e.target.value)}
+              style={{
+                width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #e5e7eb', background: '#f9fafb'
+              }}
             >
               <option value="">Selecciona</option>
               {countries.map((c) => (
@@ -299,13 +327,16 @@ export function SignUp({ onSuccess }) {
                 </option>
               ))}
             </select>
-            {errors.country_id && <p className="error">{errors.country_id}</p>}
+            {errors.country_id && <p className="error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '0.25rem' }}>{errors.country_id}</p>}
           </div>
           <div>
-            <label>Género</label>
+            <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>Género</label>
             <select
               value={formData.gender_id}
               onChange={(e) => handleChange("gender_id", e.target.value)}
+              style={{
+                width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #e5e7eb', background: '#f9fafb'
+              }}
             >
               <option value="">Prefiero no decir</option>
               {genders.map((g) => (
@@ -317,12 +348,15 @@ export function SignUp({ onSuccess }) {
           </div>
 
           <div>
-            <label>Idioma nativo</label>
+            <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>Idioma nativo</label>
             <select
               value={formData.native_lang_id}
               onChange={(e) =>
                 handleChange("native_lang_id", e.target.value)
               }
+              style={{
+                width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #e5e7eb', background: '#f9fafb'
+              }}
             >
               <option value="">Selecciona</option>
               {
@@ -333,16 +367,19 @@ export function SignUp({ onSuccess }) {
                 ))}
             </select>
             {errors.native_lang_id && (
-              <p className="error">{errors.native_lang_id}</p>
+              <p className="error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '0.25rem' }}>{errors.native_lang_id}</p>
             )}
           </div>
           <div>
-            <label>Idioma a aprender</label>
+            <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>Idioma a aprender</label>
             <select
               value={formData.target_lang_id}
               onChange={(e) =>
                 handleChange("target_lang_id", e.target.value)
               }
+              style={{
+                width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #e5e7eb', background: '#f9fafb'
+              }}
             >
               <option value="">Selecciona</option>
               {languages
@@ -354,11 +391,11 @@ export function SignUp({ onSuccess }) {
                 ))}
             </select>
             {errors.target_lang_id && (
-              <p className="error">{errors.target_lang_id}</p>
+              <p className="error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '0.25rem' }}>{errors.target_lang_id}</p>
             )}
           </div>
-          <div>
-            <label>Sobre ti</label>
+          <div style={{ gridColumn: '1 / -1' }}>
+            <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>Sobre ti</label>
             <textarea
               value={formData.description}
               onChange={(e) =>
@@ -366,27 +403,35 @@ export function SignUp({ onSuccess }) {
               }
               placeholder="Cuéntanos algo..."
               rows={3}
+              style={{
+                width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #e5e7eb', background: '#f9fafb', fontFamily: 'inherit'
+              }}
             />
           </div>
         </div>
       )}
 
       {/* Botones navegación */}
-      <div className="navButtons">
-        {currentStep > 1 && (
-          <button type="button" onClick={prevStep} className="secondaryBtn">
-            <ChevronLeft size={14} /> Anterior
-          </button>
-        )}
+      <div className="navButtons" style={{ marginTop: '2rem', display: 'flex', gap: '1rem', justifyContent: 'space-between' }}>
+
+        <button type="button" onClick={prevStep} className="btn btn-ghost" disabled={currentStep === 1} style={{ visibility: currentStep === 1 ? 'hidden' : 'visible', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <ChevronLeft size={16} /> Anterior
+        </button>
+
         {currentStep < 2 ? (
-          <button type="button" onClick={nextStep} className="primaryBtn">
-            Siguiente <ChevronRight size={14} />
+          <button type="button" onClick={nextStep} className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            Siguiente <ChevronRight size={16} />
           </button>
         ) : (
-          <button type="button" onClick={handleSubmit} className="primaryBtn">
-            Crear cuenta <MessageCircle size={14} />
+          <button type="button" onClick={handleSubmit} className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            Crear cuenta <MessageCircle size={16} />
           </button>
         )}
+      </div>
+
+      <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.9rem' }}>
+        <span style={{ color: 'var(--text-muted)' }}>¿Ya tienes cuenta? </span>
+        <a href="/login" style={{ color: 'var(--primary-color)', fontWeight: '600', textDecoration: 'none' }}>Inicia Sesión</a>
       </div>
     </div>
   );
