@@ -252,6 +252,28 @@ export function Dashboard({ user }) {
     setShowNotifications(false);
   };
 
+  // Marcar todas como leídas
+  const handleMarkAllAsRead = async () => {
+    try {
+      const res = await authFetch(
+        `${API_BACKEND}/notifications/${decodedToken.sub}/read-all`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.ok) {
+        setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+        setUnreadCount(0);
+      }
+    } catch (error) {
+      console.error("Error marcando todas las notificaciones como leídas:", error);
+    }
+  };
+
   const handleDeleteMatch = async (matchedUserId) => {
     const confirmDelete = window.confirm(
       translations[language].dashboard.matchSection.deleteMatchWarning
@@ -301,7 +323,13 @@ export function Dashboard({ user }) {
                 className="navBarElement"
                 src="../../../public/assets/notification.png"
                 alt="notifications"
-                onClick={() => setShowNotifications(!showNotifications)}
+                onClick={() => {
+                  const nextShow = !showNotifications;
+                  setShowNotifications(nextShow);
+                  if (nextShow && unreadCount > 0) {
+                    handleMarkAllAsRead();
+                  }
+                }}
               />
               {unreadCount > 0 && (
                 <span className="notificationBadge">{unreadCount}</span>
