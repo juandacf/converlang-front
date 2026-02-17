@@ -211,6 +211,7 @@ export default function VideoCall() {
     initWebRTC().then(() => {
       // B. Unirse a la sala
       socket.emit("joinCallRoom", numericMatchId);
+      socket.emit("joinRoom", numericMatchId); // Unirse a la sala de chat tambien
 
       // C. Anunciar "estoy listo" para ver si hay alguien más
       //    (o esperar a que el otro se una)
@@ -294,6 +295,18 @@ export default function VideoCall() {
       navigate(-1);
     });
 
+    // 7. Recibir Mensajes de Chat
+    const handleNewMessage = (msg) => {
+      if (getMsgMatchId(msg) === numericMatchId) {
+        setMessages((prev) => {
+          // Evitar duplicados si el mensaje ya está en la lista (por ejemplo, el que enviamos localmente como optimista)
+          if (prev.find((m) => m.message_id === msg.message_id)) return prev;
+          return [...prev, msg];
+        });
+      }
+    };
+    socket.on("newMessage", handleNewMessage);
+
     return () => {
       socket.off("incomingCall");
       socket.off("callAccepted");
@@ -301,6 +314,7 @@ export default function VideoCall() {
       socket.off("webrtcAnswer");
       socket.off("webrtcIceCandidate");
       socket.off("callEnded");
+      socket.off("newMessage", handleNewMessage);
       cleanupCall();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -425,17 +439,6 @@ export default function VideoCall() {
   ====================================================== */
   const sendMessage = () => {
     if (!draft.trim()) return;
-
-    setMessages((p) => [
-      ...p,
-      {
-        message_id: `tmp_${Date.now()}`,
-        sender_id: userId,
-        match_id: numericMatchId,
-        message: draft,
-        __pending: true,
-      },
-    ]);
 
     socket.emit("sendMessage", {
       matchId: numericMatchId,

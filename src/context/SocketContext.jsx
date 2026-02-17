@@ -16,7 +16,6 @@ export function SocketProvider({ children }) {
     });
 
     newSocket.on("connect", () => {
-      console.log("🔌 Socket conectado:", newSocket.id);
       setSocket(newSocket); // 🔥 Actualizamos el estado, react hace re-render
     });
 
