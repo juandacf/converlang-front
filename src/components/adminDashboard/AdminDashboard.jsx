@@ -334,7 +334,6 @@ const UserDistributionChart = ({ data }) => {
   const COLORS = {
     'Usuarios Activos': '#107C10',
     'Usuarios Inactivos': '#D13438',
-    'Teachers': '#0078D4',
     'Administradores': '#8764B8'
   };
 
@@ -391,56 +390,7 @@ const UserDistributionChart = ({ data }) => {
   );
 };
 
-/**
- * Sección de reseñas recientes
- */
-const ReviewsSection = ({ reviews }) => {
-  return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 h-full" style={{ userSelect: 'none' }}>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h3 className="text-lg font-bold text-slate-800">Reseñas Recientes</h3>
-          <p className="text-sm text-slate-500 mt-1">Últimas calificaciones</p>
-        </div>
-        <div className="flex items-center gap-2 px-3 py-1 bg-yellow-50 rounded-lg border border-yellow-100">
-          <Star size={16} className="fill-yellow-400 text-yellow-400" />
-          <span className="text-sm font-bold text-yellow-700">4.8</span>
-        </div>
-      </div>
-      <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-        {reviews.length === 0 ? (
-          <p className="text-center text-slate-400 py-8">No hay reseñas disponibles</p>
-        ) : (
-          reviews.map((review, index) => (
-            <div key={index} className="border border-slate-100 rounded-lg p-4 hover:bg-slate-50 transition-colors">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold">
-                    {review.user_name?.charAt(0) || 'U'}
-                  </div>
-                  <div>
-                    <span className="font-semibold text-slate-800 text-sm block">{review.user_name}</span>
-                    <span className="text-xs text-slate-400">ID: {review.session_id}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-0.5">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      size={12}
-                      className={i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-slate-200"}
-                    />
-                  ))}
-                </div>
-              </div>
-              <p className="text-xs text-slate-600 leading-relaxed italic">"{review.comment || "Sin comentarios"}"</p>
-            </div>
-          ))
-        )}
-      </div>
-    </div>
-  );
-};
+
 
 /**
  * Tabla de usuarios con filtros y búsqueda
@@ -517,7 +467,6 @@ const UsersTable = ({ users, onEdit, onDelete, onActivate, onCreate }) => {
           >
             <option value="all">Todos</option>
             <option value="admin">Admins</option>
-            <option value="teacher">Teachers</option>
             <option value="user">Users</option>
           </select>
           <button
@@ -686,7 +635,7 @@ export function AdminDashboard() {
   const [activityData, setActivityData] = useState([]);
   const [userDistribution, setUserDistribution] = useState([]);
   const [userGrowthData, setUserGrowthData] = useState([]);
-  const [reviews, setReviews] = useState([]);
+
   const [users, setUsers] = useState([]);
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -753,10 +702,9 @@ export function AdminDashboard() {
       }
 
       // Cargar datos en paralelo para mejor rendimiento
-      const [statsData, activityData, reviewsData, usersData, distributionData, metricsData, userGrowthData] = await Promise.all([
+      const [statsData, activityData, usersData, distributionData, metricsData, userGrowthData] = await Promise.all([
         dashboardService.getStats(),
         dashboardService.getActivity(),
-        dashboardService.getRecentReviews(),
         usersService.getAllUsers({ includeInactive: true }),
         dashboardService.getUserDistribution(),
         dashboardService.getMetrics(),
@@ -766,7 +714,6 @@ export function AdminDashboard() {
       // Actualizar estado con los datos recibidos
       setStats(statsData);
       setActivityData(activityData);
-      setReviews(reviewsData);
       setUsers(usersData);
       setUserDistribution(distributionData);
       setMetrics(metricsData);
@@ -954,20 +901,7 @@ export function AdminDashboard() {
             {/* Segunda Fila */}
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
               <UserGrowthChart data={userGrowthData} />
-              <div className="grid grid-cols-1 gap-6">
-                <MetricsPanel metrics={metrics} />
-                <ReviewsSection reviews={reviews} />
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <UsersTable
-                users={users}
-                onEdit={handleEditClick}
-                onDelete={handleDeleteClick}
-                onActivate={handleActivateClick}
-                onCreate={handleCreateClick}
-              />
+              <MetricsPanel metrics={metrics} />
             </div>
           </div>
         );
@@ -1009,9 +943,16 @@ export function AdminDashboard() {
       {/* SIDEBAR */}
       <aside className={`bg-white border-r border-slate-200 transition-all duration-300 flex flex-col ${sidebarOpen ? 'w-64' : 'w-20'}`}>
         <div className="h-16 flex items-center justify-center border-b border-slate-100">
-          <div className="flex items-center gap-2 font-bold text-xl text-indigo-600">
-            <Globe className="w-8 h-8" />
-            {sidebarOpen && <span>ConverLang</span>}
+          <div className="flex items-center justify-center w-full px-4">
+            {sidebarOpen ? (
+              <img
+                src="/assets/img/converlang_horizontal.png"
+                alt="ConverLang Logo"
+                className="h-64 w-auto object-contain"
+              />
+            ) : (
+              <Globe className="w-8 h-8 text-indigo-600" />
+            )}
           </div>
         </div>
 
