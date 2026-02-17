@@ -38,7 +38,8 @@ export function Authentication() {
       {/* Header Fijo */}
       <header className="landing-header">
         <div className="logo-container">
-          <img src="/assets/img/converlang_horizontal.png" alt="Converlang Logo" />
+          <img src="/assets/img/converlang_horizontal.png" alt="Converlang Logo" className="logo-desktop" />
+          <img src="/assets/img/converlang_mobile.png" alt="Converlang Logo" className="logo-mobile" />
         </div>
         <nav className="landing-nav">
           <a href="/login" target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
@@ -115,7 +116,8 @@ export function Authentication() {
       <footer className="landing-footer">
         <div className="footer-content">
           <div className="footer-brand">
-            <img src="/assets/img/converlang_horizontal.png" alt="Converlang" className="footer-logo" />
+            <img src="/assets/img/converlang_horizontal.png" alt="Converlang" className="footer-logo logo-desktop" />
+            <img src="/assets/img/converlang_mobile.png" alt="Converlang" className="footer-logo logo-mobile" />
             <p className="footer-tagline">El mundo es tu aula. Habla con confianza.</p>
             <div className="social-links">
               <a href="#"><Instagram size={20} /></a>
