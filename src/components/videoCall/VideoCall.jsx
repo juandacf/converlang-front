@@ -45,6 +45,32 @@ export default function VideoCall() {
   const decoded = jwtDecode(token);
   const userId = Number(decoded.sub);
 
+  useEffect(() => {
+    const fetchPreferences = async () => {
+      try {
+        const res = await authFetch(
+          `${API_BACKEND}/preferences/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (res.ok) {
+          const data = await res.json();
+          // Backend: theme = true (light) | false (dark)
+          setDarkMode(!data.theme);
+          setLanguage(data.language_code || "ES");
+        }
+      } catch (error) {
+        console.error("Error loading preferences:", error);
+      }
+    };
+
+    fetchPreferences();
+  }, [userId, token, API_BACKEND]);
+
   const iceServers = useMemo(
     () => ({ iceServers: [{ urls: ["stun:stun.l.google.com:19302"] }] }),
     []
