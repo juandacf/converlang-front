@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ChevronLeft,
   ChevronRight,
@@ -13,7 +14,7 @@ import {
 import "./SignUp.css";
 import { API_URL } from "../../config/api";
 
-export function SignUp({ onSuccess }) {
+export function SignUp() {
   const [currentStep, setCurrentStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -35,6 +36,8 @@ export function SignUp({ onSuccess }) {
   const [languages, setLanguages] = useState([])
   const [genders, setGenders] = useState([])
   const API_BACKEND = API_URL
+  const navigate = useNavigate();
+
 
 
   useEffect(() => {  //Traemos los países de la bdd
@@ -186,8 +189,13 @@ export function SignUp({ onSuccess }) {
         throw new Error(errorMessage);
       }
 
-      alert("¡Cuenta creada con éxito!");
-      onSuccess(); // 👈 Llama a la función del padre
+      // Mostrar mensaje de éxito
+      alert("¡Cuenta creada con éxito! Ahora inicia sesión.");
+
+      // Redirigir al login después de 1.5 segundos
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
     } catch (err) {
       console.error("Error al crear cuenta:", err);
       alert(err.message);
@@ -338,7 +346,7 @@ export function SignUp({ onSuccess }) {
                 width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #e5e7eb', background: '#f9fafb'
               }}
             >
-              <option value="">Prefiero no decir</option>
+              <option value="">Selecciona</option>
               {genders.map((g) => (
                 <option key={g.gender_id} value={g.gender_id}>
                   {g.gender_name}
