@@ -11,8 +11,13 @@ import {
   EyeOff,
   Mail,
 } from "lucide-react";
+import DatePicker, { registerLocale } from "react-datepicker";
+import { es } from "date-fns/locale/es";
+import "react-datepicker/dist/react-datepicker.css";
 import "./SignUp.css";
 import { API_URL } from "../../config/api";
+
+registerLocale("es", es);
 
 import { CustomAlert } from "../common/CustomAlert";
 
@@ -326,10 +331,29 @@ export function SignUp() {
             <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>
               <Calendar size={14} className="icon" style={{ marginRight: '5px' }} /> Fecha de nacimiento
             </label>
-            <input
-              type="date"
-              value={formData.birth_date}
-              onChange={(e) => handleChange("birth_date", e.target.value)}
+            <DatePicker
+              selected={formData.birth_date ? new Date(formData.birth_date) : null}
+              onChange={(date) => {
+                if (date) {
+                  const year = date.getFullYear();
+                  const month = String(date.getMonth() + 1).padStart(2, '0');
+                  const day = String(date.getDate()).padStart(2, '0');
+                  handleChange('birth_date', `${year}-${month}-${day}`);
+                } else {
+                  handleChange('birth_date', '');
+                }
+              }}
+              locale="es"
+              dateFormat="dd/MM/yyyy"
+              showYearDropdown
+              scrollableYearDropdown
+              yearDropdownItemNumber={76}
+              minDate={new Date(1936, 0, 1)}
+              maxDate={new Date(2011, 11, 31)}
+              placeholderText="Selecciona tu fecha de nacimiento"
+              className="custom-datepicker"
+              wrapperClassName="datepicker-wrapper"
+              calendarClassName="custom-calendar"
               style={{
                 width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #e5e7eb', background: '#f9fafb'
               }}

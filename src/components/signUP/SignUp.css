@@ -143,6 +143,98 @@
   color: #388e3c;
 }
 
+/* DatePicker Custom Styles */
+.datepicker-wrapper {
+  width: 100%;
+}
+
+.custom-datepicker {
+  width: 100% !important;
+  padding: 10px 12px !important;
+  border-radius: 14px !important;
+  border: 1px solid var(--border) !important;
+  background: #fafafa !important;
+  outline: none !important;
+  transition: border 0.15s ease, box-shadow 0.15s ease, background 0.15s ease !important;
+  font-size: 15px !important;
+  font-family: inherit !important;
+}
+
+.custom-datepicker:focus {
+  border-color: transparent !important;
+  background: #fff !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 25%, transparent) !important;
+}
+
+.react-datepicker-popper {
+  z-index: 9999 !important;
+}
+
+.react-datepicker {
+  border: 1px solid var(--border) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+  font-family: inherit !important;
+}
+
+.react-datepicker__header {
+  background: #f9fafb !important;
+  border-bottom: 1px solid var(--border) !important;
+  border-radius: 14px 14px 0 0 !important;
+  padding: 12px 0 !important;
+}
+
+.react-datepicker__current-month {
+  font-weight: 600 !important;
+  color: var(--foreground) !important;
+  margin-bottom: 8px !important;
+}
+
+.react-datepicker__day-name {
+  color: var(--muted) !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+}
+
+.react-datepicker__day {
+  border-radius: 8px !important;
+  transition: all 0.15s ease !important;
+}
+
+.react-datepicker__day:hover {
+  background: #e5e7eb !important;
+}
+
+.react-datepicker__day--selected {
+  background: var(--primary-color, #6b7cfa) !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.react-datepicker__day--keyboard-selected {
+  background: color-mix(in srgb, var(--primary-color, #6b7cfa) 30%, transparent) !important;
+}
+
+.react-datepicker__day--disabled {
+  color: #ccc !important;
+  cursor: not-allowed !important;
+}
+
+.react-datepicker__year-dropdown {
+  background: white !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.react-datepicker__year-option:hover {
+  background: #f3f4f6 !important;
+}
+
+.react-datepicker__navigation {
+  top: 14px !important;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .signUpForm {
