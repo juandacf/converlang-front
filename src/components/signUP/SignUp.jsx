@@ -196,8 +196,8 @@ export function SignUp({ onSuccess }) {
 
   return (
     <div className="SignUpContainer">
-      <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-        <img src="/assets/img/converlang_horizontal.png" alt="Converlang" style={{ height: '100px', marginBottom: '1rem', mixBlendMode: 'multiply' }} />
+      <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+        <img src="/assets/img/converlang_horizontal.png" alt="Converlang" style={{ height: '110px', width: 'auto', marginBottom: '0.75rem', display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
         <h3>Crear cuenta</h3>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Paso {currentStep} de 2</p>
       </div>
@@ -243,7 +243,7 @@ export function SignUp({ onSuccess }) {
             />
             {errors.email && <p className="error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '0.25rem' }}>{errors.email}</p>}
           </div>
-          <div>
+          <div style={{ gridColumn: '1 / -1' }}>
             <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>
               <Lock size={14} className="icon" style={{ marginRight: '5px' }} /> Contraseña
             </label>
@@ -273,7 +273,7 @@ export function SignUp({ onSuccess }) {
               </div>
             )}
           </div>
-          <div>
+          <div style={{ gridColumn: '1 / -1' }}>
             <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>Confirmar contraseña</label>
             <input
               type="password"
@@ -402,7 +402,7 @@ export function SignUp({ onSuccess }) {
                 handleChange("description", e.target.value)
               }
               placeholder="Cuéntanos algo..."
-              rows={3}
+              rows={2}
               style={{
                 width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #e5e7eb', background: '#f9fafb', fontFamily: 'inherit'
               }}

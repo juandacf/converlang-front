@@ -3,35 +3,37 @@
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
   border-radius: 22px;
-  padding: 28px;
+  padding: 20px;
   width: min(520px, 100%);
   overflow: auto;
 }
 
 .SignUpContainer h3 {
-  margin: 0 0 14px;
-  font-size: 26px;
+  margin: 0 0 8px;
+  font-size: 24px;
   font-weight: 800;
   letter-spacing: 0.2px;
 }
 
 .signUpForm {
   display: grid;
-  gap: 16px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
 }
+
 
 .signUpForm label {
   display: block;
   font-size: 14px;
   color: var(--muted);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .signUpForm input,
 .signUpForm select,
 .signUpForm textarea {
   width: 100%;
-  padding: 12px 14px;
+  padding: 10px 12px;
   border-radius: 14px;
   border: 1px solid var(--border);
   background: #fafafa;
@@ -151,7 +153,7 @@
     flex-direction: column;
   }
 
-  .loginRight{
+  .loginRight {
     width: 100vw;
   }
 }

@@ -85,7 +85,7 @@ export function Login() {
             />
             <div className="loginContainer">
                 <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                    <img src="/assets/img/converlang_horizontal.png" alt="Converlang" style={{ height: '100px', marginBottom: '1rem', mixBlendMode: 'multiply' }} />
+                    <img src="/assets/img/converlang_horizontal.png" alt="Converlang" style={{ height: '130px', width: 'auto', marginBottom: '1rem', display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
                     <h3>Bienvenido de nuevo</h3>
                     <p style={{ color: 'var(--text-muted)' }}>Ingresa tus credenciales para continuar</p>
                 </div>
