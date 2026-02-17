@@ -364,10 +364,10 @@ export function Dashboard({ user }) {
                       if (notifTranslations) {
                         if (notif.notification_type === 'match') {
                           displayTitle = notifTranslations.newMatch.title;
-                          displayMessage = `${notif.message}${notifTranslations.newMatch.content}`; // userName + content
+                          displayMessage = `${notif.message} ${notifTranslations.newMatch.content}`; // userName + content
                         } else if (notif.notification_type === 'like_request') {
                           displayTitle = notifTranslations.newLike.title;
-                          displayMessage = `${notif.message}${notifTranslations.newLike.content}`; // userName + content
+                          displayMessage = `${notif.message} ${notifTranslations.newLike.content}`; // userName + content
                         }
                       }
 

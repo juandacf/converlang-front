@@ -92,11 +92,11 @@ export const Translations = {
       "title": "Notificaciones",
       "newLike": {
         "title": "Nueva Solicitud de Match",
-        "content": ""
+        "content": "Quiere hacer match contigo."
       },
       "newMatch": {
         "title": "¡Nuevo Match!",
-        "content": ""
+        "content": "Es tu nuevo match!"
       }
     }
   },
@@ -194,11 +194,11 @@ export const Translations = {
       "title": "Notifications",
       "newLike": {
         "title": "New Match Request",
-        "content": ""
+        "content": "Wants to match with you."
       },
       "newMatch": {
         "title": "New Match!",
-        "content": ""
+        "content": "Is your new match!"
       }
     }
   },
@@ -296,11 +296,11 @@ export const Translations = {
       "title": "Notifications",
       "newLike": {
         "title": "Nouvelle demande de match",
-        "content": ""
+        "content": "Veut matcher avec vous."
       },
       "newMatch": {
         "title": "Nouveau Match !",
-        "content": ""
+        "content": "Est votre nouveau match !"
       }
     }
   },
@@ -398,11 +398,11 @@ export const Translations = {
       "title": "Notificações",
       "newLike": {
         "title": "Nova Solicitação de Match",
-        "content": ""
+        "content": "Quer dar match com você."
       },
       "newMatch": {
         "title": "Novo Match!",
-        "content": ""
+        "content": "É o seu novo match!"
       }
     }
   },
@@ -500,11 +500,11 @@ export const Translations = {
       "title": "Benachrichtigungen",
       "newLike": {
         "title": "Neue Match-Anfrage",
-        "content": ""
+        "content": "Möchte mit dir matchen."
       },
       "newMatch": {
         "title": "Neues Match!",
-        "content": ""
+        "content": "Ist dein neues Match!"
       }
     }
   }
