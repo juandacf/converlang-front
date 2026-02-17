@@ -311,7 +311,7 @@ export function Dashboard({ user }) {
                 <div className="notificationsPanel">
                   <div className="notificationsPanelHeader">
                     <h4 className="notificationsPanelTitle">
-                      {translations[language]?.dashboard?.notifications?.title || 'Notificaciones'}
+                      {translations[language].notifications.title || 'Notificaciones'}
                     </h4>
                     <button
                       className="closeNotificationsBtn"
@@ -328,19 +328,35 @@ export function Dashboard({ user }) {
                       {translations[language]?.dashboard?.notifications?.empty || 'No tienes notificaciones'}
                     </p>
                   ) : (
-                    notifications.slice(0, 10).map((notif) => (
-                      <div
-                        key={notif.notification_id}
-                        className={`notificationItem ${!notif.is_read ? 'unread' : ''}`}
-                        onClick={() => handleNotificationClick(notif)}
-                      >
-                        <p className="notificationTitle">{notif.title}</p>
-                        <p className="notificationMessage">{notif.message}</p>
-                        <span className="notificationTime">
-                          {formatTimeAgo(notif.created_at)}
-                        </span>
-                      </div>
-                    ))
+                    notifications.slice(0, 10).map((notif) => {
+                      let displayTitle = notif.title;
+                      let displayMessage = notif.message;
+
+                      const notifTranslations = Translations[language]?.notifications;
+                      if (notifTranslations) {
+                        if (notif.notification_type === 'match') {
+                          displayTitle = notifTranslations.newMatch.title;
+                          displayMessage = `${notifTranslations.newMatch.content}${notif.message}`; // notif.message contains v_sender_name from DB
+                        } else if (notif.notification_type === 'like_request') {
+                          displayTitle = notifTranslations.newLike.title;
+                          displayMessage = `${notif.message} ${notifTranslations.newLike.content}`; // notif.message contains v_sender_name from DB
+                        }
+                      }
+
+                      return (
+                        <div
+                          key={notif.notification_id}
+                          className={`notificationItem ${!notif.is_read ? 'unread' : ''}`}
+                          onClick={() => handleNotificationClick(notif)}
+                        >
+                          <p className="notificationTitle">{displayTitle}</p>
+                          <p className="notificationMessage">{displayMessage}</p>
+                          <span className="notificationTime">
+                            {formatTimeAgo(notif.created_at)}
+                          </span>
+                        </div>
+                      );
+                    })
                   )}
                 </div>
               )}

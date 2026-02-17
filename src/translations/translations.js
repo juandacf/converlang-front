@@ -87,6 +87,17 @@ export const Translations = {
       "endCallButton": "Terminar la llamada",
       "sendAMessageButton": "Enviar",
       "messageInputPlaceholder": "Escribe un mensaje..."
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "newLike": {
+        "title": "Nueva Solicitud de Match",
+        "content": "Quiere hacer match contigo."
+      },
+      "newMatch": {
+        "title": "¡Nuevo Match!",
+        "content": "Tienes un nuevo match con "
+      }
     }
   },
 
@@ -178,6 +189,17 @@ export const Translations = {
       "endCallButton": "End call",
       "sendAMessageButton": "Send",
       "messageInputPlaceholder": "Type a message..."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "newLike": {
+        "title": "New Match Request",
+        "content": "Wants to match with you."
+      },
+      "newMatch": {
+        "title": "New Match!",
+        "content": "You have a new match with "
+      }
     }
   },
 
@@ -269,6 +291,17 @@ export const Translations = {
       "endCallButton": "Terminer l’appel",
       "sendAMessageButton": "Envoyer",
       "messageInputPlaceholder": "Écrivez un message..."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "newLike": {
+        "title": "Nouvelle demande de match",
+        "content": "Veut faire un match avec vous."
+      },
+      "newMatch": {
+        "title": "Nouveau Match !",
+        "content": "Vous avez un nouveau match avec "
+      }
     }
   },
 
@@ -360,6 +393,17 @@ export const Translations = {
       "endCallButton": "Encerrar chamada",
       "sendAMessageButton": "Enviar",
       "messageInputPlaceholder": "Escreva uma mensagem..."
+    },
+    "notifications": {
+      "title": "Notificações",
+      "newLike": {
+        "title": "Nova Solicitação de Match",
+        "content": "Quer dar match com você."
+      },
+      "newMatch": {
+        "title": "Novo Match!",
+        "content": "Você tem um novo match com "
+      }
     }
   },
 
@@ -451,6 +495,17 @@ export const Translations = {
       "endCallButton": "Anruf beenden",
       "sendAMessageButton": "Senden",
       "messageInputPlaceholder": "Nachricht schreiben..."
+    },
+    "notifications": {
+      "title": "Benachrichtigungen",
+      "newLike": {
+        "title": "Neue Match-Anfrage",
+        "content": "Möchte ein Match mit dir."
+      },
+      "newMatch": {
+        "title": "Neues Match!",
+        "content": "Du hast ein neues Match mit "
+      }
     }
   }
 };
