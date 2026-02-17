@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { API_URL } from "../../config/api";
 import { InactiveAccountModal } from "./InactiveAccountModal";
+import { CustomAlert } from "../common/CustomAlert";
 
 
 
@@ -13,6 +14,11 @@ export function Login() {
     const [formData, setFormData] = useState({
         email: "",
         password: ""
+    });
+    const [alertState, setAlertState] = useState({
+        isOpen: false,
+        type: "success",
+        message: ""
     });
     const [showInactiveModal, setShowInactiveModal] = useState(false);
     const navigate = useNavigate();
@@ -54,7 +60,11 @@ export function Login() {
                 }
 
                 // Error genérico para otros casos
-                alert("Correo o contraseña incorrectos");
+                setAlertState({
+                    isOpen: true,
+                    type: "error",
+                    message: "Correo o contraseña incorrectos"
+                });
                 return;
             }
 
@@ -72,13 +82,23 @@ export function Login() {
             }
         } catch (error) {
             console.error("Error en login:", error);
-            alert("Error al intentar iniciar sesión");
+            setAlertState({
+                isOpen: true,
+                type: "error",
+                message: "Error al intentar iniciar sesión"
+            });
         }
     };
 
 
     return (
         <>
+            <CustomAlert
+                isOpen={alertState.isOpen}
+                onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
+                type={alertState.type}
+                message={alertState.message}
+            />
             <InactiveAccountModal
                 isOpen={showInactiveModal}
                 onClose={() => setShowInactiveModal(false)}

@@ -14,9 +14,16 @@ import {
 import "./SignUp.css";
 import { API_URL } from "../../config/api";
 
+import { CustomAlert } from "../common/CustomAlert";
+
 export function SignUp() {
   const [currentStep, setCurrentStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
+  const [alertState, setAlertState] = useState({
+    isOpen: false,
+    type: "success",
+    message: ""
+  });
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -190,7 +197,11 @@ export function SignUp() {
       }
 
       // Mostrar mensaje de éxito
-      alert("¡Cuenta creada con éxito! Ahora inicia sesión.");
+      setAlertState({
+        isOpen: true,
+        type: "success",
+        message: "¡Cuenta creada con éxito! Ahora inicia sesión."
+      });
 
       // Redirigir al login después de 1.5 segundos
       setTimeout(() => {
@@ -198,8 +209,16 @@ export function SignUp() {
       }, 1500);
     } catch (err) {
       console.error("Error al crear cuenta:", err);
-      alert(err.message);
+      setAlertState({
+        isOpen: true,
+        type: "error",
+        message: err.message
+      });
     }
+  };
+
+  const closeAlert = () => {
+    setAlertState(prev => ({ ...prev, isOpen: false }));
   };
 
   return (
@@ -441,6 +460,13 @@ export function SignUp() {
         <span style={{ color: 'var(--text-muted)' }}>¿Ya tienes cuenta? </span>
         <a href="/login" style={{ color: 'var(--primary-color)', fontWeight: '600', textDecoration: 'none' }}>Inicia Sesión</a>
       </div>
+
+      <CustomAlert
+        isOpen={alertState.isOpen}
+        onClose={closeAlert}
+        type={alertState.type}
+        message={alertState.message}
+      />
     </div>
   );
 }
