@@ -14,6 +14,7 @@ import VideoCall from "./components/videoCall/VideoCall";
 import UserPreferencesCard from "./components/preferences/Preferences";
 import { UserRoute } from "./components/guards/UserRoute";
 import { AdminRoute } from "./components/guards/AdminRoute";
+import { TermsAndConditions } from "./components/termsAndConditions/TermsAndConditions";
 
 export default function App() {
 
@@ -28,6 +29,7 @@ export default function App() {
         <Route path="/" element={<Authentication />} />
         <Route path="/login" element={<div className="auth-page"><Login /></div>} />
         <Route path="/signup" element={<div className="auth-page"><SignUp /></div>} />
+        <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
 
         {/* Rutas de usuario - admin no puede acceder */}
         <Route path="/dashboard" element={<UserRoute><Dashboard user={userExample} /></UserRoute>} />

@@ -1,0 +1,146 @@
+.termsContainer {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.termsContent {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 900px;
+    width: 100%;
+    padding: 3rem;
+    position: relative;
+    margin: 2rem auto;
+}
+
+.backButton {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #e5e7eb;
+    background: white;
+    color: #6b7280;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.backButton:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+    transform: scale(1.05);
+}
+
+.termsHeader {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.termsLogo {
+    height: 80px;
+    width: auto;
+    margin-bottom: 1.5rem;
+}
+
+.termsHeader h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #1f2937;
+    margin: 0 0 0.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.lastUpdated {
+    color: #6b7280;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.termsBody {
+    color: #374151;
+    line-height: 1.8;
+}
+
+.termsBody section {
+    margin-bottom: 2.5rem;
+}
+
+.termsBody h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #f3f4f6;
+}
+
+.termsBody p {
+    margin: 0 0 1rem;
+    font-size: 1rem;
+}
+
+.termsBody ul {
+    margin: 1rem 0;
+    padding-left: 2rem;
+}
+
+.termsBody li {
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+}
+
+.termsFooter {
+    background: #f9fafb;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 3rem;
+    text-align: center;
+}
+
+.termsFooter p {
+    margin: 0;
+    font-weight: 600;
+    color: #4b5563;
+    font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .termsContainer {
+        padding: 1rem;
+    }
+
+    .termsContent {
+        padding: 2rem 1.5rem;
+    }
+
+    .termsHeader h1 {
+        font-size: 2rem;
+    }
+
+    .termsBody h2 {
+        font-size: 1.25rem;
+    }
+
+    .backButton {
+        top: 1rem;
+        right: 1rem;
+    }
+}

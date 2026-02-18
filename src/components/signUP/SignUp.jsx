@@ -42,6 +42,7 @@ export function SignUp() {
     native_lang_id: "",
     target_lang_id: "",
     description: "",
+    acceptTerms: false,
   });
   const [errors, setErrors] = useState({});
   const [countries, setCountries] = useState([])
@@ -156,6 +157,9 @@ export function SignUp() {
       ) {
         newErrors.target_lang_id = "Debe ser diferente al idioma nativo";
       }
+      if (!formData.acceptTerms) {
+        newErrors.acceptTerms = "Debes aceptar los términos y condiciones";
+      }
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -262,8 +266,8 @@ export function SignUp() {
             {errors.last_name && <p className="error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '0.25rem' }}>{errors.last_name}</p>}
           </div>
           <div style={{ gridColumn: '1 / -1' }}>
-            <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>
-              <Mail size={14} className="icon" style={{ marginRight: '5px' }} /> Correo
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '.5rem', fontWeight: '500' }}>
+              <Mail size={14} className="icon" /> Correo
             </label>
             <input
               type="email"
@@ -276,8 +280,8 @@ export function SignUp() {
             {errors.email && <p className="error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '0.25rem' }}>{errors.email}</p>}
           </div>
           <div style={{ gridColumn: '1 / -1' }}>
-            <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>
-              <Lock size={14} className="icon" style={{ marginRight: '5px' }} /> Contraseña
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '.5rem', fontWeight: '500' }}>
+              <Lock size={14} className="icon" /> Contraseña
             </label>
             <div className="passwordField" style={{ position: 'relative' }}>
               <input
@@ -328,8 +332,8 @@ export function SignUp() {
       {currentStep === 2 && (
         <div className="signUpForm">
           <div>
-            <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>
-              <Calendar size={14} className="icon" style={{ marginRight: '5px' }} /> Fecha de nacimiento
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '.5rem', fontWeight: '500' }}>
+              <Calendar size={14} className="icon" /> Fecha de nacimiento
             </label>
             <DatePicker
               selected={formData.birth_date ? new Date(formData.birth_date) : null}
@@ -361,8 +365,8 @@ export function SignUp() {
             {errors.birth_date && <p className="error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '0.25rem' }}>{errors.birth_date}</p>}
           </div>
           <div>
-            <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>
-              <MapPin size={14} className="icon" style={{ marginRight: '5px' }} /> País
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '.5rem', fontWeight: '500' }}>
+              <MapPin size={14} className="icon" /> País
             </label>
             <select
               value={formData.country_id}
@@ -381,7 +385,7 @@ export function SignUp() {
             {errors.country_id && <p className="error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '0.25rem' }}>{errors.country_id}</p>}
           </div>
           <div>
-            <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>Género</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '.5rem', fontWeight: '500' }}>Género</label>
             <select
               value={formData.gender_id}
               onChange={(e) => handleChange("gender_id", e.target.value)}
@@ -399,7 +403,7 @@ export function SignUp() {
           </div>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>Idioma nativo</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '.5rem', fontWeight: '500' }}>Idioma nativo</label>
             <select
               value={formData.native_lang_id}
               onChange={(e) =>
@@ -422,7 +426,7 @@ export function SignUp() {
             )}
           </div>
           <div>
-            <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>Idioma a aprender</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '.5rem', fontWeight: '500' }}>Idioma a aprender</label>
             <select
               value={formData.target_lang_id}
               onChange={(e) =>
@@ -446,7 +450,7 @@ export function SignUp() {
             )}
           </div>
           <div style={{ gridColumn: '1 / -1' }}>
-            <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>Sobre ti</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '.5rem', fontWeight: '500' }}>Sobre ti</label>
             <textarea
               value={formData.description}
               onChange={(e) =>
@@ -458,6 +462,41 @@ export function SignUp() {
                 width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #e5e7eb', background: '#f9fafb', fontFamily: 'inherit'
               }}
             />
+          </div>
+          <div style={{ gridColumn: '1 / -1' }}>
+            <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontSize: '14px', cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={formData.acceptTerms}
+                onChange={(e) => handleChange("acceptTerms", e.target.checked)}
+                style={{
+                  width: '18px',
+                  height: '18px',
+                  cursor: 'pointer',
+                  accentColor: 'var(--primary-color, #6b7cfa)'
+                }}
+              />
+              <span style={{ color: 'var(--text-muted, #6b7280)' }}>
+                Acepto los{' '}
+                <a
+                  href="/terms-and-conditions"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: 'var(--primary-color, #6b7cfa)',
+                    fontWeight: '600',
+                    textDecoration: 'underline',
+                    cursor: 'pointer'
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  términos y condiciones
+                </a>
+              </span>
+            </label>
+            {errors.acceptTerms && (
+              <p className="error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '0.25rem' }}>{errors.acceptTerms}</p>
+            )}
           </div>
         </div>
       )}
