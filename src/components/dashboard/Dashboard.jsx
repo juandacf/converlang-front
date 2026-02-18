@@ -18,6 +18,7 @@ import { Translations } from "../../translations/translations";
 import { io } from "socket.io-client";
 import { CustomAlert } from "../common/CustomAlert";
 import { Footer } from "../common/Footer";
+import { getAvatarUrl } from "../../utils/avatarUtils";
 
 
 
@@ -66,7 +67,7 @@ export function Dashboard({ user }) {
         setAuthUser(json);
 
         if (json.profile_photo) {
-          setPhotoPreview(`${API_BACKEND}${json.profile_photo}`);
+          setPhotoPreview(getAvatarUrl(json.profile_photo));
         }
       })
       .catch((err) => console.error('User fetch error:', err.message));
@@ -131,7 +132,7 @@ export function Dashboard({ user }) {
         const userStatistics = Array.isArray(json) ? json : json.users ?? [];
         setSessions(userStatistics);
       })
-      .catch((err) => console.log(err.message));
+      .catch((err) => console.error(err.message));
 
     return () => controller.abort();
   }, []);
@@ -322,7 +323,7 @@ export function Dashboard({ user }) {
   };
   translations[language].dashboard.matchSection.deleteMatchWarning
 
-  console.log(sessions)
+
   return (
     <>
       <div className={darkMode ? "dark-mode" : ""}>
@@ -450,11 +451,7 @@ export function Dashboard({ user }) {
 
                   <img
                     className="matchPhoto"
-                    src={
-                      u.profile_photo
-                        ? `${API_BACKEND}${u.profile_photo}`
-                        : "../../../public/assets/user.png"
-                    }
+                    src={getAvatarUrl(u.profile_photo)}
                     alt=""
                   />
                   <p>{u.first_name}</p>

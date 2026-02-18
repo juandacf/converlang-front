@@ -6,6 +6,7 @@ import { API_URL } from "../../config/api";
 import { authFetch } from "../../config/authFetch";
 import { Translations } from "../../translations/translations";
 import { CustomAlert } from "../common/CustomAlert";
+import { AVATARS, getAvatarUrl } from "../../utils/avatarUtils";
 
 const translations = Translations
 export function EditProfile() {
@@ -15,6 +16,10 @@ export function EditProfile() {
   const [photoPreview, setPhotoPreview] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("ES");
+
+  // Estado para el modal de selección de avatar
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
+
   const [alertState, setAlertState] = useState({
     isOpen: false,
     type: "success",
@@ -95,10 +100,10 @@ export function EditProfile() {
 
         // Vista previa de foto
         if (data.profile_photo) {
-          setPhotoPreview(`${API_BACKEND}${data.profile_photo}`);
+          setPhotoPreview(getAvatarUrl(data.profile_photo));
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   }, [decodedToken.sub]);
 
   function handleChange(e) {
@@ -154,6 +159,40 @@ export function EditProfile() {
       isOpen: true,
       type: "success",
       message: translations[language].editProfile.successUploadPhoto
+    });
+  }
+
+  // Seleccionar avatar predefinido
+  async function handleAvatarSelection(avatarPath) {
+    // Actualizar en backend (PATCH)
+    // Se debe enviar todo el objeto 'form' porque el DTO valida campos obligatorios
+    const res = await authFetch(`${API_BACKEND}/users/${decodedToken.sub}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ ...form, profile_photo: avatarPath }),
+    });
+
+    if (!res.ok) {
+      setAlertState({
+        isOpen: true,
+        type: "error",
+        message: "Error al actualizar avatar"
+      });
+      return;
+    }
+
+    // Actualizar estado local
+    setPhotoPreview(avatarPath);
+    setForm({ ...form, profile_photo: avatarPath });
+    setShowAvatarModal(false);
+
+    setAlertState({
+      isOpen: true,
+      type: "success",
+      message: "Avatar actualizado correctamente"
     });
   }
 
@@ -237,7 +276,27 @@ export function EditProfile() {
 
             <div className="inputGroup fullWidth">
               <label>{translations[language].editProfile.changePhoto}</label>
-              <input type="file" accept="image/*" onChange={handlePhotoChange} />
+
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowAvatarModal(true)}
+                  style={{
+                    padding: '8px 16px',
+                    backgroundColor: '#4f46e5',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem'
+                  }}
+                >
+                  Seleccionar Avatar
+                </button>
+                <span style={{ color: '#666' }}>o</span>
+                <input type="file" accept="image/*" onChange={handlePhotoChange} style={{ flex: 1 }} />
+              </div>
+
             </div>
             {photoPreview && (
               <button
@@ -247,6 +306,68 @@ export function EditProfile() {
               >
                 {translations[language].editProfile.deletePhoto}
               </button>
+            )}
+
+            {/* Modal de Selección de Avatar */}
+            {showAvatarModal && (
+              <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 1000
+              }}>
+                <div style={{
+                  backgroundColor: 'white',
+                  padding: '20px',
+                  borderRadius: '12px',
+                  width: '90%',
+                  maxWidth: '600px',
+                  maxHeight: '80vh',
+                  overflowY: 'auto',
+                  position: 'relative'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
+                    <h3>Elige un Avatar</h3>
+                    <button
+                      type="button"
+                      onClick={() => setShowAvatarModal(false)}
+                      style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}
+                    >
+                      &times;
+                    </button>
+                  </div>
+
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))',
+                    gap: '15px'
+                  }}>
+                    {AVATARS.map((avatar, index) => (
+                      <img
+                        key={index}
+                        src={avatar}
+                        alt={`Avatar ${index}`}
+                        onClick={() => handleAvatarSelection(avatar)}
+                        style={{
+                          width: '100%',
+                          borderRadius: '50%',
+                          cursor: 'pointer',
+                          border: form.profile_photo === avatar ? '3px solid #4f46e5' : '1px solid #ddd',
+                          transition: 'transform 0.2s'
+                        }}
+                        onMouseOver={(e) => e.target.style.transform = 'scale(1.1)'}
+                        onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
             )}
 
             <div className="inputGroup">

@@ -57,7 +57,7 @@ export function SignUp() {
     fetch(`${API_BACKEND}/countries`)
       .then((res) => {
         if (!res.ok) throw new Error("Error al obtener los países");
-        console.log(res.body)
+
         return res.json();
       })
       .then((data) => setCountries(data))
@@ -69,7 +69,7 @@ export function SignUp() {
     fetch(`${API_BACKEND}/languages`)
       .then((res) => {
         if (!res.ok) throw new Error("Error al obtener los lenguajes");
-        console.log(res.body)
+
         return res.json();
       })
       .then((data) => setLanguages(data))

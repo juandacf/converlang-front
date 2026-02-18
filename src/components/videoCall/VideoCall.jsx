@@ -149,7 +149,7 @@ export default function VideoCall() {
 
     // 4. Manejar tracks remotos (u otros eventos)
     peerRef.current.ontrack = (event) => {
-      console.log("Track remoto recibido:", event.streams);
+
       if (remoteVideoRef.current && event.streams[0]) {
         remoteVideoRef.current.srcObject = event.streams[0];
       }
@@ -256,7 +256,7 @@ export default function VideoCall() {
 
     // 1. Otro usuario se unió o envió solicitud
     socket.on("incomingCall", async ({ caller }) => {
-      console.log("Recibida incomingCall de:", caller);
+
       // Aceptamos automáticamente para establecer P2P
       // Decidir quién es Caller basado en ID para evitar colisiones
       const imCaller = userId > (selectedMatch?.other_user_id || 0);
@@ -265,16 +265,16 @@ export default function VideoCall() {
       socket.emit("callAccepted", { matchId: numericMatchId });
 
       if (imCaller) {
-        console.log("Soy el Caller, crearé oferta...");
+
         await createOffer();
       } else {
-        console.log("Soy el Callee, esperaré oferta...");
+
       }
     });
 
     // 2. Alguien aceptó mi llamada (o handshake inicial)
     socket.on("callAccepted", async () => {
-      console.log("callAccepted recibido.");
+
       // Si yo soy el caller y aún no he ofertado, oferto.
       // (La lógica de arriba en incomingCall suele cubrir el inicio, 
       //  pero esto cubre si el otro usuario ya estaba en la sala y responde a mi join)
@@ -282,7 +282,7 @@ export default function VideoCall() {
       const imCaller = userId > (selectedMatch?.other_user_id || 0);
       // Solo si soy caller y NO he ofertado aun
       if (imCaller && !hasLocalOfferRef.current) {
-        console.log("Soy Caller (por callAccepted), creando oferta...");
+
         await createOffer();
       }
     });
@@ -290,7 +290,7 @@ export default function VideoCall() {
     // 3. Recibir Oferta
     socket.on("webrtcOffer", async ({ offer }) => {
       if (!peerRef.current) return;
-      console.log("Oferta recibida");
+
 
       // Si recibimos oferta, somos Callee (o collision recovery, WebRTC lo maneja si hay glare)
       await peerRef.current.setRemoteDescription(new RTCSessionDescription(offer));
@@ -300,7 +300,7 @@ export default function VideoCall() {
     // 4. Recibir Respuesta
     socket.on("webrtcAnswer", async ({ answer }) => {
       if (!peerRef.current) return;
-      console.log("Respuesta recibida");
+
       await peerRef.current.setRemoteDescription(new RTCSessionDescription(answer));
     });
 
@@ -316,7 +316,7 @@ export default function VideoCall() {
 
     // 6. Fin de llamada
     socket.on("callEnded", () => {
-      console.log("El otro usuario colgó.");
+
       cleanupCall();
       setAlertState({
         isOpen: true,

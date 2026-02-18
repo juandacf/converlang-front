@@ -680,7 +680,7 @@ export function AdminDashboard() {
         return false;
       }
 
-      console.log('✅ Usuario autenticado como administrador:', user.email);
+
       return true;
     };
 
@@ -719,7 +719,7 @@ export function AdminDashboard() {
       setMetrics(metricsData);
       setUserGrowthData(userGrowthData);
 
-      console.log('✅ Datos del dashboard cargados exitosamente');
+
     } catch (error) {
       console.error('❌ Error cargando datos del dashboard:', error);
       showToast('Error al cargar datos del dashboard', 'error');

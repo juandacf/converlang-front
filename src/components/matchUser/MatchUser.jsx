@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import { API_URL } from "../../config/api";
 import { authFetch } from "../../config/authFetch";
 import { Translations } from "../../translations/translations";
+import { getAvatarUrl } from "../../utils/avatarUtils";
 
 export function MatchUser() {
   const translations = Translations
@@ -95,7 +96,7 @@ export function MatchUser() {
             .catch(() => { });
         });
       })
-      .catch((err) => console.log(err.message));
+      .catch((err) => console.error(err.message));
 
     return () => controller.abort();
   }, []);
@@ -208,7 +209,7 @@ export function MatchUser() {
               <div className="photoNameContainer">
                 <div className="photoContainer">
                   <img
-                    src={u.profile_photo ? `${API_BACKEND}${u.profile_photo}` : "../../../public/assets/user.png"}
+                    src={getAvatarUrl(u.profile_photo)}
                     alt=""
                     className="matchPhotoo"
                   />

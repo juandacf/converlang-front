@@ -9,6 +9,7 @@ import { API_URL } from "../../config/api";
 import { authFetch } from "../../config/authFetch";
 import { Translations } from "../../translations/translations";
 import { CustomAlert } from "../common/CustomAlert";
+import { getAvatarUrl } from "../../utils/avatarUtils";
 
 
 export function UserChat() {
@@ -295,11 +296,7 @@ export function UserChat() {
                 <div className="chatPhotoContainer">
                   <img
                     className="userPhoto purpleMargin"
-                    src={
-                      chat.profile_photo
-                        ? `${API_BACKEND}${chat.profile_photo}`
-                        : "../../../public/assets/user.png"
-                    }
+                    src={getAvatarUrl(chat.profile_photo)}
                     alt=""
                   />
                 </div>
@@ -321,11 +318,7 @@ export function UserChat() {
                   <div className="chatPhotoContainer">
                     <img
                       className="userPhoto purpleMargin"
-                      src={
-                        selectedMatch?.profile_photo
-                          ? `${API_BACKEND}${selectedMatch.profile_photo}`
-                          : "../../../public/assets/user.png"
-                      }
+                      src={getAvatarUrl(selectedMatch?.profile_photo)}
                       alt=""
                     />
                   </div>

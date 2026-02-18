@@ -19,7 +19,7 @@ export const usersService = {
   createUser: async (userData) => {
     try {
       const response = await api.post('/admin/users', userData);
-      console.log('✅ Usuario creado exitosamente:', response);
+
       return response;
     } catch (error) {
       console.error('❌ Error al crear usuario:', error.message);
@@ -52,7 +52,7 @@ export const usersService = {
       const endpoint = queryString ? `/admin/users?${queryString}` : '/admin/users';
 
       const response = await api.get(endpoint);
-      console.log(`✅ Usuarios obtenidos (${response.length}):`, response);
+
       return response;
     } catch (error) {
       console.error('❌ Error al obtener usuarios:', error.message);
@@ -70,7 +70,7 @@ export const usersService = {
   getUserById: async (userId) => {
     try {
       const response = await api.get(`/admin/users/${userId}`);
-      console.log('✅ Usuario obtenido:', response);
+
       return response;
     } catch (error) {
       console.error(`❌ Error al obtener usuario ${userId}:`, error.message);
@@ -88,7 +88,7 @@ export const usersService = {
   updateUser: async (userId, userData) => {
     try {
       const response = await api.put(`/admin/users/${userId}`, userData);
-      console.log('✅ Usuario actualizado:', response);
+
       return response;
     } catch (error) {
       console.error(`❌ Error al actualizar usuario ${userId}:`, error.message);
@@ -106,7 +106,7 @@ export const usersService = {
   changePassword: async (userId, password) => {
     try {
       const response = await api.patch(`/admin/users/${userId}/password`, { password });
-      console.log('✅ Contraseña de usuario cambiada:', response);
+
       return response;
     } catch (error) {
       console.error(`❌ Error al cambiar contraseña del usuario ${userId}:`, error.message);
@@ -123,7 +123,7 @@ export const usersService = {
   deleteUser: async (userId) => {
     try {
       const response = await api.delete(`/admin/users/${userId}`);
-      console.log('✅ Usuario inactivado:', response);
+
       return response;
     } catch (error) {
       console.error(`❌ Error al inactivar usuario ${userId}:`, error.message);
@@ -140,7 +140,7 @@ export const usersService = {
   activateUser: async (userId) => {
     try {
       const response = await api.patch(`/admin/users/${userId}/activate`);
-      console.log('✅ Usuario reactivado:', response);
+
       return response;
     } catch (error) {
       console.error(`❌ Error al reactivar usuario ${userId}:`, error.message);
@@ -170,7 +170,7 @@ export const usersService = {
   reportUser: async (userId) => {
     try {
       const response = await api.post(`/users/report/${userId}`);
-      console.log('✅ Usuario reportado:', response);
+
       return response;
     } catch (error) {
       console.error(`❌ Error al reportar usuario ${userId}:`, error.message);

@@ -39,7 +39,7 @@ export default function UserPreferencesCard() {
   useEffect(() => {
     const fetchPreferences = async () => {
       try {
-        console.log('Fetching preferences for user:', user_id);
+
         const res = await authFetch(
           `${API_BACKEND}/preferences/${user_id}`,
           {
@@ -49,7 +49,7 @@ export default function UserPreferencesCard() {
           }
         );
 
-        console.log('Preferences response status:', res.status);
+
 
         if (!res.ok) {
           const errorText = await res.text();
@@ -58,7 +58,7 @@ export default function UserPreferencesCard() {
         }
 
         const data = await res.json();
-        console.log('Preferences data received:', data);
+
 
         // Backend: theme = true (light) | false (dark)
         setDarkMode(!data.theme);

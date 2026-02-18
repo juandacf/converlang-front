@@ -58,7 +58,7 @@ export const dashboardService = {
   getStats: async () => {
     try {
       const response = await api.get('/admin/stats');
-      console.log('✅ Estadísticas cargadas del backend:', response);
+
 
       // Validar que la respuesta tenga la estructura esperada
       if (!response || typeof response !== 'object') {
@@ -82,7 +82,7 @@ export const dashboardService = {
   getActivity: async () => {
     try {
       const response = await api.get('/admin/activity');
-      console.log('✅ Actividad semanal cargada del backend:', response);
+
 
       // Validar que sea un array
       if (!Array.isArray(response)) {
@@ -106,7 +106,7 @@ export const dashboardService = {
   getRecentReviews: async () => {
     try {
       const response = await api.get('/admin/reviews');
-      console.log('✅ Reseñas recientes cargadas del backend:', response);
+
 
       // Validar que sea un array
       if (!Array.isArray(response)) {
@@ -130,7 +130,7 @@ export const dashboardService = {
   getUserDistribution: async () => {
     try {
       const response = await api.get('/admin/user-distribution');
-      console.log('✅ Distribución usuarios cargada del backend:', response);
+
 
       if (!Array.isArray(response)) {
         console.warn('⚠️ Respuesta de user-distribution no es un array, usando mock');
@@ -152,7 +152,7 @@ export const dashboardService = {
   getMetrics: async () => {
     try {
       const response = await api.get('/admin/metrics');
-      console.log('✅ Métricas cargadas del backend:', response);
+
 
       if (!response || typeof response !== 'object') {
         console.warn('⚠️ Respuesta de metrics tiene formato inesperado');
@@ -175,7 +175,7 @@ export const dashboardService = {
   getUserGrowth: async () => {
     try {
       const response = await api.get('/admin/user-growth');
-      console.log('✅ Crecimiento de usuarios cargado del backend:', response);
+
 
       if (!Array.isArray(response)) {
         console.warn('⚠️ Respuesta de user-growth no es un array');
@@ -196,7 +196,7 @@ export const dashboardService = {
    */
   getDashboardData: async () => {
     try {
-      console.log('📊 Cargando datos completos del dashboard...');
+
 
       // Ejecutar todas las peticiones en paralelo para mejor rendimiento
       const [stats, activity, reviews, userDistribution] = await Promise.all([
@@ -206,7 +206,7 @@ export const dashboardService = {
         dashboardService.getUserDistribution()
       ]);
 
-      console.log('✅ Datos del dashboard cargados exitosamente');
+
 
       return {
         stats,
@@ -234,7 +234,7 @@ export const dashboardService = {
   checkBackendConnection: async () => {
     try {
       await api.get('/admin/stats');
-      console.log('✅ Conexión con el backend establecida');
+
       return true;
     } catch (error) {
       console.error('❌ No se pudo conectar con el backend:', error.message);
