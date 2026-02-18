@@ -19,6 +19,9 @@ import { io } from "socket.io-client";
 import { CustomAlert } from "../common/CustomAlert";
 import { Footer } from "../common/Footer";
 import { getAvatarUrl } from "../../utils/avatarUtils";
+import { CalendarCard } from "./CalendarCard";
+import { Bell, Settings, AlignJustify } from 'lucide-react'; // Assuming lucide-react is available, or use images if not
+
 
 
 
@@ -329,182 +332,172 @@ export function Dashboard({ user }) {
       <div className={darkMode ? "dark-mode" : ""}>
         <NavBar />
         <div className="dashboardMainContainer">
-          <div className="dashNavBar">
-            <div className="notificationWrapper">
-              <img
-                className="navBarElement"
-                src="../../../public/assets/notification.png"
-                alt="notifications"
-                onClick={() => {
-                  const nextShow = !showNotifications;
-                  setShowNotifications(nextShow);
-                  if (nextShow && unreadCount > 0) {
-                    handleMarkAllAsRead();
-                  }
-                }}
-              />
-              {unreadCount > 0 && (
-                <span className="notificationBadge">{unreadCount}</span>
-              )}
 
-              {showNotifications && (
-                <div className="notificationsPanel">
-                  <div className="notificationsPanelHeader">
-                    <h4 className="notificationsPanelTitle">
-                      {translations[language].notifications.title || 'Notificaciones'}
-                    </h4>
+          <div className="dashboard-content-wrapper">
+            <div className="greetingContainer">
+              <div className="header-left-actions">
+                <div className="ios-toggle-switch">
+                  <div className="toggle-handle"></div>
+                </div>
+              </div>
+
+              <div className="greeting-center">
+                <div className="UserPic">
+                  <img
+                    className="actualPic"
+                    src={photoPreview || "../../../public/assets/user.png"}
+                    alt=""
+                  />
+                </div>
+                <div className="greeting-text">
+                  <h3 className="bigGreeting">
+                    ¡Hola! {authUser.first_name} {authUser.last_name}
+                  </h3>
+                  <h3 className="smallGreeting">{translations[language].dashboard.mainBox.letUsBegin}</h3>
+                </div>
+              </div>
+
+              <div className="header-right-actions">
+                <div className="notificationWrapper">
+                  <img
+                    className="navBarElement"
+                    src="../../../public/assets/notification.png"
+                    alt="notifications"
+                    onClick={() => {
+                      const nextShow = !showNotifications;
+                      setShowNotifications(nextShow);
+                      if (nextShow && unreadCount > 0) {
+                        handleMarkAllAsRead();
+                      }
+                    }}
+                  />
+                  {unreadCount > 0 && (
+                    <span className="notificationBadge">{unreadCount}</span>
+                  )}
+                  {showNotifications && (
+                    <div className="notificationsPanel">
+                      <div className="notificationsPanelHeader">
+                        <h4 className="notificationsPanelTitle">
+                          {translations[language].notifications.title || 'Notificaciones'}
+                        </h4>
+                        <button className="closeNotificationsBtn" onClick={(e) => { e.stopPropagation(); setShowNotifications(false); }}>✕</button>
+                      </div>
+                      {notifications.length === 0 ? (
+                        <p className="noNotifications">{translations[language]?.dashboard?.notifications?.empty || 'No tienes notificaciones'}</p>
+                      ) : (
+                        notifications.slice(0, 10).map((notif) => (
+                          <div key={notif.notification_id} className="notificationItem" onClick={() => handleNotificationClick(notif)}>
+                            <p className="notificationTitle">{notif.title}</p>
+                            <p className="notificationMessage">{notif.message}</p>
+                            <span className="notificationTime">{formatTimeAgo(notif.created_at)}</span>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="settingsWrapper">
+                  <img
+                    className="navBarElement"
+                    src="../../../public/assets/setting.png"
+                    alt="settings"
+                    onClick={() => setShowSettingsMenu(!showSettingsMenu)}
+                  />
+                  {showSettingsMenu && (
+                    <div className="settingsMenu">
+                      <p onClick={() => Navigate('/editProfile')}>{translations[language].dashboard.settingMenu.editProfile}</p>
+                      <p onClick={() => Navigate('/preferences')}>{translations[language].dashboard.settingMenu.preferences}</p>
+                      <p onClick={() => {
+                        localStorage.removeItem("token");
+                        window.location.href = "/";
+                      }}>{translations[language].dashboard.settingMenu.logOut}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="recentMatchContainer">
+              <h3 className="recentMatchTitle">{translations[language].dashboard.matchSection.recentMatches}</h3>
+              <div className="recentMatchItems">
+                {users.map((u) => (
+                  <div className="recentMatch" key={u.matched_user_id}>
+
+
                     <button
-                      className="closeNotificationsBtn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowNotifications(false);
-                      }}
+                      className="deleteMatchBtn"
+                      onClick={() => handleDeleteMatch(u.matched_user_id)}
                     >
                       ✕
                     </button>
+
+                    <img
+                      className="matchPhoto"
+                      src={getAvatarUrl(u.profile_photo)}
+                      alt=""
+                    />
+                    <p>{u.first_name}</p>
+                    <p>{u.last_name}</p>
                   </div>
-                  {notifications.length === 0 ? (
-                    <p className="noNotifications">
-                      {translations[language]?.dashboard?.notifications?.empty || 'No tienes notificaciones'}
-                    </p>
-                  ) : (
-                    notifications.slice(0, 10).map((notif) => {
-                      let displayTitle = notif.title;
-                      let displayMessage = notif.message;
-
-                      const notifTranslations = Translations[language]?.notifications;
-                      if (notifTranslations) {
-                        if (notif.notification_type === 'match') {
-                          displayTitle = notifTranslations.newMatch.title;
-                          displayMessage = `${notif.message} ${notifTranslations.newMatch.content}`; // userName + content
-                        } else if (notif.notification_type === 'like_request') {
-                          displayTitle = notifTranslations.newLike.title;
-                          displayMessage = `${notif.message} ${notifTranslations.newLike.content}`; // userName + content
-                        }
-                      }
-
-                      return (
-                        <div
-                          key={notif.notification_id}
-                          className={`notificationItem ${!notif.is_read ? 'unread' : ''}`}
-                          onClick={() => handleNotificationClick(notif)}
-                        >
-                          <p className="notificationTitle">{displayTitle}</p>
-                          <p className="notificationMessage">{displayMessage}</p>
-                          <span className="notificationTime">
-                            {formatTimeAgo(notif.created_at)}
-                          </span>
-                        </div>
-                      );
-                    })
-                  )}
-                </div>
-              )}
-            </div>
-
-            <img
-              className="navBarElement"
-              src="../../../public/assets/setting.png"
-              alt="settings"
-              onClick={() => setShowSettingsMenu(!showSettingsMenu)}
-            />
-            {showSettingsMenu && (
-              <div className="settingsMenu">
-                <p onClick={() => Navigate('/editProfile')}>{translations[language].dashboard.settingMenu.editProfile}</p>
-                <p onClick={() => Navigate('/preferences')}>{translations[language].dashboard.settingMenu.preferences}</p>
-                <p onClick={() => {
-                  localStorage.removeItem("token");
-                  window.location.href = "/";
-                }}>{translations[language].dashboard.settingMenu.logOut}</p>
+                ))}
               </div>
-            )}
 
-          </div>
-          <div className="greetingContainer">
-            <div className="UserPic">
-              <img
-                className="actualPic"
-                src={photoPreview || "../../../public/assets/user.png"}
-                alt=""
-              />
             </div>
-            <div className="greeting">
-              <h3 className="bigGreeting">
-                {translations[language].dashboard.mainBox.greeting} {authUser.first_name + " " + authUser.last_name}
-              </h3>
-              <h3 className="smallGreeting">{translations[language].dashboard.mainBox.letUsBegin}</h3>
-            </div>
-          </div>
-          <div className="recentMatchContainer">
-            <h3 className="recentMatchTitle">{translations[language].dashboard.matchSection.recentMatches}</h3>
-            <div className="recentMatchItems">
-              {users.map((u) => (
-                <div className="recentMatch" key={u.matched_user_id}>
-
-
-                  <button
-                    className="deleteMatchBtn"
-                    onClick={() => handleDeleteMatch(u.matched_user_id)}
-                  >
-                    ✕
+            <div className="dashboard-grid-3">
+              {/* 1. MATCH CTA CARD */}
+              <div className="grid-card match-cta-card">
+                <div className="match-content">
+                  <button className="matchButtonLarge" onClick={() => Navigate('/matchUser')}>
+                    Match <span style={{ fontSize: '1.5rem' }}>♥</span>
                   </button>
-
-                  <img
-                    className="matchPhoto"
-                    src={getAvatarUrl(u.profile_photo)}
-                    alt=""
-                  />
-                  <p>{u.first_name}</p>
-                  <p>{u.last_name}</p>
-                </div>
-              ))}
-            </div>
-
-          </div>
-          <div className="carrouselStatistics">
-            <div className="carrouselContainer">
-              <div className="carrouselTitle">{translations[language].dashboard.servicesSection.matchServiceTitle}</div>
-              <div className="matchContainer">
-                <div>
-                  <a href="/matchUser">
-                    {" "}
-                    <button className="matchButton">{translations[language].dashboard.servicesSection.matchButton}</button>
-                  </a>
                 </div>
               </div>
-            </div>
 
-            <div className="carrouselContainer">
-              <div className="carrouselTitle">
-                {translations[language].dashboard.servicesSection.sessionsGraphicTitle}
-              </div>
-              <div className="matchContainer matchStatistics">
-                <ResponsiveContainer
-                  className="recentSessions"
-                  width="90%"
-                  height={150}
-                >
+              {/* 2. STATISTICS CARD */}
+              <div className="grid-card stats-card ios-card">
+                <div className="carrouselTitle">
+                  {translations[language].dashboard.servicesSection.sessionsGraphicTitle}
+                </div>
+                <ResponsiveContainer width="100%" height={180}>
                   <LineChart data={sessions}>
-                    <CartesianGrid stroke="#D88484FF" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                    <XAxis
+                      dataKey="name"
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fill: '#9CA3AF', fontSize: 12 }}
+                    />
+                    <YAxis hide />
+                    <Tooltip
+                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                    />
                     <Line
                       type="monotone"
                       dataKey="sesiones"
-                      stroke="#8884d8"
-                      strokeWidth={2}
+                      stroke="url(#colorGradient)" /* We will define gradient below or just solid */
+                      strokeWidth={4}
+                      dot={{ fill: '#4F46E5', strokeWidth: 2, r: 4 }}
+                      activeDot={{ r: 6 }}
                     />
+                    <defs>
+                      <linearGradient id="colorGradient" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="#818cf8" />
+                        <stop offset="100%" stopColor="#4f46e5" />
+                      </linearGradient>
+                    </defs>
                   </LineChart>
                 </ResponsiveContainer>
+              </div>
 
-                <div></div>
+              {/* 3. CALENDAR CARD */}
+              <div className="grid-card">
+                <CalendarCard />
               </div>
             </div>
           </div>
         </div>
         <Footer language={language} darkMode={darkMode} />
-      </div>
+      </div >
 
       <CustomAlert
         isOpen={alertState.isOpen}
@@ -520,35 +513,37 @@ export function Dashboard({ user }) {
 export function NavBar() {
   return (
     <nav className="navBar">
-      <a href="/dashboard">
-        {" "}
+      <a href="/dashboard" className="navItem" title="Ir al Inicio">
         <img
           src="../../../public/assets/home.png"
-          alt="connect"
+          alt="Home"
           className="navBarImage"
         />
+        <span className="navLabel">Home</span>
       </a>
-      <a href="/matchUser">
-        {" "}
+      <a href="/matchUser" className="navItem" title="Buscar personas para practicar">
         <img
           src="../../../public/assets/friend-request.png"
-          alt="connect"
+          alt="Match"
           className="navBarImage"
         />
+        <span className="navLabel">Match</span>
       </a>
-      <a href="/userChat">
+      <a href="/userChat" className="navItem" title="Ver tus mensajes">
         <img
           src="../../../public/assets/messages.png"
-          alt="connect"
-          className="navBarImage"
-        />{" "}
-      </a>
-      <a href="">
-        <img
-          src="../../../public/assets/sticky-note.png"
-          alt="connect"
+          alt="Messages"
           className="navBarImage"
         />
+        <span className="navLabel">Messages</span>
+      </a>
+      <a href="" className="navItem" title="Tus notas personales">
+        <img
+          src="../../../public/assets/sticky-note.png"
+          alt="Notes"
+          className="navBarImage"
+        />
+        <span className="navLabel">Notes</span>
       </a>
     </nav>
   );

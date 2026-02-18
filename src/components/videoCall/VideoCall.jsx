@@ -38,6 +38,11 @@ export default function VideoCall() {
 
   const [messages, setMessages] = useState([]);
   const [draft, setDraft] = useState("");
+  const [alertState, setAlertState] = useState({
+    isOpen: false,
+    message: "",
+    type: "info",
+  });
 
   const API_BACKEND = API_URL;
   const numericMatchId = useMemo(() => Number(match_id), [match_id]);
