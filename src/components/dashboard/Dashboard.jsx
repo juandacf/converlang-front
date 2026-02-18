@@ -392,7 +392,7 @@ export function Dashboard({ user }) {
                 </div>
                 <div className="greeting-text">
                   <h3 className="bigGreeting">
-                    ¡Hola! {authUser.first_name} {authUser.last_name}
+                    {translations[language].mainBox.greeting} {authUser.first_name} {authUser.last_name}
                   </h3>
                   <h3 className="smallGreeting">{translations[language].dashboard.mainBox.letUsBegin}</h3>
                 </div>
