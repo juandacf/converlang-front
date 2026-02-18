@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev:vite": "vite --host",
-    "server": "json-server --watch ./db.json --host 0.0.0.0 --port 4000",
+    "server": "json-server --watch ./db.json --host 0.0.0.0 --port 4010",
     "dev": "concurrently -k -n \"api,web\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm:server\" \"npm:dev:vite\"",
     "build": "vite build",
     "lint": "eslint .",
