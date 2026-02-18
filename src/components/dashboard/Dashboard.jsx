@@ -462,7 +462,12 @@ export function Dashboard({ user }) {
               <h3 className="recentMatchTitle">{translations[language].dashboard.matchSection.recentMatches}</h3>
               <div className="recentMatchItems">
                 {users.map((u) => (
-                  <div className="recentMatch" key={u.matched_user_id}>
+                  <div
+                    className="recentMatch"
+                    key={u.matched_user_id}
+                    onClick={() => Navigate('/userChat', { state: { targetUserId: u.matched_user_id } })}
+                    style={{ cursor: 'pointer' }}
+                  >
 
 
                     <button

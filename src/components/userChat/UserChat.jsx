@@ -3,7 +3,7 @@ import { NavBar } from "../dashboard/Dashboard";
 import { Footer } from "../common/Footer";
 import "./UserChat.css";
 import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useSocket } from "../../context/SocketContext";
 import { API_URL } from "../../config/api";
 import { authFetch } from "../../config/authFetch";
@@ -47,12 +47,27 @@ export function UserChat() {
   // =====================================================
   // 1. Obtener lista de chats del usuario
   // =====================================================
+  const location = useLocation();
+
   useEffect(() => {
     authFetch(`${API_BACKEND}/chats/list/${decodedToken.sub}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then((res) => res.json())
-      .then((data) => setChatList(data));
+      .then((data) => {
+        setChatList(data);
+
+        // Auto-select chat if navigating from dashboard
+        const targetId = location.state?.targetUserId;
+        if (targetId) {
+          const found = data.find(c => Number(c.other_user_id) === Number(targetId));
+          if (found) {
+            setSelectedMatch(found);
+            // Limpiar el state para no re-seleccionar al recargar si no se quiere
+            // window.history.replaceState({}, document.title)
+          }
+        }
+      });
   }, [decodedToken.sub]);
 
   // =====================================================
