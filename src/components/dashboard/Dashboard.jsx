@@ -17,6 +17,7 @@ import { authFetch } from "../../config/authFetch";
 import { Translations } from "../../translations/translations";
 import { io } from "socket.io-client";
 import { CustomAlert } from "../common/CustomAlert";
+import { Footer } from "../common/Footer";
 
 
 
@@ -503,20 +504,9 @@ export function Dashboard({ user }) {
                 <div></div>
               </div>
             </div>
-            <div className="carrouselContainer">
-              <div className="carrouselTitle">{translations[language].dashboard.servicesSection.hireATeacherTitle}</div>
-              <div className="matchContainer">
-                <div>
-                  <a href="/matchTeacher">
-                    {" "}
-                    <button className="matchButton buttonPremium">{translations[language].dashboard.servicesSection.premium}</button>
-                  </a>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
-        <Footer />
+        <Footer language={language} darkMode={darkMode} />
       </div>
 
       <CustomAlert
@@ -564,91 +554,5 @@ export function NavBar() {
         />
       </a>
     </nav>
-  );
-}
-
-export function Footer() {
-
-  const [language, setLanguage] = useState("ES");
-  const [darkMode, setDarkMode] = useState(false);
-  const token = localStorage.getItem("token");
-  const decodedToken = jwtDecode(token);
-  useEffect(() => {
-    const fetchPreferences = async () => {
-      try {
-        const res = await authFetch(
-          `${API_BACKEND}/preferences/${decodedToken.sub}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!res.ok) {
-          throw new Error(`Error ${res.status}`);
-        }
-
-        const data = await res.json();
-
-        // Backend: theme = true (light) | false (dark)
-        setDarkMode(!data.theme);
-        setLanguage(data.language_code);
-      } catch (error) {
-        console.error("Error cargando preferencias:", error);
-      }
-    };
-
-    fetchPreferences();
-  }, []);
-
-  return (
-    <footer className="footerContainer">
-      <div className="footerSection" id="socialMedia">
-        <a href="" className="socialMediaLink">
-          <img
-            src="../../../public/assets/twitter.png"
-            alt=""
-            className="socialMediaIcon"
-          />
-        </a>
-        <a href="" className="socialMediaLink">
-          <img
-            src="../../../public/assets/instagram.png"
-            alt=""
-            className="socialMediaIcon"
-          />
-        </a>
-        <a href="" className="socialMediaLink">
-          <img
-            src="../../../public/assets/linkedin.png"
-            alt=""
-            className="socialMediaIcon"
-          />
-        </a>
-        <a href="" className="socialMediaLink">
-          <img
-            src="../../../public/assets/youtube.png"
-            alt=""
-            className="socialMediaIcon"
-          />
-        </a>
-      </div>
-      <div className="aboutUs footerSection">
-        <h3>{translations[language].dashboard.footer.aboutUs}</h3>
-        <p>{translations[language].dashboard.footer.mission}</p>
-        <p>{translations[language].dashboard.footer.efficacy}</p>
-      </div>
-      <div className="helpSupport footerSection">
-        <h3>{translations[language].dashboard.footer.helpAndSupport}</h3>
-        <p>{translations[language].dashboard.footer.contact}</p>
-        <p>{translations[language].dashboard.footer.helpAndSupport}</p>
-      </div>
-      <div className="termsPrivacy footerSection">
-        <h3>{translations[language].dashboard.footer.termsAndPrivacy}</h3>
-        <p>{translations[language].dashboard.footer.communityBlog}</p>
-        <p>{translations[language].dashboard.footer.tems}</p>
-      </div>
-    </footer>
   );
 }

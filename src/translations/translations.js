@@ -67,10 +67,6 @@ export const Translations = {
       "matchModuleTitle": "Hagamos Match",
       "matchButton": "Like"
     },
-    "teacherMatchModule": {
-      "teacherModuleTitle": "Contrata un profesor!",
-      "hireButton": "Contratar"
-    },
     "chatModule": {
       "searchBarPlaceholder": "Buscar...",
       "sendMessagePlaceholder": "Escribe un mensaje...",
@@ -101,6 +97,28 @@ export const Translations = {
     },
     "alert": {
       "buttonText": "Entendido"
+    },
+    "footer": {
+      "tagline": "El mundo es tu aula. Habla con confianza.",
+      "company": {
+        "title": "Compañía",
+        "about": "Quiénes somos",
+        "blog": "Blog",
+        "careers": "Carreras"
+      },
+      "legal": {
+        "title": "Legal",
+        "terms": "Términos y condiciones",
+        "privacy": "Privacidad",
+        "cookies": "Cookies"
+      },
+      "support": {
+        "title": "Soporte",
+        "guide": "Guía básica",
+        "help": "Centro de ayuda",
+        "contact": "Contacto"
+      },
+      "copyright": "Todos los derechos reservados."
     }
   },
 
@@ -172,10 +190,6 @@ export const Translations = {
       "matchModuleTitle": "Let's Match",
       "matchButton": "Like"
     },
-    "teacherMatchModule": {
-      "teacherModuleTitle": "Hire a teacher!",
-      "hireButton": "Hire"
-    },
     "chatModule": {
       "searchBarPlaceholder": "Search...",
       "sendMessagePlaceholder": "Type a message...",
@@ -206,6 +220,28 @@ export const Translations = {
     },
     "alert": {
       "buttonText": "Got it"
+    },
+    "footer": {
+      "tagline": "The world is your classroom. Speak with confidence.",
+      "company": {
+        "title": "Company",
+        "about": "About Us",
+        "blog": "Blog",
+        "careers": "Careers"
+      },
+      "legal": {
+        "title": "Legal",
+        "terms": "Terms and Conditions",
+        "privacy": "Privacy",
+        "cookies": "Cookies"
+      },
+      "support": {
+        "title": "Support",
+        "guide": "Basic Guide",
+        "help": "Help Center",
+        "contact": "Contact"
+      },
+      "copyright": "All rights reserved."
     }
   },
 
@@ -277,10 +313,6 @@ export const Translations = {
       "matchModuleTitle": "Faisons match",
       "matchButton": "J’aime"
     },
-    "teacherMatchModule": {
-      "teacherModuleTitle": "Engagez un professeur !",
-      "hireButton": "Engager"
-    },
     "chatModule": {
       "searchBarPlaceholder": "Rechercher...",
       "sendMessagePlaceholder": "Écrivez un message...",
@@ -311,6 +343,28 @@ export const Translations = {
     },
     "alert": {
       "buttonText": "Compris"
+    },
+    "footer": {
+      "tagline": "Le monde est votre salle de classe. Parlez avec confiance.",
+      "company": {
+        "title": "Entreprise",
+        "about": "À propos",
+        "blog": "Blog",
+        "careers": "Carrières"
+      },
+      "legal": {
+        "title": "Légal",
+        "terms": "Conditions générales",
+        "privacy": "Confidentialité",
+        "cookies": "Cookies"
+      },
+      "support": {
+        "title": "Assistance",
+        "guide": "Guide de base",
+        "help": "Centre d'aide",
+        "contact": "Contact"
+      },
+      "copyright": "Tous droits réservés."
     }
   },
 
@@ -382,10 +436,6 @@ export const Translations = {
       "matchModuleTitle": "Vamos dar match",
       "matchButton": "Curtir"
     },
-    "teacherMatchModule": {
-      "teacherModuleTitle": "Contrate um professor!",
-      "hireButton": "Contratar"
-    },
     "chatModule": {
       "searchBarPlaceholder": "Pesquisar...",
       "sendMessagePlaceholder": "Escreva uma mensagem...",
@@ -416,6 +466,28 @@ export const Translations = {
     },
     "alert": {
       "buttonText": "Entendido"
+    },
+    "footer": {
+      "tagline": "O mundo é sua sala de aula. Fale com confiança.",
+      "company": {
+        "title": "Empresa",
+        "about": "Sobre nós",
+        "blog": "Blog",
+        "careers": "Carreiras"
+      },
+      "legal": {
+        "title": "Jurídico",
+        "terms": "Termos e condições",
+        "privacy": "Privacidade",
+        "cookies": "Cookies"
+      },
+      "support": {
+        "title": "Suporte",
+        "guide": "Guia básico",
+        "help": "Central de ajuda",
+        "contact": "Contato"
+      },
+      "copyright": "Todos os direitos reservados."
     }
   },
 
@@ -487,10 +559,6 @@ export const Translations = {
       "matchModuleTitle": "Lass uns matchen",
       "matchButton": "Gefällt mir"
     },
-    "teacherMatchModule": {
-      "teacherModuleTitle": "Buche einen Lehrer!",
-      "hireButton": "Buchen"
-    },
     "chatModule": {
       "searchBarPlaceholder": "Suchen...",
       "sendMessagePlaceholder": "Nachricht schreiben...",
@@ -521,6 +589,28 @@ export const Translations = {
     },
     "alert": {
       "buttonText": "Verstanden"
+    },
+    "footer": {
+      "tagline": "Die Welt ist dein Klassenzimmer. Sprich mit Selbstvertrauen.",
+      "company": {
+        "title": "Unternehmen",
+        "about": "Über uns",
+        "blog": "Blog",
+        "careers": "Karriere"
+      },
+      "legal": {
+        "title": "Rechtliches",
+        "terms": "Nutzungsbedingungen",
+        "privacy": "Datenschutz",
+        "cookies": "Cookies"
+      },
+      "support": {
+        "title": "Support",
+        "guide": "Grundlegende Anleitung",
+        "help": "Hilfecenter",
+        "contact": "Kontakt"
+      },
+      "copyright": "Alle Rechte vorbehalten."
     }
   }
 };

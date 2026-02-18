@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
-import { NavBar, Footer } from "../dashboard/Dashboard";
+import { NavBar } from "../dashboard/Dashboard";
+import { Footer } from "../common/Footer";
 import "./MatchUser.css";
 import { jwtDecode } from "jwt-decode";
 import { API_URL } from "../../config/api";
@@ -275,7 +276,7 @@ export function MatchUser() {
           </button>
         </div>
 
-        <Footer />
+        <Footer language={language} darkMode={darkMode} />
       </div>
     </div>
   );

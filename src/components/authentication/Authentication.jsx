@@ -1,12 +1,7 @@
 import './Authentication.css';
 import { motion } from 'framer-motion';
 import LottieIcon from '../common/LottieIcon'; // Import the new component
-import {
-  Instagram,
-  Twitter,
-  Facebook,
-  Youtube
-} from 'lucide-react';
+import { Footer } from '../common/Footer';
 
 export function Authentication() {
 
@@ -112,47 +107,7 @@ export function Authentication() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="landing-footer">
-        <div className="footer-content">
-          <div className="footer-brand">
-            <img src="/assets/img/converlang_horizontal.png" alt="Converlang" className="footer-logo logo-desktop" />
-            <img src="/assets/img/converlang_mobile.png" alt="Converlang" className="footer-logo logo-mobile" />
-            <p className="footer-tagline">El mundo es tu aula. Habla con confianza.</p>
-            <div className="social-links">
-              <a href="#"><Instagram size={20} /></a>
-              <a href="#"><Twitter size={20} /></a>
-              <a href="#"><Facebook size={20} /></a>
-              <a href="#"><Youtube size={20} /></a>
-            </div>
-          </div>
-
-          <div className="footer-grid">
-            <div className="footer-column">
-              <h4>Compañía</h4>
-              <a href="#">Quiénes somos</a>
-              <a href="#">Blog</a>
-              <a href="#">Carreras</a>
-            </div>
-            <div className="footer-column">
-              <h4>Legal</h4>
-              <a href="/terms-and-conditions" target="_blank" rel="noopener noreferrer">Términos y condiciones</a>
-              <a href="#">Privacidad</a>
-              <a href="#">Cookies</a>
-            </div>
-            <div className="footer-column">
-              <h4>Soporte</h4>
-              <a href="#">Guía básica</a>
-              <a href="#">Centro de ayuda</a>
-              <a href="#">Contacto</a>
-            </div>
-          </div>
-        </div>
-
-        <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} Converlang. Todos los derechos reservados.</p>
-        </div>
-      </footer>
+      <Footer language="ES" darkMode={false} />
     </div>
   );
 }

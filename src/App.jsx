@@ -5,7 +5,6 @@ import { Login } from './components/login/Login';
 import { SignUp } from './components/signUP/SignUp';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { MatchUser } from './components/matchUser/MatchUser';
-import { MatchTeacher } from './components/matchTeacher/MatchTeacher';
 import { UserChat } from './components/userChat/UserChat';
 import { TeacherDashboard } from "./components/teacher-Dashboard/TeacherDashboard";
 import { AdminDashboard } from "./components/adminDashboard/AdminDashboard";
@@ -34,7 +33,6 @@ export default function App() {
         {/* Rutas de usuario - admin no puede acceder */}
         <Route path="/dashboard" element={<UserRoute><Dashboard user={userExample} /></UserRoute>} />
         <Route path="/matchUser" element={<UserRoute><MatchUser /></UserRoute>} />
-        <Route path="/matchTeacher" element={<UserRoute><MatchTeacher /></UserRoute>} />
         <Route path="/userChat" element={<UserRoute><UserChat /></UserRoute>} />
         <Route path="/teacherDashboard" element={<UserRoute><TeacherDashboard /></UserRoute>} />
         <Route path="/editProfile" element={<UserRoute><EditProfile /></UserRoute>} />

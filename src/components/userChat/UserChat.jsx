@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { NavBar, Footer } from "../dashboard/Dashboard";
+import { NavBar } from "../dashboard/Dashboard";
+import { Footer } from "../common/Footer";
 import "./UserChat.css";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
