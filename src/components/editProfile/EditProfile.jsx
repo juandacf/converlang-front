@@ -6,12 +6,14 @@ import { API_URL } from "../../config/api";
 import { authFetch } from "../../config/authFetch";
 import { Translations } from "../../translations/translations";
 import { CustomAlert } from "../common/CustomAlert";
+import { useNavigate } from "react-router-dom";
 import { AVATARS, getAvatarUrl } from "../../utils/avatarUtils";
 
 const translations = Translations
 export function EditProfile() {
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
+  const navigate = useNavigate();
   const [languages, setLanguages] = useState([]);
   const [photoPreview, setPhotoPreview] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
@@ -38,7 +40,6 @@ export function EditProfile() {
     "native_lang_id",
     "target_lang_id",
     "description",
-    "bank_id",
   ];
 
   async function handleDeletePhoto() {
@@ -152,7 +153,7 @@ export function EditProfile() {
     const json = await res.json();
 
     // Nueva foto
-    setPhotoPreview(`${API_BACKEND}${json.path}`);
+    setPhotoPreview(`${API_BACKEND}${json.path}?t=${new Date().getTime()}`);
     setForm({ ...form, profile_photo: json.path });
 
     setAlertState({
@@ -229,6 +230,9 @@ export function EditProfile() {
         type: "success",
         message: translations[language].editProfile.sucessUpdateProfile
       });
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
     }
 
   }

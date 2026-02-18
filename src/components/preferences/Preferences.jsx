@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Preferences.css";
 import { NavBar } from "../dashboard/Dashboard";
 import { API_URL } from "../../config/api";
@@ -9,6 +10,7 @@ import { CustomAlert } from "../common/CustomAlert";
 
 export default function UserPreferencesCard() {
   // 🌙 Frontend: true = dark mode
+  const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("ES");
   const [loading, setLoading] = useState(false);
@@ -102,6 +104,9 @@ export default function UserPreferencesCard() {
         type: "success",
         message: translations[language].preferences.preferencesSuccess
       });
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
     } catch (error) {
       console.error("Error guardando preferencias:", error);
       setAlertState({

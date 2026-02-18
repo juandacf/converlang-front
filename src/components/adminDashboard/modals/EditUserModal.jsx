@@ -18,7 +18,7 @@ export const EditUserModal = ({ isOpen, onClose, onSuccess, userId }) => {
         native_lang_id: '',
         target_lang_id: '',
         match_quantity: 10,
-        bank_id: '',
+
         description: '',
         profile_photo: ''
     });
@@ -78,7 +78,7 @@ export const EditUserModal = ({ isOpen, onClose, onSuccess, userId }) => {
                 native_lang_id: user.native_lang_id || '',
                 target_lang_id: user.target_lang_id || '',
                 match_quantity: user.match_quantity || 10,
-                bank_id: user.bank_id || '',
+
                 description: user.description || '',
                 profile_photo: user.profile_photo || ''
             });
