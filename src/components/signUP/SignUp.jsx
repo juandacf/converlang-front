@@ -529,6 +529,7 @@ export function SignUp() {
         onClose={closeAlert}
         type={alertState.type}
         message={alertState.message}
+        language="ES"
       />
     </div>
   );

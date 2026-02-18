@@ -98,6 +98,9 @@ export const Translations = {
         "title": "¡Nuevo Match!",
         "content": "Es tu nuevo match!"
       }
+    },
+    "alert": {
+      "buttonText": "Entendido"
     }
   },
 
@@ -200,6 +203,9 @@ export const Translations = {
         "title": "New Match!",
         "content": "Is your new match!"
       }
+    },
+    "alert": {
+      "buttonText": "Got it"
     }
   },
 
@@ -302,6 +308,9 @@ export const Translations = {
         "title": "Nouveau Match !",
         "content": "Est votre nouveau match !"
       }
+    },
+    "alert": {
+      "buttonText": "Compris"
     }
   },
 
@@ -404,6 +413,9 @@ export const Translations = {
         "title": "Novo Match!",
         "content": "É o seu novo match!"
       }
+    },
+    "alert": {
+      "buttonText": "Entendido"
     }
   },
 
@@ -506,6 +518,9 @@ export const Translations = {
         "title": "Neues Match!",
         "content": "Ist dein neues Match!"
       }
+    },
+    "alert": {
+      "buttonText": "Verstanden"
     }
   }
 };

@@ -16,6 +16,7 @@ import { API_URL } from "../../config/api";
 import { authFetch } from "../../config/authFetch";
 import { Translations } from "../../translations/translations";
 import { io } from "socket.io-client";
+import { CustomAlert } from "../common/CustomAlert";
 
 
 
@@ -31,6 +32,11 @@ export function Dashboard({ user }) {
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("ES");
+  const [alertState, setAlertState] = useState({
+    isOpen: false,
+    type: "success",
+    message: ""
+  });
 
   // Estados para notificaciones
   const [notifications, setNotifications] = useState([]);
@@ -306,7 +312,11 @@ export function Dashboard({ user }) {
         prev.filter((u) => u.matched_user_id !== matchedUserId)
       );
     } catch (err) {
-      alert(err.message);
+      setAlertState({
+        isOpen: true,
+        type: "error",
+        message: err.message
+      });
     }
   };
   translations[language].dashboard.matchSection.deleteMatchWarning
@@ -508,6 +518,14 @@ export function Dashboard({ user }) {
         </div>
         <Footer />
       </div>
+
+      <CustomAlert
+        isOpen={alertState.isOpen}
+        onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
+        type={alertState.type}
+        message={alertState.message}
+        language={language}
+      />
     </>
   );
 }

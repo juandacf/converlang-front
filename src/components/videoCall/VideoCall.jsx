@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import { API_URL } from "../../config/api";
 import { authFetch } from "../../config/authFetch";
 import { Translations } from "../../translations/translations";
+import { CustomAlert } from "../common/CustomAlert";
 
 export default function VideoCall() {
   const [darkMode, setDarkMode] = useState(false);
@@ -317,8 +318,12 @@ export default function VideoCall() {
     socket.on("callEnded", () => {
       console.log("El otro usuario colgó.");
       cleanupCall();
-      alert("La llamada ha finalizado.");
-      navigate(-1);
+      setAlertState({
+        isOpen: true,
+        type: "success",
+        message: "La llamada ha finalizado."
+      });
+      setTimeout(() => navigate(-1), 1500);
     });
 
     // 7. Recibir Mensajes de Chat
@@ -564,6 +569,14 @@ export default function VideoCall() {
           </div>
         </div>
       </div>
+
+      <CustomAlert
+        isOpen={alertState.isOpen}
+        onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
+        type={alertState.type}
+        message={alertState.message}
+        language={language}
+      />
     </div>
   );
 }

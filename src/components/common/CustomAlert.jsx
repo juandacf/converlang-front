@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle, AlertCircle } from "lucide-react";
 import "./CustomAlert.css";
+import { Translations } from "../../translations/translations";
 
-export function CustomAlert({ isOpen, onClose, type = "success", message }) {
+export function CustomAlert({ isOpen, onClose, type = "success", message, language = "ES" }) {
     if (!isOpen) return null;
 
     const isSuccess = type === "success";
@@ -25,10 +26,6 @@ export function CustomAlert({ isOpen, onClose, type = "success", message }) {
                             {isSuccess ? <CheckCircle size={32} /> : <AlertCircle size={32} />}
                         </div>
 
-                        <h3 className="custom-alert-title">
-                            {isSuccess ? '¡Éxito!' : 'Error'}
-                        </h3>
-
                         <p className="custom-alert-message">
                             {message}
                         </p>
@@ -37,7 +34,7 @@ export function CustomAlert({ isOpen, onClose, type = "success", message }) {
                             onClick={onClose}
                             className="primaryBtn custom-alert-btn"
                         >
-                            Entendido
+                            {Translations[language]?.alert?.buttonText || "Entendido"}
                         </button>
                     </motion.div>
                 </div>

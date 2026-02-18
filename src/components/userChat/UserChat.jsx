@@ -7,6 +7,7 @@ import { useSocket } from "../../context/SocketContext";
 import { API_URL } from "../../config/api";
 import { authFetch } from "../../config/authFetch";
 import { Translations } from "../../translations/translations";
+import { CustomAlert } from "../common/CustomAlert";
 
 
 export function UserChat() {
@@ -21,6 +22,11 @@ export function UserChat() {
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("ES");
   const [showConfigMenu, setShowConfigMenu] = useState(false);
+  const [alertState, setAlertState] = useState({
+    isOpen: false,
+    type: "success",
+    message: ""
+  });
   const configMenuRef = useRef(null);
   const navigate = useNavigate();
   const API_BACKEND = API_URL
@@ -157,7 +163,11 @@ export function UserChat() {
       setShowConfigMenu(false);
 
     } catch (err) {
-      alert(err.message);
+      setAlertState({
+        isOpen: true,
+        type: "error",
+        message: err.message
+      });
     }
   };
 
@@ -208,9 +218,17 @@ export function UserChat() {
       setMessages([]);
       setShowConfigMenu(false);
 
-      alert(translations[language].chatModule.reportSuccess);
+      setAlertState({
+        isOpen: true,
+        type: "success",
+        message: translations[language].chatModule.reportSuccess
+      });
     } catch (err) {
-      alert(err.message);
+      setAlertState({
+        isOpen: true,
+        type: "error",
+        message: err.message
+      });
     }
   };
 
@@ -386,6 +404,14 @@ export function UserChat() {
         <NavBar />
         <Footer />
       </div>
+
+      <CustomAlert
+        isOpen={alertState.isOpen}
+        onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
+        type={alertState.type}
+        message={alertState.message}
+        language={language}
+      />
     </>
 
   );

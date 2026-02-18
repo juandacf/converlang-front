@@ -5,6 +5,7 @@ import { API_URL } from "../../config/api";
 import { authFetch } from "../../config/authFetch";
 import { jwtDecode } from "jwt-decode";
 import { Translations } from "../../translations/translations";
+import { CustomAlert } from "../common/CustomAlert";
 
 export default function UserPreferencesCard() {
   // 🌙 Frontend: true = dark mode
@@ -12,6 +13,11 @@ export default function UserPreferencesCard() {
   const [language, setLanguage] = useState("ES");
   const [loading, setLoading] = useState(false);
   const [languages, setLanguages] = useState([]);
+  const [alertState, setAlertState] = useState({
+    isOpen: false,
+    type: "success",
+    message: ""
+  });
 
   const API_BACKEND = API_URL;
   const translations = Translations
@@ -91,10 +97,18 @@ export default function UserPreferencesCard() {
         throw new Error(`Error ${res.status}`);
       }
 
-      alert(translations[language].preferences.preferencesSuccess);
+      setAlertState({
+        isOpen: true,
+        type: "success",
+        message: translations[language].preferences.preferencesSuccess
+      });
     } catch (error) {
       console.error("Error guardando preferencias:", error);
-      alert(translations[language].preferences.preferencesNotSuccess);
+      setAlertState({
+        isOpen: true,
+        type: "error",
+        message: translations[language].preferences.preferencesNotSuccess
+      });
     } finally {
       setLoading(false);
     }
@@ -159,6 +173,14 @@ export default function UserPreferencesCard() {
           <NavBar />
         </div>
       </div>
+
+      <CustomAlert
+        isOpen={alertState.isOpen}
+        onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
+        type={alertState.type}
+        message={alertState.message}
+        language={language}
+      />
     </div>
   );
 }

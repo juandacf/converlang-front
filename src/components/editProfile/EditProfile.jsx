@@ -5,6 +5,7 @@ import "./editProfile.css";
 import { API_URL } from "../../config/api";
 import { authFetch } from "../../config/authFetch";
 import { Translations } from "../../translations/translations";
+import { CustomAlert } from "../common/CustomAlert";
 
 const translations = Translations
 export function EditProfile() {
@@ -14,6 +15,11 @@ export function EditProfile() {
   const [photoPreview, setPhotoPreview] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("ES");
+  const [alertState, setAlertState] = useState({
+    isOpen: false,
+    type: "success",
+    message: ""
+  });
   const API_BACKEND = API_URL
 
 
@@ -42,14 +48,22 @@ export function EditProfile() {
     );
 
     if (!res.ok) {
-      alert(translations[language].editProfile.errorDeletePhoto);
+      setAlertState({
+        isOpen: true,
+        type: "error",
+        message: translations[language].editProfile.errorDeletePhoto
+      });
       return;
     }
 
     setPhotoPreview(null);
     setForm({ ...form, profile_photo: null });
 
-    alert(translations[language].editProfile.successDeletePhoto);
+    setAlertState({
+      isOpen: true,
+      type: "success",
+      message: translations[language].editProfile.successDeletePhoto
+    });
   }
 
   const initialForm = editableFields.reduce(
@@ -122,7 +136,11 @@ export function EditProfile() {
     );
 
     if (!res.ok) {
-      alert(translations[language].editProfile.errorUploadPhoto);
+      setAlertState({
+        isOpen: true,
+        type: "error",
+        message: translations[language].editProfile.errorUploadPhoto
+      });
       return;
     }
 
@@ -132,7 +150,11 @@ export function EditProfile() {
     setPhotoPreview(`${API_BACKEND}${json.path}`);
     setForm({ ...form, profile_photo: json.path });
 
-    alert(translations[language].editProfile.successUploadPhoto);
+    setAlertState({
+      isOpen: true,
+      type: "success",
+      message: translations[language].editProfile.successUploadPhoto
+    });
   }
 
   async function handleSubmit(e) {
@@ -155,11 +177,19 @@ export function EditProfile() {
     });
 
     if (!res.ok) {
-      alert(translations[language].editProfile.errorUploadProfile);
+      setAlertState({
+        isOpen: true,
+        type: "error",
+        message: translations[language].editProfile.errorUploadProfile
+      });
       return;
     } else {
 
-      alert(translations[language].editProfile.sucessUpdateProfile);
+      setAlertState({
+        isOpen: true,
+        type: "success",
+        message: translations[language].editProfile.sucessUpdateProfile
+      });
     }
 
   }
@@ -306,6 +336,14 @@ export function EditProfile() {
           </form>
         </div>
       </div>
+
+      <CustomAlert
+        isOpen={alertState.isOpen}
+        onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
+        type={alertState.type}
+        message={alertState.message}
+        language={language}
+      />
     </>
   );
 }
