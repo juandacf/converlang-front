@@ -1,6 +1,6 @@
 .termsContainer {
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4a5f7a 0%, #5b7c99 100%);
     padding: 2rem;
     display: flex;
     justify-content: center;
@@ -60,7 +60,7 @@
     font-weight: 800;
     color: #1f2937;
     margin: 0 0 0.5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4a5f7a 0%, #5b7c99 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

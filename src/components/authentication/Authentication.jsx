@@ -136,7 +136,7 @@ export function Authentication() {
             </div>
             <div className="footer-column">
               <h4>Legal</h4>
-              <a href="#">Términos y condiciones</a>
+              <a href="/terms-and-conditions" target="_blank" rel="noopener noreferrer">Términos y condiciones</a>
               <a href="#">Privacidad</a>
               <a href="#">Cookies</a>
             </div>
