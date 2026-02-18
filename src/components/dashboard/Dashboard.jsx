@@ -1,5 +1,5 @@
 import "./Dashboard.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   LineChart,
   Line,
@@ -20,6 +20,7 @@ import { CustomAlert } from "../common/CustomAlert";
 import { Footer } from "../common/Footer";
 import { getAvatarUrl } from "../../utils/avatarUtils";
 import { CalendarCard } from "./CalendarCard";
+import { ConfirmModal } from "../common/ConfirmModal";
 import { Bell, Settings, AlignJustify } from 'lucide-react'; // Assuming lucide-react is available, or use images if not
 
 
@@ -47,6 +48,32 @@ export function Dashboard({ user }) {
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+
+  // Estado para ConfirmModal
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    matchId: null
+  });
+
+  // Refs para detectar clic fuera
+  const notificationRef = useRef(null);
+  const settingsRef = useRef(null);
+
+  // Cerrar menús al hacer clic fuera
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+        setShowNotifications(false);
+      }
+      if (settingsRef.current && !settingsRef.current.contains(event.target)) {
+        setShowSettingsMenu(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const Navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -285,11 +312,19 @@ export function Dashboard({ user }) {
     }
   };
 
-  const handleDeleteMatch = async (matchedUserId) => {
-    const confirmDelete = window.confirm(
-      translations[language].dashboard.matchSection.deleteMatchWarning
-    );
-    if (!confirmDelete) return;
+  const handleDeleteMatchClick = (matchedUserId) => {
+    setConfirmModal({
+      isOpen: true,
+      matchId: matchedUserId
+    });
+  };
+
+  const confirmDeleteMatch = async () => {
+    const matchedUserId = confirmModal.matchId;
+    if (!matchedUserId) return;
+
+    // Cerrar modal inmediatamente
+    setConfirmModal({ isOpen: false, matchId: null });
 
     const user1 = decodedToken.sub;
     const user2 = matchedUserId;
@@ -311,11 +346,17 @@ export function Dashboard({ user }) {
         throw new Error(text || "Error al eliminar el match");
       }
 
-
       // actualizar UI
       setUsers((prev) =>
         prev.filter((u) => u.matched_user_id !== matchedUserId)
       );
+
+      setAlertState({
+        isOpen: true,
+        type: "success",
+        message: "Match eliminado correctamente"
+      });
+
     } catch (err) {
       setAlertState({
         isOpen: true,
@@ -358,7 +399,7 @@ export function Dashboard({ user }) {
               </div>
 
               <div className="header-right-actions">
-                <div className="notificationWrapper">
+                <div className="notificationWrapper" ref={notificationRef}>
                   <img
                     className="navBarElement"
                     src="../../../public/assets/notification.png"
@@ -397,7 +438,7 @@ export function Dashboard({ user }) {
                   )}
                 </div>
 
-                <div className="settingsWrapper">
+                <div className="settingsWrapper" ref={settingsRef}>
                   <img
                     className="navBarElement"
                     src="../../../public/assets/setting.png"
@@ -426,7 +467,7 @@ export function Dashboard({ user }) {
 
                     <button
                       className="deleteMatchBtn"
-                      onClick={() => handleDeleteMatch(u.matched_user_id)}
+                      onClick={() => handleDeleteMatchClick(u.matched_user_id)}
                     >
                       ✕
                     </button>
@@ -505,6 +546,13 @@ export function Dashboard({ user }) {
         type={alertState.type}
         message={alertState.message}
         language={language}
+      />
+
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal({ isOpen: false, matchId: null })}
+        onConfirm={confirmDeleteMatch}
+        message={translations[language].dashboard.matchSection.deleteMatchWarning}
       />
     </>
   );

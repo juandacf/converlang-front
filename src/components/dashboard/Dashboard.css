@@ -182,19 +182,22 @@
 
 .navBarImage {
   width: 3.2rem;
-  /* Enlarge icons */
   height: 3.2rem;
-  opacity: 0.7;
-  /* Slightly more visible by default */
-  transition: all .3s ease;
-  filter: grayscale(100%);
+  opacity: 0.9;
+  /* More visible */
+  transition: all .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  /* Bouncy transition */
+  filter: grayscale(0%);
+  /* Show color */
 }
 
 .navBarImage:hover,
 .navBar .active-icon {
   opacity: 1;
-  transform: scale(1.15);
-  filter: grayscale(0%);
+  transform: scale(1.25);
+  /* Slightly bigger */
+  filter: brightness(1.2) drop-shadow(0 0 10px rgba(79, 70, 229, 0.4));
+  /* Glow effect */
   cursor: pointer;
 }
 
@@ -508,32 +511,22 @@
   border-radius: 999px;
 }
 
-.recentMatch {
-  flex: 0 0 auto;
-  padding: .8rem 1rem;
-  background: var(--card-soft);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-soft);
+/* .recentMatch styles moved to line ~866 to group with delete button */
 
-  scroll-snap-align: center;
-
-  display: flex;
-  align-items: center;
-  gap: .75rem;
-
-  transition: transform .2s, background .2s;
+.recentMatch p {
+  font-size: 0.75rem;
+  text-align: center;
+  color: #4b5563;
+  margin: 0;
+  line-height: 1.2;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.recentMatch:hover {
-  background: #eef0ff;
-  transform: translateY(-3px);
-}
-
-.matchPhoto {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  object-fit: cover;
+.recentMatch:hover .matchPhoto {
+  border-color: #4f46e5;
 }
 
 /* ================================
@@ -838,23 +831,67 @@
   background: #f0f0f0;
 }
 
+/* RECENT MATCHES RESIZE & STYLE */
 .recentMatch {
+  flex: 0 0 auto;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+
+  scroll-snap-align: center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 110px;
+  /* Increased width */
   position: relative;
+
+  transition: transform .2s;
 }
 
+.matchPhoto {
+  width: 5rem;
+  /* Increased size */
+  height: 5rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s;
+}
+
+/* DELETE BUTTON STYLING */
 .deleteMatchBtn {
   position: absolute;
-  top: 5px;
-  right: 5px;
-  background: transparent;
-  border: none;
-  color: #d9534f;
-  font-size: 16px;
+  top: 0;
+  right: 15px;
+  /* Offset to float over avatar */
+
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ff4d4f;
+  /* Red circle */
+  border: 2px solid white;
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 14px;
+  font-weight: bold;
   cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s;
+  z-index: 5;
 }
 
 .deleteMatchBtn:hover {
-  color: #c9302c;
+  background: #d9363e;
   transform: scale(1.1);
 }
 
