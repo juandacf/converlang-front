@@ -175,7 +175,7 @@ export default function UserPreferencesCard() {
             {loading ? translations[language].preferences.loadingSaveButton : translations[language].preferences.saveButton}
           </button>
 
-          <NavBar />
+          <NavBar language={language} />
         </div>
       </div>
 

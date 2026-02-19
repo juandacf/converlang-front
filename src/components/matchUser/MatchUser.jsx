@@ -190,7 +190,7 @@ export function MatchUser() {
   return (
     <div className={darkMode ? "dark-mode" : ""}>
       <div className="mainContainer">
-        <NavBar />
+        <NavBar language={language} />
 
         <div className="matchHeader">
           <div className="matchMainTitle">

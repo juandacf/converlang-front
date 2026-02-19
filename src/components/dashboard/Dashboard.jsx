@@ -371,7 +371,7 @@ export function Dashboard({ user }) {
   return (
     <>
       <div className={darkMode ? "dark-mode" : ""}>
-        <NavBar />
+        <NavBar language={language} />
         <div className="dashboardMainContainer">
 
           <div className="dashboard-content-wrapper">
@@ -472,7 +472,10 @@ export function Dashboard({ user }) {
 
                     <button
                       className="deleteMatchBtn"
-                      onClick={() => handleDeleteMatchClick(u.matched_user_id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteMatchClick(u.matched_user_id);
+                      }}
                     >
                       ✕
                     </button>
@@ -494,7 +497,7 @@ export function Dashboard({ user }) {
               <div className="grid-card match-cta-card">
                 <div className="match-content">
                   <button className="matchButtonLarge" onClick={() => Navigate('/matchUser')}>
-                    Match <span style={{ fontSize: '1.5rem' }}>♥</span>
+                    Match <span style={{ fontSize: '1.5rem' }}></span>
                   </button>
                 </div>
               </div>
@@ -506,12 +509,13 @@ export function Dashboard({ user }) {
                 </div>
                 <ResponsiveContainer width="100%" height={180}>
                   <LineChart data={sessions}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#7da2ebff" />
                     <XAxis
                       dataKey="name"
                       axisLine={false}
                       tickLine={false}
-                      tick={{ fill: '#9CA3AF', fontSize: 12 }}
+                      tick={{ fill: '#9CA3AF', fontSize: 10 }}
+                      interval={4}
                     />
                     <YAxis hide />
                     <Tooltip
@@ -520,15 +524,15 @@ export function Dashboard({ user }) {
                     <Line
                       type="monotone"
                       dataKey="sesiones"
-                      stroke="url(#colorGradient)" /* We will define gradient below or just solid */
+                      stroke="url(#colorGradient)"
                       strokeWidth={4}
-                      dot={{ fill: '#4F46E5', strokeWidth: 2, r: 4 }}
-                      activeDot={{ r: 6 }}
+                      dot={{ fill: '#8e83f8', strokeWidth: 2, r: 3 }}
+                      activeDot={{ r: 6, fill: '#6d28d9' }}
                     />
                     <defs>
                       <linearGradient id="colorGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#818cf8" />
-                        <stop offset="100%" stopColor="#4f46e5" />
+                        <stop offset="0%" stopColor="#c888f3" />
+                        <stop offset="100%" stopColor="#8e83f8" />
                       </linearGradient>
                     </defs>
                   </LineChart>
@@ -563,16 +567,19 @@ export function Dashboard({ user }) {
   );
 }
 
-export function NavBar() {
+export function NavBar({ language = "ES" }) {
+  const t = Translations[language]?.dashboard?.navBar || Translations["ES"].dashboard.navBar;
+
   return (
     <nav className="navBar">
       <a href="/dashboard" className="navItem" title="Ir al Inicio">
         <img
+
           src="../../../public/assets/home.png"
           alt="Home"
           className="navBarImage"
         />
-        <span className="navLabel">Home</span>
+        <span className="navLabel">{t.home}</span>
       </a>
       <a href="/matchUser" className="navItem" title="Buscar personas para practicar">
         <img
@@ -580,7 +587,7 @@ export function NavBar() {
           alt="Match"
           className="navBarImage"
         />
-        <span className="navLabel">Match</span>
+        <span className="navLabel">{t.match}</span>
       </a>
       <a href="/userChat" className="navItem" title="Ver tus mensajes">
         <img
@@ -588,7 +595,7 @@ export function NavBar() {
           alt="Messages"
           className="navBarImage"
         />
-        <span className="navLabel">Messages</span>
+        <span className="navLabel">{t.messages}</span>
       </a>
       <a href="" className="navItem" title="Tus notas personales">
         <img
@@ -596,7 +603,7 @@ export function NavBar() {
           alt="Notes"
           className="navBarImage"
         />
-        <span className="navLabel">Notes</span>
+        <span className="navLabel">{t.notes}</span>
       </a>
     </nav>
   );

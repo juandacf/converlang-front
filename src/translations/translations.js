@@ -17,7 +17,7 @@ export const Translations = {
       "servicesSection": {
         "matchServiceTitle": "Iniciar Match",
         "matchButton": "Match",
-        "sessionsGraphicTitle": "Tus sesiones (ùltimos 30 dìas):",
+        "sessionsGraphicTitle": "Tus sesiones (últimos 30 días):",
         "hireATeacherTitle": "Contratar a un profesor",
         "premium": "Premium"
       },
@@ -31,6 +31,12 @@ export const Translations = {
         "helpAndSupport": "Ayuda y soporte",
         "contact": "Contacto",
         "questions": "Preguntas"
+      },
+      "navBar": {
+        "home": "Inicio",
+        "match": "Match",
+        "messages": "Mensajes",
+        "notes": "Notas"
       }
     },
     "preferences": {
@@ -154,6 +160,12 @@ export const Translations = {
         "helpAndSupport": "Help & Support",
         "contact": "Contact",
         "questions": "Questions"
+      },
+      "navBar": {
+        "home": "Home",
+        "match": "Match",
+        "messages": "Messages",
+        "notes": "Notes"
       }
     },
     "preferences": {
@@ -277,6 +289,12 @@ export const Translations = {
         "helpAndSupport": "Aide et support",
         "contact": "Contact",
         "questions": "Questions"
+      },
+      "navBar": {
+        "home": "Accueil",
+        "match": "Match",
+        "messages": "Messages",
+        "notes": "Notes"
       }
     },
     "preferences": {
@@ -400,6 +418,12 @@ export const Translations = {
         "helpAndSupport": "Ajuda e suporte",
         "contact": "Contato",
         "questions": "Perguntas"
+      },
+      "navBar": {
+        "home": "Início",
+        "match": "Match",
+        "messages": "Mensagens",
+        "notes": "Notas"
       }
     },
     "preferences": {
@@ -523,6 +547,12 @@ export const Translations = {
         "helpAndSupport": "Hilfe & Support",
         "contact": "Kontakt",
         "questions": "Fragen"
+      },
+      "navBar": {
+        "home": "Startseite",
+        "match": "Match",
+        "messages": "Nachrichten",
+        "notes": "Notizen"
       }
     },
     "preferences": {

@@ -268,7 +268,7 @@ export function EditProfile() {
   return (
     <>
       <div className={darkMode ? "dark-mode" : ""}>
-        <NavBar />
+        <NavBar language={language} />
         <div className="preferencesContainer">
           <h2 className="title">{translations[language].editProfile.modifyProfileTitle}</h2>
 
