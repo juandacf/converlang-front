@@ -371,7 +371,7 @@ export function Dashboard({ user }) {
   return (
     <>
       <div className={darkMode ? "dark-mode" : ""}>
-        <NavBar />
+        <NavBar language={language} />
         <div className="dashboardMainContainer">
 
           <div className="dashboard-content-wrapper">
@@ -472,7 +472,10 @@ export function Dashboard({ user }) {
 
                     <button
                       className="deleteMatchBtn"
-                      onClick={() => handleDeleteMatchClick(u.matched_user_id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteMatchClick(u.matched_user_id);
+                      }}
                     >
                       ✕
                     </button>
@@ -563,16 +566,19 @@ export function Dashboard({ user }) {
   );
 }
 
-export function NavBar() {
+export function NavBar({ language = "ES" }) {
+  const t = Translations[language]?.dashboard?.navBar || Translations["ES"].dashboard.navBar;
+
   return (
     <nav className="navBar">
       <a href="/dashboard" className="navItem" title="Ir al Inicio">
         <img
+
           src="../../../public/assets/home.png"
           alt="Home"
           className="navBarImage"
         />
-        <span className="navLabel">Home</span>
+        <span className="navLabel">{t.home}</span>
       </a>
       <a href="/matchUser" className="navItem" title="Buscar personas para practicar">
         <img
@@ -580,7 +586,7 @@ export function NavBar() {
           alt="Match"
           className="navBarImage"
         />
-        <span className="navLabel">Match</span>
+        <span className="navLabel">{t.match}</span>
       </a>
       <a href="/userChat" className="navItem" title="Ver tus mensajes">
         <img
@@ -588,7 +594,7 @@ export function NavBar() {
           alt="Messages"
           className="navBarImage"
         />
-        <span className="navLabel">Messages</span>
+        <span className="navLabel">{t.messages}</span>
       </a>
       <a href="" className="navItem" title="Tus notas personales">
         <img
@@ -596,7 +602,7 @@ export function NavBar() {
           alt="Notes"
           className="navBarImage"
         />
-        <span className="navLabel">Notes</span>
+        <span className="navLabel">{t.notes}</span>
       </a>
     </nav>
   );

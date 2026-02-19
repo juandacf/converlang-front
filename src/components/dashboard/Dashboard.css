@@ -525,9 +525,6 @@
   text-overflow: ellipsis;
 }
 
-.recentMatch:hover .matchPhoto {
-  border-color: #4f46e5;
-}
 
 /* ================================
    LEGACY / UNUSED (Can be removed or kept for reference)

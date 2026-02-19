@@ -31,6 +31,12 @@ export const Translations = {
         "helpAndSupport": "Ayuda y soporte",
         "contact": "Contacto",
         "questions": "Preguntas"
+      },
+      "navBar": {
+        "home": "Inicio",
+        "match": "Match",
+        "messages": "Mensajes",
+        "notes": "Notas"
       }
     },
     "preferences": {
@@ -154,6 +160,12 @@ export const Translations = {
         "helpAndSupport": "Help & Support",
         "contact": "Contact",
         "questions": "Questions"
+      },
+      "navBar": {
+        "home": "Home",
+        "match": "Match",
+        "messages": "Messages",
+        "notes": "Notes"
       }
     },
     "preferences": {
@@ -277,6 +289,12 @@ export const Translations = {
         "helpAndSupport": "Aide et support",
         "contact": "Contact",
         "questions": "Questions"
+      },
+      "navBar": {
+        "home": "Accueil",
+        "match": "Match",
+        "messages": "Messages",
+        "notes": "Notes"
       }
     },
     "preferences": {
@@ -400,6 +418,12 @@ export const Translations = {
         "helpAndSupport": "Ajuda e suporte",
         "contact": "Contato",
         "questions": "Perguntas"
+      },
+      "navBar": {
+        "home": "Início",
+        "match": "Match",
+        "messages": "Mensagens",
+        "notes": "Notas"
       }
     },
     "preferences": {
@@ -523,6 +547,12 @@ export const Translations = {
         "helpAndSupport": "Hilfe & Support",
         "contact": "Kontakt",
         "questions": "Fragen"
+      },
+      "navBar": {
+        "home": "Startseite",
+        "match": "Match",
+        "messages": "Nachrichten",
+        "notes": "Notizen"
       }
     },
     "preferences": {

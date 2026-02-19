@@ -410,7 +410,7 @@ export function UserChat() {
           </div>
         </div>
 
-        <NavBar />
+        <NavBar language={language} />
         <Footer />
       </div>
 
