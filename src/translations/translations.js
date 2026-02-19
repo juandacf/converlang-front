@@ -17,7 +17,7 @@ export const Translations = {
       "servicesSection": {
         "matchServiceTitle": "Iniciar Match",
         "matchButton": "Match",
-        "sessionsGraphicTitle": "Tus sesiones (ùltimos 30 dìas):",
+        "sessionsGraphicTitle": "Tus sesiones (últimos 30 días):",
         "hireATeacherTitle": "Contratar a un profesor",
         "premium": "Premium"
       },

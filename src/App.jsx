@@ -6,7 +6,6 @@ import { SignUp } from './components/signUP/SignUp';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { MatchUser } from './components/matchUser/MatchUser';
 import { UserChat } from './components/userChat/UserChat';
-import { TeacherDashboard } from "./components/teacher-Dashboard/TeacherDashboard";
 import { AdminDashboard } from "./components/adminDashboard/AdminDashboard";
 import { EditProfile } from "./components/editProfile/EditProfile";
 import VideoCall from "./components/videoCall/VideoCall";
@@ -34,7 +33,6 @@ export default function App() {
         <Route path="/dashboard" element={<UserRoute><Dashboard user={userExample} /></UserRoute>} />
         <Route path="/matchUser" element={<UserRoute><MatchUser /></UserRoute>} />
         <Route path="/userChat" element={<UserRoute><UserChat /></UserRoute>} />
-        <Route path="/teacherDashboard" element={<UserRoute><TeacherDashboard /></UserRoute>} />
         <Route path="/editProfile" element={<UserRoute><EditProfile /></UserRoute>} />
         <Route path="/videocall/:match_id" element={<UserRoute><VideoCall /></UserRoute>} />
         <Route path="/preferences" element={<UserRoute><UserPreferencesCard /></UserRoute>} />

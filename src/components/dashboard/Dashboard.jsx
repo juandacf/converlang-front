@@ -514,7 +514,8 @@ export function Dashboard({ user }) {
                       dataKey="name"
                       axisLine={false}
                       tickLine={false}
-                      tick={{ fill: '#9CA3AF', fontSize: 12 }}
+                      tick={{ fill: '#9CA3AF', fontSize: 10 }}
+                      interval={4}
                     />
                     <YAxis hide />
                     <Tooltip
@@ -523,15 +524,15 @@ export function Dashboard({ user }) {
                     <Line
                       type="monotone"
                       dataKey="sesiones"
-                      stroke="url(#colorGradient)" /* We will define gradient below or just solid */
+                      stroke="url(#colorGradient)"
                       strokeWidth={4}
-                      dot={{ fill: '#4F46E5', strokeWidth: 2, r: 4 }}
-                      activeDot={{ r: 6 }}
+                      dot={{ fill: '#8e83f8', strokeWidth: 2, r: 3 }}
+                      activeDot={{ r: 6, fill: '#6d28d9' }}
                     />
                     <defs>
                       <linearGradient id="colorGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#818cf8" />
-                        <stop offset="100%" stopColor="#4f46e5" />
+                        <stop offset="0%" stopColor="#c888f3" />
+                        <stop offset="100%" stopColor="#8e83f8" />
                       </linearGradient>
                     </defs>
                   </LineChart>
