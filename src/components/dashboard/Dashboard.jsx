@@ -497,7 +497,7 @@ export function Dashboard({ user }) {
               <div className="grid-card match-cta-card">
                 <div className="match-content">
                   <button className="matchButtonLarge" onClick={() => Navigate('/matchUser')}>
-                    Match <span style={{ fontSize: '1.5rem' }}>♥</span>
+                    Match <span style={{ fontSize: '1.5rem' }}></span>
                   </button>
                 </div>
               </div>
@@ -509,7 +509,7 @@ export function Dashboard({ user }) {
                 </div>
                 <ResponsiveContainer width="100%" height={180}>
                   <LineChart data={sessions}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#7da2ebff" />
                     <XAxis
                       dataKey="name"
                       axisLine={false}
