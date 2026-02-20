@@ -55,6 +55,15 @@ export function Dashboard({ user }) {
     matchId: null
   });
 
+  // Efecto para sincronizar el modo oscuro con el body
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
+  }, [darkMode]);
+
   // Refs para detectar clic fuera
   const notificationRef = useRef(null);
   const settingsRef = useRef(null);
@@ -370,14 +379,17 @@ export function Dashboard({ user }) {
 
   return (
     <>
-      <div className={darkMode ? "dark-mode" : ""}>
+      <div className={darkMode ? "dark-mode dark-mode-root" : "dark-mode-root"}>
         <NavBar language={language} />
         <div className="dashboardMainContainer">
 
           <div className="dashboard-content-wrapper">
             <div className="greetingContainer">
               <div className="header-left-actions">
-                <div className="ios-toggle-switch">
+                <div
+                  className={`ios-toggle-switch ${darkMode ? "active" : ""}`}
+                  onClick={() => setDarkMode(!darkMode)}
+                >
                   <div className="toggle-handle"></div>
                 </div>
               </div>

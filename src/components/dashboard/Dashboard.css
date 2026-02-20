@@ -13,25 +13,29 @@
   --ios-text: #1C1C1E;
   --ios-blue: #007AFF;
   --ios-green: #34C759;
+  --ios-gray: #8E8E93;
 
-  --bg: var(--ios-bg);
-  --card: #ffffff;
-  --card-soft: #f4f6ff;
-  --text: #1f2937;
+  --bg: #F2F2F7;
+  --card: #FFFFFF;
+  --card-soft: #F4F6FF;
+  --text: #1C1C1E;
+  --text-light: #8E8E93;
+  --border: #C6C6C8;
+  --border-light: #E5E5EA;
 
   /* Glassmorphism */
-  --glass-bg: rgba(255, 255, 255, 0.65);
-  --glass-border: 1px solid rgba(255, 255, 255, 0.4);
+  --glass-bg: rgba(255, 255, 255, 0.82);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.3);
   --glass-blur: blur(20px);
-  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
 
   /* Layout */
   --radius-lg: 24px;
   --radius-md: 16px;
-  --shadow: 0 10px 25px rgba(0, 0, 0, .08);
+  --shadow: 0 10px 25px rgba(0, 0, 0, .05);
   --gradient-primary: linear-gradient(210deg, #5b6cff, #3a2bf0 55%, #2b23c9 100%);
-  --gradient-match: linear-gradient(90deg, #FF9A9E 0%, #FECFEF 99%, #FECFEF 100%);
-  /* Placeholder pinkish */
+  --gradient-match: linear-gradient(135deg, #a4b2ec 0%, #ffffff 100%);
+  --gradient-btn: linear-gradient(90deg, #f7ab83 0%, #FF6B6B 100%);
 }
 
 /* ================================
@@ -42,9 +46,9 @@
   flex-direction: column;
   align-items: center;
   padding: 1.5rem;
-  background: linear-gradient(180deg, #a4b2ec 0%, #dfd5e7 100%);
-  /* Blue/Purple gradient bg as per mockup */
-  color: white;
+  background: var(--gradient-match);
+  /* Use variable for better control */
+  color: var(--text);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
   width: 100%;
@@ -103,14 +107,24 @@
 ================================ */
 
 .dark-mode {
-  --bg: #0f172a;
-  --card: #1e293b;
-  --card-soft: #1a2236;
-  --text: #e5e7eb;
-  --text-light: #9ca3af;
+  --bg: #000000;
+  --card: #1C1C1E;
+  --card-soft: #2C2C2E;
+  --text: #FFFFFF;
+  --text-light: #8E8E93;
+  --border: #38383A;
+  --border-light: #2C2C2E;
+
+  --glass-bg: rgba(28, 28, 30, 0.8);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
 
   --shadow: 0 10px 25px rgba(0, 0, 0, .6);
   --shadow-soft: 0 4px 14px rgba(0, 0, 0, .5);
+
+  --gradient-match: linear-gradient(135deg, #2C2C2E 0%, #1C1C1E 100%);
+  --ios-bg: #000000;
+  --ios-text: #FFFFFF;
 }
 
 
@@ -141,13 +155,13 @@
   /* Reduced gap */
 
   /* Glassmorphism Pill */
-  background: rgba(179, 212, 224, 0.4);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
   border-radius: 44px;
 
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
+  box-shadow: var(--glass-shadow);
   padding: 2rem 0;
   z-index: 100;
 }
@@ -271,7 +285,7 @@
 ================================ */
 /* The main wrapper that holds the blue border */
 .dashboard-content-wrapper {
-  background: white;
+  background: var(--card);
   border: 2px solid #87CEFA;
   /* Light Blue Border */
   box-shadow: 0 0 0 4px rgba(135, 206, 250, 0.1);
@@ -326,7 +340,7 @@
   height: 5.5rem;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #fff;
+  border: 3px solid var(--card);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
@@ -334,7 +348,7 @@
   font-size: 1.8rem;
   font-weight: 700;
   margin: 0;
-  color: #1f2937;
+  color: var(--text);
   line-height: 1.2;
 }
 
@@ -346,24 +360,35 @@
 
 /* Toggle Switch (Left) */
 .ios-toggle-switch {
-  width: 60px;
-  height: 32px;
-  background: #34C759;
+  width: 50px;
+  height: 28px;
+  background: var(--ios-gray);
   border-radius: 30px;
   position: relative;
   cursor: pointer;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s;
+  opacity: 0.6;
+}
+
+.ios-toggle-switch.active {
+  background: var(--ios-green);
+  opacity: 1;
 }
 
 .toggle-handle {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   background: white;
   border-radius: 50%;
   position: absolute;
   top: 2px;
-  right: 2px;
+  left: 2px;
+  transition: transform 0.3s ease-in-out;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.ios-toggle-switch.active .toggle-handle {
+  transform: translateX(22px);
 }
 
 /* Right Actions */
@@ -399,16 +424,15 @@
 
 /* 1. MATCH CTA CARD */
 .match-cta-card {
-  background: var(--ios-bg);
+  background: var(--card);
   box-shadow: var(--shadow);
   justify-content: center;
   align-items: center;
-  background: #c5f3f5;
-  border: 0.5px solid #8e83f8;
+  border: 0.5px solid var(--ios-blue);
 }
 
 .match-content {
-  background: linear-gradient(135deg, #a4b2ec 0%, #ffffff 100%);
+  background: var(--gradient-match);
   width: 100%;
   height: 100%;
   display: flex;
@@ -439,25 +463,25 @@
 
 .matchButtonLarge:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(255, 107, 107, 0.6);
+  box-shadow: 0 15px 40px rgba(255, 107, 107, 0.3);
 }
 
 /* 2. STATS CARD */
 .stats-card {
-  background: rgb(156, 150, 211);
+  background: var(--card);
   box-shadow: var(--shadow);
   padding: 1.5rem;
   border-radius: var(--radius-lg);
   position: relative;
   /* Gradient border effect */
-  background: linear-gradient(white, rgb(199, 217, 236)) padding-box,
-    linear-gradient(135deg, #c5f3f5 0%, #8e83f8 100%) border-box;
+  background: var(--card) padding-box,
+    linear-gradient(135deg, var(--ios-blue) 0%, #8e83f8 100%) border-box;
   border: 2px solid transparent;
 }
 
 .stats-card .carrouselTitle {
   font-size: 1.1rem;
-  color: #4B5563;
+  color: var(--text);
   margin-bottom: 2rem;
 }
 
@@ -521,7 +545,7 @@
 .recentMatch p {
   font-size: 0.75rem;
   text-align: center;
-  color: #4b5563;
+  color: var(--text);
   margin: 0;
   line-height: 1.2;
   width: 100%;
@@ -671,15 +695,16 @@
   /* Adjust to align under the bell icon relative to its center */
   left: auto;
   transform: none;
-  background: white;
+  background: var(--card);
   border-radius: 12px;
-  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow);
   padding: 0;
   width: 320px;
   max-height: 400px;
   overflow-y: auto;
   z-index: 200;
   margin-top: 0;
+  border: 1px solid var(--border-light);
 }
 
 .notificationsPanelHeader {
@@ -687,14 +712,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-light);
 }
 
 .notificationsPanelTitle {
   margin: 0;
   font-weight: 600;
   font-size: 0.95rem;
-  color: #1f2937;
+  color: var(--text);
   border: none;
   /* Remove border from title itself */
   padding: 0;
@@ -717,13 +742,13 @@
 
 .notificationItem {
   padding: 0.9rem 1rem;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid var(--border-light);
   cursor: pointer;
   transition: background 0.2s;
 }
 
 .notificationItem:hover {
-  background: #f9fafb;
+  background: var(--card-soft);
 }
 
 .notificationItem:last-child {
@@ -731,19 +756,19 @@
 }
 
 .notificationItem.unread {
-  background: #eff6ff;
-  border-left: 3px solid #3b82f6;
+  background: var(--card-soft);
+  border-left: 3px solid var(--ios-blue);
 }
 
 .notificationTitle {
   font-weight: 600;
   margin: 0 0 4px 0;
   font-size: 0.85rem;
-  color: #1f2937;
+  color: var(--text);
 }
 
 .notificationMessage {
-  color: #6b7280;
+  color: var(--text-light);
   margin: 0;
   font-size: 0.8rem;
   line-height: 1.4;
@@ -811,14 +836,15 @@
   position: absolute;
   right: 0;
   top: 40px;
-  background: white;
+  background: var(--card);
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow);
   padding: 8px 0;
   width: 180px;
   z-index: 100;
   margin-right: 0;
   overflow: hidden;
+  border: 1px solid var(--border-light);
 }
 
 .settingsMenu p {
@@ -830,7 +856,7 @@
 }
 
 .settingsMenu p:hover {
-  background: #f0f0f0;
+  background: var(--card-soft);
 }
 
 /* RECENT MATCHES RESIZE & STYLE */
@@ -860,7 +886,7 @@
   height: 5rem;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid white;
+  border: 3px solid var(--card);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: border-color 0.3s;
 }
@@ -877,7 +903,7 @@
   border-radius: 50%;
   background: #ff4d4f;
   /* Red circle */
-  border: 2px solid white;
+  border: 2px solid var(--card);
   color: white;
 
   display: flex;
@@ -898,8 +924,8 @@
 }
 
 .dark-mode .navBar {
-  background: linear-gradient(210deg, #1e293b, #0f172a 55%, #020617 100%);
-  box-shadow: 5px 0 40px rgba(0, 0, 0, .8);
+  background: var(--glass-bg);
+  box-shadow: var(--glass-shadow);
 }
 
 .dark-mode .navBarImage {
@@ -919,11 +945,11 @@
 }
 
 .dark-mode .greetingContainer {
-  background: var(--card);
+  background: transparent;
 }
 
 .dark-mode .actualPic {
-  border-color: #020617;
+  border-color: var(--card);
 }
 
 .dark-mode .bigGreeting {
@@ -935,31 +961,15 @@
 }
 
 .dark-mode .recentMatch {
+  background: transparent;
+}
+
+.dark-mode .recentMatchCards {
   background: var(--card-soft);
 }
 
-.dark-mode .recentMatch:hover {
-  background: #1f2937;
-}
-
 .dark-mode .recentMatchItems::-webkit-scrollbar-thumb {
-  background: #374151;
-}
-
-.dark-mode .carrouselContainer {
-  background: var(--card);
-}
-
-.dark-mode .matchContainer {
-  box-shadow: var(--shadow-soft);
-}
-
-.dark-mode .matchButton {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .7);
-}
-
-.dark-mode .buttonPremium {
-  box-shadow: 0 8px 22px rgba(184, 134, 11, .6);
+  background: var(--border);
 }
 
 .dark-mode .footerContainer {
@@ -967,16 +977,8 @@
   box-shadow: 0 -4px 14px rgba(0, 0, 0, .7);
 }
 
-.dark-mode .settingsMenu {
-  background: #1e293b;
-}
-
 .dark-mode .settingsMenu p {
   color: var(--text);
-}
-
-.dark-mode .settingsMenu p:hover {
-  background: #1e293b;
 }
 
 .dark-mode .deleteMatchBtn {
@@ -987,29 +989,19 @@
   color: #ef4444;
 }
 
-.dark-mode .recentMatchTitle {
-  color: white;
-}
-
-.dark-mode .carrouselTitle {
-  color: white
-}
-
+.dark-mode .recentMatchTitle,
+.dark-mode .carrouselTitle,
 .dark-mode .footerSection {
-  color: white
+  color: var(--text);
 }
 
 .dark-mode .navBarElement {
-  background-color: white;
+  background-color: var(--card-soft);
 }
 
 .dark-mode .socialMediaIcon {
   background-color: white;
   border-radius: 15%;
-}
-
-.dark-mode .recentMatch {
-  color: white;
 }
 
 /* =========================================
@@ -1022,11 +1014,22 @@ html,
 body {
   width: 100%;
   overflow-x: hidden;
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.3s ease;
 }
 
 /* Mejora para todas las cajas */
 * {
   box-sizing: border-box;
+}
+
+.dark-mode-root {
+  background: var(--bg);
+  min-height: 100vh;
+  width: 100%;
 }
 
 /* -----------------------------------------
