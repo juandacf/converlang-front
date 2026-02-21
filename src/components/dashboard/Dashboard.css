@@ -333,7 +333,7 @@
   gap: 1.5rem;
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 70%;
   transform: translate(-50%, -50%);
 }
 
@@ -341,16 +341,29 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  text-align: left;
+  align-items: center;
+  /* Center horizontally */
+  text-align: center;
+  /* Center text */
 }
 
 .actualPic {
-  width: 5.5rem;
-  height: 5.5rem;
+  width: 7rem;
+  /* Increased size */
+  height: 7rem;
+  /* Increased size */
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid var(--card);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1.5px solid rgba(0, 0, 0, 0.4);
+  /* Faded black for light mode */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  /* Shadow to soften the solid border */
+  transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+.actualPic:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
 }
 
 .bigGreeting {
@@ -818,6 +831,20 @@
   color: #9ca3af;
 }
 
+/* Dark mode avatars */
+.dark-mode .actualPic,
+.dark-mode .matchPhoto {
+  border-color: rgba(255, 255, 255, 0.5);
+  /* Faded white for dark mode */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  /* Faded white glow/shadow */
+}
+
+.dark-mode .actualPic:hover,
+.dark-mode .recentMatch:hover .matchPhoto {
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
 .dark-mode label {
   color: #e5e7eb;
 }
@@ -905,14 +932,21 @@
 }
 
 .matchPhoto {
-  width: 5rem;
+  width: 6.5rem;
   /* Increased size */
-  height: 5rem;
+  height: 6.5rem;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid var(--card);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  transition: border-color 0.3s;
+  border: 1.5px solid rgba(0, 0, 0, 0.4);
+  /* Faded black for light mode */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  /* Shadow to soften the solid border */
+  transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+.recentMatch:hover .matchPhoto {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
 }
 
 /* DELETE BUTTON STYLING */
