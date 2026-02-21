@@ -434,7 +434,7 @@
   text-align: center;
 }
 
-.match-cta-text h3 {
+mall .match-cta-text h3 {
   margin: 0 0 0.5rem 0;
   font-size: 1.5rem;
   font-weight: 700;
@@ -1076,11 +1076,11 @@
 }
 
 .dark-mode .deleteMatchBtn {
-  color: #f87171;
+  color: #ffffff;
 }
 
 .dark-mode .deleteMatchBtn:hover {
-  color: #ef4444;
+  color: #ffffff;
 }
 
 .dark-mode .recentMatchTitle,
