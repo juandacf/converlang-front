@@ -386,12 +386,6 @@ export function Dashboard({ user }) {
           <div className="dashboard-content-wrapper">
             <div className="greetingContainer">
               <div className="header-left-actions">
-                <div
-                  className={`ios-toggle-switch ${darkMode ? "active" : ""}`}
-                  onClick={() => setDarkMode(!darkMode)}
-                >
-                  <div className="toggle-handle"></div>
-                </div>
               </div>
 
               <div className="greeting-center">
@@ -412,10 +406,8 @@ export function Dashboard({ user }) {
 
               <div className="header-right-actions">
                 <div className="notificationWrapper" ref={notificationRef}>
-                  <img
-                    className="navBarElement"
-                    src="../../../public/assets/notification.png"
-                    alt="notifications"
+                  <Bell
+                    className="navBarElement SVGIcon"
                     onClick={() => {
                       const nextShow = !showNotifications;
                       setShowNotifications(nextShow);
@@ -451,10 +443,8 @@ export function Dashboard({ user }) {
                 </div>
 
                 <div className="settingsWrapper" ref={settingsRef}>
-                  <img
-                    className="navBarElement"
-                    src="../../../public/assets/setting.png"
-                    alt="settings"
+                  <Settings
+                    className="navBarElement SVGIcon"
                     onClick={() => setShowSettingsMenu(!showSettingsMenu)}
                   />
                   {showSettingsMenu && (
