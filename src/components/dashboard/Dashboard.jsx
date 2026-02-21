@@ -498,8 +498,12 @@ export function Dashboard({ user }) {
               {/* 1. MATCH CTA CARD */}
               <div className="grid-card match-cta-card">
                 <div className="match-content">
+                  <div className="match-cta-text">
+                    <h3>{translations[language]?.dashboard?.servicesSection?.matchCtaTitle || "¿Quieres practicar?"}</h3>
+                    <p>{translations[language]?.dashboard?.servicesSection?.matchCtaText || "Haz clic aquí para encontrar personas nativas o fluidas que pueden enseñarte el idioma que buscas."}</p>
+                  </div>
                   <button className="matchButtonLarge" onClick={() => Navigate('/matchUser')}>
-                    Match <span style={{ fontSize: '1.5rem' }}></span>
+                    {translations[language]?.dashboard?.servicesSection?.matchButton || 'Match'} <span style={{ fontSize: '1.5rem' }}></span>
                   </button>
                 </div>
               </div>

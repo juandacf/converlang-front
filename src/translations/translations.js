@@ -17,6 +17,8 @@ export const Translations = {
       "servicesSection": {
         "matchServiceTitle": "Iniciar Match",
         "matchButton": "Match",
+        "matchCtaTitle": "¿Quieres practicar?",
+        "matchCtaText": "Haz clic aquí para encontrar personas nativas o fluidas que pueden enseñarte el idioma que buscas.",
         "sessionsGraphicTitle": "Tus sesiones (últimos 30 días):",
         "hireATeacherTitle": "Contratar a un profesor",
         "premium": "Premium"
@@ -146,6 +148,8 @@ export const Translations = {
       "servicesSection": {
         "matchServiceTitle": "Start a Match",
         "matchButton": "Match",
+        "matchCtaTitle": "Want to practice?",
+        "matchCtaText": "Click here to find native or fluent speakers who can teach you the language you are looking for.",
         "sessionsGraphicTitle": "Your sessions (last 30 days):",
         "hireATeacherTitle": "Hire a Teacher",
         "premium": "Premium"
@@ -275,6 +279,8 @@ export const Translations = {
       "servicesSection": {
         "matchServiceTitle": "Lancer un match",
         "matchButton": "Match",
+        "matchCtaTitle": "Envie de pratiquer ?",
+        "matchCtaText": "Cliquez ici pour trouver des locuteurs natifs ou bilingues qui peuvent vous enseigner la langue que vous recherchez.",
         "sessionsGraphicTitle": "Vos sessions (30 derniers jours) :",
         "hireATeacherTitle": "Engager un professeur",
         "premium": "Premium"
@@ -404,6 +410,8 @@ export const Translations = {
       "servicesSection": {
         "matchServiceTitle": "Iniciar Match",
         "matchButton": "Match",
+        "matchCtaTitle": "Quer praticar?",
+        "matchCtaText": "Clique aqui para encontrar falantes nativos ou fluentes que podem te ensinar o idioma que você procura.",
         "sessionsGraphicTitle": "Suas sessões (últimos 30 dias):",
         "hireATeacherTitle": "Contratar um professor",
         "premium": "Premium"
@@ -533,6 +541,8 @@ export const Translations = {
       "servicesSection": {
         "matchServiceTitle": "Match starten",
         "matchButton": "Match",
+        "matchCtaTitle": "Möchtest du üben?",
+        "matchCtaText": "Klicke hier, um Muttersprachler oder fließend Sprechende zu finden, die dir die gesuchte Sprache beibringen können.",
         "sessionsGraphicTitle": "Deine Sitzungen (letzte 30 Tage):",
         "hireATeacherTitle": "Einen Lehrer engagieren",
         "premium": "Premium"
