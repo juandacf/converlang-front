@@ -4,6 +4,7 @@ import { Authentication } from './components/authentication/Authentication'
 import { Login } from './components/login/Login';
 import { SignUp } from './components/signUP/SignUp';
 import { Dashboard } from './components/dashboard/Dashboard';
+import { Metrics } from './components/metrics/Metrics';
 import { MatchUser } from './components/matchUser/MatchUser';
 import { UserChat } from './components/userChat/UserChat';
 import { AdminDashboard } from "./components/adminDashboard/AdminDashboard";
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="/editProfile" element={<UserRoute><EditProfile /></UserRoute>} />
         <Route path="/videocall/:match_id" element={<UserRoute><VideoCall /></UserRoute>} />
         <Route path="/preferences" element={<UserRoute><UserPreferencesCard /></UserRoute>} />
+        <Route path="/metrics" element={<UserRoute><Metrics /></UserRoute>} />
 
         {/* Rutas de admin - usuario no puede acceder */}
         <Route path="/adminDashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />

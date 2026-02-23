@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { NavBar } from "../dashboard/Dashboard";
-import { Footer } from "../common/Footer";
+
 import "./UserChat.css";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -411,7 +411,7 @@ export function UserChat() {
         </div>
 
         <NavBar language={language} />
-        <Footer />
+
       </div>
 
       <CustomAlert

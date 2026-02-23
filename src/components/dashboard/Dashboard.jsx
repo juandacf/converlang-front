@@ -17,7 +17,7 @@ import { authFetch } from "../../config/authFetch";
 import { Translations } from "../../translations/translations";
 import { io } from "socket.io-client";
 import { CustomAlert } from "../common/CustomAlert";
-import { Footer } from "../common/Footer";
+
 import { getAvatarUrl } from "../../utils/avatarUtils";
 import { CalendarCard } from "./CalendarCard";
 import { ConfirmModal } from "../common/ConfirmModal";
@@ -552,7 +552,7 @@ export function Dashboard({ user }) {
             </div>
           </div>
         </div>
-        <Footer language={language} darkMode={darkMode} />
+
       </div >
 
       <CustomAlert
@@ -603,13 +603,13 @@ export function NavBar({ language = "ES" }) {
         />
         <span className="navLabel">{t.messages}</span>
       </a>
-      <a href="" className="navItem" title="Tus notas personales">
+      <a href="/metrics" className="navItem" title="Tus métricas">
         <img
-          src="../../../public/assets/sticky-note.png"
-          alt="Notes"
+          src="../../../public/assets/metricas.png"
+          alt="Metrics"
           className="navBarImage"
         />
-        <span className="navLabel">{t.notes}</span>
+        <span className="navLabel">{t.metrics}</span>
       </a>
     </nav>
   );

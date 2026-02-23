@@ -38,7 +38,7 @@ export const Translations = {
         "home": "Inicio",
         "match": "Match",
         "messages": "Mensajes",
-        "notes": "Notas"
+        "metrics": "Métricas"
       }
     },
     "preferences": {
@@ -74,6 +74,20 @@ export const Translations = {
     "matchModule": {
       "matchModuleTitle": "Hagamos Match",
       "matchButton": "Like"
+    },
+    "metricsModule": {
+      "pageTitle": "Mis Métricas",
+      "backToDashboard": "Volver",
+      "overviewTitle": "Resumen General",
+      "preferredUser": "Usuario Preferido",
+      "interactions": "interacciones",
+      "noPreferredUser": "Aún no tienes un usuario preferido",
+      "avgPerCall": "Mensajes enviados por llamada",
+      "newMatches": "Matches nuevos (30 días)",
+      "countriesTitle": "Países de tus Matches",
+      "noCountries": "Haz match para ver la distribución de países",
+      "wordsTitle": "Palabras más usadas",
+      "noWords": "Empieza a chatear para ver tu vocabulario"
     },
     "chatModule": {
       "searchBarPlaceholder": "Buscar...",
@@ -169,7 +183,7 @@ export const Translations = {
         "home": "Home",
         "match": "Match",
         "messages": "Messages",
-        "notes": "Notes"
+        "metrics": "Metrics"
       }
     },
     "preferences": {
@@ -205,6 +219,20 @@ export const Translations = {
     "matchModule": {
       "matchModuleTitle": "Let's Match",
       "matchButton": "Like"
+    },
+    "metricsModule": {
+      "pageTitle": "My Metrics",
+      "backToDashboard": "Back",
+      "overviewTitle": "Overview",
+      "preferredUser": "Preferred User",
+      "interactions": "interactions",
+      "noPreferredUser": "You don't have a preferred user yet",
+      "avgPerCall": "Messages sent per call",
+      "newMatches": "New matches (30 days)",
+      "countriesTitle": "Your Match Countries",
+      "noCountries": "Match with people to see country distribution",
+      "wordsTitle": "Most Used Words",
+      "noWords": "Start chatting to see your vocabulary"
     },
     "chatModule": {
       "searchBarPlaceholder": "Search...",
@@ -300,7 +328,7 @@ export const Translations = {
         "home": "Accueil",
         "match": "Match",
         "messages": "Messages",
-        "notes": "Notes"
+        "metrics": "Métriques"
       }
     },
     "preferences": {
@@ -336,6 +364,20 @@ export const Translations = {
     "matchModule": {
       "matchModuleTitle": "Faisons match",
       "matchButton": "J’aime"
+    },
+    "metricsModule": {
+      "pageTitle": "Mes Métriques",
+      "backToDashboard": "Retour",
+      "overviewTitle": "Aperçu Général",
+      "preferredUser": "Utilisateur Préféré",
+      "interactions": "interactions",
+      "noPreferredUser": "Vous n'avez pas encore d'utilisateur préféré",
+      "avgPerCall": "Messages envoyés par appel",
+      "newMatches": "Nouveaux matchs (30 jours)",
+      "countriesTitle": "Pays de vos Matchs",
+      "noCountries": "Faites des matchs pour voir la répartition par pays",
+      "wordsTitle": "Mots les plus utilisés",
+      "noWords": "Commencez à chatter pour voir votre vocabulaire"
     },
     "chatModule": {
       "searchBarPlaceholder": "Rechercher...",
@@ -431,7 +473,7 @@ export const Translations = {
         "home": "Início",
         "match": "Match",
         "messages": "Mensagens",
-        "notes": "Notas"
+        "metrics": "Métricas"
       }
     },
     "preferences": {
@@ -467,6 +509,20 @@ export const Translations = {
     "matchModule": {
       "matchModuleTitle": "Vamos dar match",
       "matchButton": "Curtir"
+    },
+    "metricsModule": {
+      "pageTitle": "Minhas Métricas",
+      "backToDashboard": "Voltar",
+      "overviewTitle": "Visão Geral",
+      "preferredUser": "Usuário Preferido",
+      "interactions": "interações",
+      "noPreferredUser": "Você ainda não tem um usuário preferido",
+      "avgPerCall": "Mensagens enviadas por chamada",
+      "newMatches": "Novos matches (30 dias)",
+      "countriesTitle": "Países dos seus Matches",
+      "noCountries": "Faça match para ver a distribuição de países",
+      "wordsTitle": "Palavras mais usadas",
+      "noWords": "Comece a conversar para ver seu vocabulário"
     },
     "chatModule": {
       "searchBarPlaceholder": "Pesquisar...",
@@ -562,7 +618,7 @@ export const Translations = {
         "home": "Startseite",
         "match": "Match",
         "messages": "Nachrichten",
-        "notes": "Notizen"
+        "metrics": "Metriken"
       }
     },
     "preferences": {
@@ -598,6 +654,20 @@ export const Translations = {
     "matchModule": {
       "matchModuleTitle": "Lass uns matchen",
       "matchButton": "Gefällt mir"
+    },
+    "metricsModule": {
+      "pageTitle": "Meine Metriken",
+      "backToDashboard": "Zurück",
+      "overviewTitle": "Übersicht",
+      "preferredUser": "Bevorzugter Benutzer",
+      "interactions": "Interaktionen",
+      "noPreferredUser": "Du hast noch keinen bevorzugten Benutzer",
+      "avgPerCall": "Nachrichten pro Anruf",
+      "newMatches": "Neue Matches (30 Tage)",
+      "countriesTitle": "Länder deiner Matches",
+      "noCountries": "Mache Matches um die Länderverteilung zu sehen",
+      "wordsTitle": "Meistverwendete Wörter",
+      "noWords": "Beginne zu chatten um deinen Wortschatz zu sehen"
     },
     "chatModule": {
       "searchBarPlaceholder": "Suchen...",

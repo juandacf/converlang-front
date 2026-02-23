@@ -532,29 +532,33 @@ const UsersTable = ({ users, onEdit, onDelete, onActivate, onCreate }) => {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button
-                        onClick={() => onEdit(user)}
-                        className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
-                        title="Editar"
-                      >
-                        <Edit2 size={16} />
-                      </button>
-                      {user.is_active ? (
-                        <button
-                          onClick={() => onDelete(user)}
-                          className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                          title="Inactivar"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => onActivate(user)}
-                          className="p-1.5 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded transition-colors"
-                          title="Reactivar"
-                        >
-                          <RefreshCw size={16} />
-                        </button>
+                      {user.role_code !== 'admin' && (
+                        <>
+                          <button
+                            onClick={() => onEdit(user)}
+                            className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+                            title="Editar"
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                          {user.is_active ? (
+                            <button
+                              onClick={() => onDelete(user)}
+                              className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                              title="Inactivar"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => onActivate(user)}
+                              className="p-1.5 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded transition-colors"
+                              title="Reactivar"
+                            >
+                              <RefreshCw size={16} />
+                            </button>
+                          )}
+                        </>
                       )}
                     </div>
                   </td>
@@ -586,8 +590,8 @@ const MetricsPanel = ({ metrics }) => {
 
   // Convertir el objeto de métricas a un array para mapear
   const metricsArray = [
-    metrics.conversion_rate,
-    metrics.verified_users,
+    metrics.total_matches,
+    metrics.online_users,
     metrics.completed_sessions,
     metrics.average_time
   ];
@@ -598,14 +602,13 @@ const MetricsPanel = ({ metrics }) => {
       <div className="space-y-6">
         {metricsArray.map((metric, index) => (
           <div key={index} className="flex items-center justify-between p-2 hover:bg-slate-50 rounded-lg transition-colors">
-            <span className="text-slate-600 font-medium text-sm">{metric.label}</span>
-            <div className="flex items-center gap-3">
-              <span className={`text-xl font-bold ${metric.color}`}>{metric.value}</span>
-              <span className={`text-xs font-semibold px-2 py-1 rounded-full ${metric.trend.startsWith('+') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
-                }`}>
-                {metric.trend}
-              </span>
+            <div>
+              <span className="text-slate-600 font-medium text-sm">{metric.label}</span>
+              {metric.description && (
+                <p className="text-xs text-slate-400 mt-0.5">{metric.description}</p>
+              )}
             </div>
+            <span className={`text-xl font-bold ${metric.color}`}>{metric.value}</span>
           </div>
         ))}
       </div>
@@ -884,7 +887,7 @@ export function AdminDashboard() {
               <StatCard title="Usuarios Activos" value={stats?.active_users} icon={Activity} trend={8} color="green" subtitle="Últimas 24h" />
               <StatCard title="Total Matches" value={stats?.total_matches} icon={MessageSquare} trend={-3} color="purple" subtitle="Conexiones" />
               <StatCard title="Sesiones Totales" value={stats?.total_sessions} icon={Clock} trend={15} color="orange" subtitle="Completadas" />
-              <StatCard title="Visitantes" value={stats?.visitors_count} icon={Eye} trend={22} color="pink" subtitle="Visitas únicas" />
+              <StatCard title="Mensajes Hoy" value={stats?.messages_today} icon={MessageSquare} trend={0} color="pink" subtitle="Enviados hoy" />
               <StatCard title="Logueados" value={stats?.logged_in_count} icon={LogIn} trend={5} color="teal" subtitle="En este momento" />
             </div>
 
