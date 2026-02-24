@@ -1,5 +1,6 @@
 /* ====== RESET / BASE ====== */
-html, body {
+html,
+body {
   width: 100%;
   overflow-x: hidden;
 }
@@ -8,19 +9,24 @@ html, body {
   box-sizing: border-box;
 }
 
-/* ====== Tokens visuales ====== */
+/* ====== Tokens — Dashboard iOS style ====== */
 :root {
-  --bg: #f4f6fb;
-  --card: #ffffff;
-  --ink: #1f2937;
-  --muted: #6b7280;
-  --radius-lg: 1.25rem;
-  --radius-pill: 999px;
-  --shadow-md: 0 12px 28px rgba(17, 24, 39, 0.08);
-  --grad-1: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-  --grad-self: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  --bg: #F2F2F7;
+  --card: #FFFFFF;
+  --card-soft: #F4F6FF;
+  --text: #1C1C1E;
+  --text-light: #8E8E93;
+  --border: #C6C6C8;
+  --border-light: #E5E5EA;
 
-  /* ✅ Sidebar width estable en desktop (no uses vh) */
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-pill: 999px;
+  --shadow: 0 10px 25px rgba(0, 0, 0, .05);
+  --shadow-md: 0 12px 28px rgba(0, 0, 0, 0.08);
+  --gradient-primary: linear-gradient(210deg, #5b6cff, #3a2bf0 55%, #2b23c9 100%);
+  --gradient-self: linear-gradient(135deg, #5b6cff 0%, #3a2bf0 100%);
+
   --sidebar-width: 88px;
 }
 
@@ -29,7 +35,6 @@ html, body {
   min-height: 100vh;
   background: var(--bg);
 
-  /* ✅ en lugar de calc(8vh + 2rem) */
   padding: 2rem 2rem 2rem calc(var(--sidebar-width) + 2rem);
 
   display: flex;
@@ -46,6 +51,7 @@ html, body {
   background: var(--card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
+  border: 0.5px solid var(--border-light);
   padding: 1rem;
 
   overflow-y: auto;
@@ -54,18 +60,26 @@ html, body {
 
 .chatSearchContainer {
   padding: 10px;
-  background: #f8f8f8;
-  border-radius: 12px;
+  background: var(--card-soft);
+  border-radius: 14px;
   margin-bottom: 10px;
 }
 
 .chatSearchInput {
   width: 100%;
-  padding: 10px;
+  padding: 10px 14px;
   border-radius: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-light);
   outline: none;
   font-size: 14px;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f5f7 100%);
+  color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.chatSearchInput:focus {
+  border-color: #007AFF;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12);
 }
 
 /* Chat item */
@@ -75,12 +89,12 @@ html, body {
   gap: 0.9rem;
   padding: 0.7rem;
   margin: 0.4rem 0;
-  border-radius: 0.9rem;
-  transition: 0.2s ease;
+  border-radius: 14px;
+  transition: background 0.2s ease, transform 0.15s ease;
 }
 
 .chatMatchContainer:hover {
-  background: #eef2ff;
+  background: var(--card-soft);
   cursor: pointer;
   transform: scale(1.01);
 }
@@ -91,16 +105,16 @@ html, body {
   height: 2.9rem;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid transparent;
+  border: 2.5px solid transparent;
 }
 
 .purpleMargin {
-  background: linear-gradient(#fff, #fff) padding-box, var(--grad-1) border-box;
+  background: linear-gradient(#fff, #fff) padding-box, var(--gradient-primary) border-box;
 }
 
 .chatNameContainer p {
   font-weight: 600;
-  color: var(--ink);
+  color: var(--text);
   margin: 0;
 }
 
@@ -112,12 +126,13 @@ html, body {
   background: var(--card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
+  border: 0.5px solid var(--border-light);
 
   display: flex;
   flex-direction: column;
 
   height: 90vh;
-  min-height: 520px; /* opcional */
+  min-height: 520px;
 }
 
 /* Header del chat */
@@ -127,28 +142,32 @@ html, body {
   justify-content: space-between;
 
   padding: 1.2rem 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-light);
   font-weight: 700;
   font-size: 1.1rem;
-  color: var(--ink);
-  background: #fafaff;
+  color: var(--text);
+  background: var(--card);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 
-  /* ✅ para anclar configMenu */
   position: relative;
 }
 
 .chatName {
   align-self: center;
   margin-left: 1vh;
+  color: var(--text);
 }
 
 /* Config button */
 .configButton {
   cursor: pointer;
+  border-radius: 8px;
+  transition: transform 0.2s;
 }
 
 .configButton:hover {
   cursor: pointer;
+  transform: scale(1.1);
 }
 
 /* Config menu */
@@ -157,11 +176,13 @@ html, body {
   top: 60px;
   right: 20px;
 
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  background: var(--card);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
   z-index: 100;
-  width: 180px;
+  width: 200px;
+  overflow: hidden;
 }
 
 .configMenu p {
@@ -169,10 +190,12 @@ html, body {
   padding: 12px 15px;
   cursor: pointer;
   font-size: 14px;
+  color: var(--text);
+  transition: background 0.2s;
 }
 
 .configMenu p:hover {
-  background-color: #f2f2f2;
+  background-color: var(--card-soft);
 }
 
 .configMenu .danger {
@@ -195,9 +218,8 @@ html, body {
   flex-direction: column;
   gap: 0.75rem;
 
-  background: #f7f7ff;
+  background: var(--bg);
 
-  /* 🔥 muy importante para scroll con flex */
   min-height: 0;
 }
 
@@ -211,14 +233,14 @@ html, body {
   border-radius: 1rem;
   line-height: 1.35;
   font-size: 0.95rem;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   word-break: break-word;
 }
 
 /* Mensaje propio */
 .selfMessage {
   align-self: flex-end;
-  background: var(--grad-self);
+  background: var(--gradient-self);
   color: white;
   border-bottom-right-radius: 0.2rem;
 }
@@ -226,8 +248,9 @@ html, body {
 /* Mensaje del otro */
 .otherMessage {
   align-self: flex-start;
-  background: white;
-  color: var(--ink);
+  background: var(--card);
+  color: var(--text);
+  border: 0.5px solid var(--border-light);
   border-bottom-left-radius: 0.2rem;
 }
 
@@ -238,8 +261,9 @@ html, body {
   padding: 1rem;
   display: flex;
   gap: 1rem;
-  background: #fff;
-  border-top: 1px solid #ececff;
+  background: var(--card);
+  border-top: 1px solid var(--border-light);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   flex-shrink: 0;
 }
 
@@ -248,23 +272,24 @@ html, body {
   padding: 0 1rem;
   height: 3rem;
   border-radius: var(--radius-pill);
-  border: 1px solid #dbeafe;
-  background: #f9f9ff;
+  border: 1px solid var(--border-light);
+  background: linear-gradient(135deg, #ffffff 0%, #f5f5f7 100%);
+  color: var(--text);
   outline: none;
-  transition: 0.2s ease;
+  transition: border-color 0.2s, box-shadow 0.2s;
   font-size: 1rem;
 }
 
 .inputChat:focus {
   background: #fff;
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+  border-color: #007AFF;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12);
 }
 
 .sendMessage {
   height: 2.6rem;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: transform 0.2s ease;
 }
 
 .sendMessage:hover {
@@ -272,94 +297,121 @@ html, body {
 }
 
 /* ================================
-   DARK MODE (OVERRIDES)
+   DARK MODE — iOS tokens
 ================================ */
+.dark-mode {
+  --bg: #000000;
+  --card: #1C1C1E;
+  --card-soft: #2C2C2E;
+  --text: #FFFFFF;
+  --text-light: #8E8E93;
+  --border: #38383A;
+  --border-light: #2C2C2E;
+
+  --shadow: 0 10px 25px rgba(0, 0, 0, .6);
+  --shadow-md: 0 12px 28px rgba(0, 0, 0, 0.5);
+}
+
 .dark-mode .userChatMainContainer {
-  background: #0f172a;
+  background: var(--bg);
 }
 
 .dark-mode .chatItemsContainer {
-  background: #1f2937;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
-}
-
-.dark-mode .chatMatchContainer:hover {
-  background: #273449;
-}
-
-.dark-mode .chatNameContainer p {
-  color: #e5e7eb;
-}
-
-.dark-mode .messagesContainer {
-  background: #1f2937;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
-}
-
-.dark-mode .messagesTitle {
-  background: #111827;
-  border-bottom-color: #374151;
-  color: #f9fafb;
-}
-
-.dark-mode .actualMessageContainer {
-  background: #0b1220;
-}
-
-.dark-mode .otherMessage {
-  background: #111827;
-  color: #e5e7eb;
-}
-
-.dark-mode .selfMessage {
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-}
-
-.dark-mode .inputContainer {
-  background: #111827;
-  border-top-color: #374151;
-}
-
-.dark-mode .inputChat {
-  background: #0b1220;
-  border-color: #374151;
-  color: #f9fafb;
-}
-
-.dark-mode .inputChat::placeholder {
-  color: #9ca3af;
-}
-
-.dark-mode .inputChat:focus {
-  background: #020617;
-  border-color: #6366f1;
+  background: var(--card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-md);
 }
 
 .dark-mode .chatSearchContainer {
-  background: #111827;
+  background: var(--card-soft);
 }
 
 .dark-mode .chatSearchInput {
-  background: #0b1220;
-  border-color: #374151;
-  color: #f9fafb;
+  background: linear-gradient(135deg, #2C2C2E 0%, #1C1C1E 100%);
+  border-color: var(--border);
+  color: #FFFFFF;
 }
 
 .dark-mode .chatSearchInput::placeholder {
-  color: #9ca3af;
+  color: var(--text-light);
+}
+
+.dark-mode .chatSearchInput:focus {
+  border-color: #007AFF;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.18);
+}
+
+.dark-mode .chatMatchContainer:hover {
+  background: var(--card-soft);
+}
+
+.dark-mode .chatNameContainer p {
+  color: #FFFFFF;
+}
+
+.dark-mode .messagesContainer {
+  background: var(--card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-md);
+}
+
+.dark-mode .messagesTitle {
+  background: var(--card);
+  border-bottom-color: var(--border);
+  color: #FFFFFF;
+}
+
+.dark-mode .chatName {
+  color: #FFFFFF;
+}
+
+.dark-mode .actualMessageContainer {
+  background: var(--bg);
+}
+
+.dark-mode .otherMessage {
+  background: var(--card-soft);
+  border-color: var(--border);
+  color: #FFFFFF;
+}
+
+.dark-mode .selfMessage {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+}
+
+.dark-mode .inputContainer {
+  background: var(--card);
+  border-top-color: var(--border);
+}
+
+.dark-mode .inputChat {
+  background: linear-gradient(135deg, #2C2C2E 0%, #1C1C1E 100%);
+  border-color: var(--border);
+  color: #FFFFFF;
+}
+
+.dark-mode .inputChat::placeholder {
+  color: var(--text-light);
+}
+
+.dark-mode .inputChat:focus {
+  background: #2C2C2E;
+  border-color: #007AFF;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.18);
 }
 
 .dark-mode .configMenu {
-  background: #1f2937;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
 }
 
 .dark-mode .configMenu p {
-  color: #e5e7eb;
+  color: #FFFFFF;
 }
 
 .dark-mode .configMenu p:hover {
-  background-color: #273449;
+  background-color: var(--card-soft);
 }
 
 .dark-mode .configMenu .danger {
@@ -371,27 +423,37 @@ html, body {
 }
 
 .dark-mode .configButton {
-  background-color: white;
+  background-color: transparent;
+  filter: invert(1);
+}
+
+.dark-mode .purpleMargin {
+  background: linear-gradient(var(--card), var(--card)) padding-box, var(--gradient-primary) border-box;
 }
 
 /* =========================================
    RESPONSIVE USER CHAT
 ========================================= */
 
-/* =====================================================
-   Tablet & Mobile
-===================================================== */
+/* Tablet & Mobile */
 @media (max-width: 900px) {
+  :root {
+    --sidebar-width: 0px;
+  }
+
   .userChatMainContainer {
     flex-direction: column;
-    height: calc(100dvh - 72px); /* todo el alto menos navBar */
+    height: calc(100dvh - 72px);
     padding: 12px;
-    padding-bottom: 0; /* ya no hace falta */
+    padding-bottom: 0;
   }
 
   .chatItemsContainer {
     height: 32vh;
     overflow-y: auto;
+    width: 100%;
+    min-width: unset;
+    border-radius: var(--radius-md);
   }
 
   .messagesContainer {
@@ -399,6 +461,7 @@ html, body {
     min-height: 0;
     display: flex;
     flex-direction: column;
+    border-radius: var(--radius-md);
   }
 
   .actualMessageContainer {
@@ -406,16 +469,17 @@ html, body {
     overflow-y: auto;
     min-height: 0;
   }
-  .chatItemsContainer{
-    width:90vw
+
+  .messagesTitle {
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+  }
+
+  .inputContainer {
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
   }
 }
 
-
-
-/* =====================================================
-   Mobile pequeño
-===================================================== */
+/* Mobile pequeño */
 @media (max-width: 420px) {
   .chatItemsContainer {
     max-height: 34dvh;
@@ -438,8 +502,6 @@ html, body {
 
   .actualMessageContainer {
     padding: 0.9rem;
-
-    /* ✅ fijo también aquí */
     height: 62vh;
   }
 
