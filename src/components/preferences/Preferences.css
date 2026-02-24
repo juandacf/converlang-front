@@ -1,27 +1,58 @@
-.preferences-card {
-  background: #ffffff;
-  border-radius: 20px;
-  padding: 24px;
+/* ===============================
+   RESET (inherited from editProfile)
+================================ */
+
+:root {
+  --sidebar-width: 88px;
+}
+
+/* ===============================
+   WRAPPER — matches editProfile
+================================ */
+.preferencesPageContainer {
   width: 100%;
-  max-width: 420px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  min-height: 100vh;
+
+  padding: clamp(16px, 3vw, 30px);
+  padding-left: calc(var(--sidebar-width) + clamp(16px, 3vw, 30px));
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.preferences-header h2 {
-  font-size: 20px;
-  font-weight: 600;
-  color: #1f2937;
+/* ===============================
+   TITLE — matches editProfile .title
+================================ */
+.preferencesTitle {
+  font-size: clamp(20px, 3.5vw, 26px);
+  font-weight: 700;
   margin-bottom: 4px;
+  text-align: center;
 }
 
-.preferences-header p {
-  font-size: 13px;
+.preferencesSubtitle {
+  font-size: 14px;
   color: #6b7280;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
-/* Rows */
+/* ===============================
+   CARD — matches editProfile .preferencesCard
+================================ */
+.preferences-card {
+  width: min(520px, 100%);
+  background: #ffffff;
+  padding: clamp(20px, 3vw, 30px);
+  border-radius: 20px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
 
+/* ===============================
+   ROW (Dark mode toggle)
+================================ */
 .preferences-row {
   display: flex;
   justify-content: space-between;
@@ -29,22 +60,23 @@
   margin-bottom: 28px;
 }
 
-.label {
+.pref-label {
   display: block;
   font-size: 14px;
-  font-weight: 500;
-  color: #374151;
+  font-weight: 600;
+  color: #1C1C1E;
 }
 
-.sub-label {
+.pref-sub-label {
   display: block;
   font-size: 12px;
   color: #9ca3af;
   margin-top: 2px;
 }
 
-/* Toggle */
-
+/* ===============================
+   TOGGLE — same styling
+================================ */
 .toggle {
   width: 48px;
   height: 24px;
@@ -57,7 +89,7 @@
 }
 
 .toggle.active {
-  background: linear-gradient(135deg, #6366f1, #7c3aed);
+  background: linear-gradient(135deg, #5b6cff, #3a2bf0);
 }
 
 .toggle-circle {
@@ -76,126 +108,182 @@
   transform: translateX(24px);
 }
 
-/* Select */
-
-.preferences-field {
+/* ===============================
+   INPUT GROUP — matches editProfile .inputGroup
+================================ */
+.pref-inputGroup {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   margin-bottom: 28px;
 }
 
-.preferences-field label {
-  display: block;
-  font-size: 14px;
-  font-weight: 500;
-  color: #374151;
-  margin-bottom: 8px;
-}
-
-.preferences-field select {
-  width: 100%;
-  padding: 10px 14px;
-  border-radius: 14px;
-  border: 1px solid #e5e7eb;
-  font-size: 14px;
-  background: #ffffff;
-  outline: none;
-  transition: border 0.2s ease, box-shadow 0.2s ease;
-}
-
-.preferences-field select:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
-}
-
-/* Button */
-
-.save-button {
-  width: 100%;
-  padding: 14px;
-  border-radius: 16px;
-  border: none;
+.pref-inputGroup label {
   font-weight: 600;
+  margin-bottom: 6px;
+  color: #1C1C1E;
+}
+
+.pref-inputGroup select {
+  width: 100%;
+  padding: 7px 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f5f7 100%);
+  color: #1C1C1E;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.pref-inputGroup select:focus {
+  border-color: #007AFF;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12);
+}
+
+/* ===============================
+   SAVE BUTTON — matches editProfile .saveBtn
+================================ */
+.prefSaveBtn {
+  width: 100%;
+  padding: 9px 36px;
+  border: none;
+  border-radius: 12px;
   font-size: 15px;
-  color: #ffffff;
+  font-weight: 600;
   cursor: pointer;
-  background: linear-gradient(135deg, #fb923c, #facc15);
-  transition: opacity 0.2s ease, transform 0.1s ease;
+  color: white;
+  background: linear-gradient(135deg, #5b6cff 0%, #3a2bf0 100%);
+  box-shadow: 0 4px 14px rgba(91, 108, 255, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 }
 
-.save-button:hover {
-  opacity: 0.9;
+.prefSaveBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(91, 108, 255, 0.45);
 }
 
-.save-button:active {
+.prefSaveBtn:active {
   transform: scale(0.98);
 }
 
-.save-button:disabled {
+.prefSaveBtn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
-.PreferencesContainer{
-    height:100vh;
-    width:100vw;
-    display:flex;
-    align-items: center;
-    justify-content: center;
+
+/* ===============================
+   RESPONSIVE
+================================ */
+
+/* Mobile: navbar bottom, sin sidebar */
+@media (max-width: 750px) {
+  :root {
+    --sidebar-width: 0px;
+  }
+
+  .preferencesPageContainer {
+    padding-left: clamp(14px, 4vw, 20px);
+    padding-bottom: calc(72px + 16px);
+  }
+
+  .preferences-card {
+    border-radius: 16px;
+    padding: 16px;
+  }
+
+  .preferencesTitle {
+    margin-bottom: 2px;
+  }
+
+  .prefSaveBtn {
+    font-size: 16px;
+  }
+}
+
+/* Mobile pequeño */
+@media (max-width: 420px) {
+  .preferences-card {
+    padding: 14px;
+  }
+
+  .prefSaveBtn {
+    padding: 13px 16px;
+  }
 }
 
 /* ================================
    DARK MODE (OVERRIDES)
+   — matches editProfile dark mode tokens
 ================================ */
-.dark-mode .PreferencesContainer {
-  background-color: #0f172a;
+
+/* Fondo general */
+.dark-mode .preferencesPageContainer {
+  background-color: #000000;
 }
 
+/* Título */
+.dark-mode .preferencesTitle {
+  color: #FFFFFF;
+}
+
+.dark-mode .preferencesSubtitle {
+  color: #8E8E93;
+}
+
+/* Card principal */
 .dark-mode .preferences-card {
-  background-color: #1f2937;
-  box-shadow: 0 12px 35px rgba(0,0,0,.45);
+  background-color: #1C1C1E;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  border: 1px solid #38383A;
 }
 
-.dark-mode .preferences-header h2 {
-  color: #f9fafb;
+/* Labels */
+.dark-mode .pref-label {
+  color: #FFFFFF;
 }
 
-.dark-mode .preferences-header p {
-  color: #9ca3af;
+.dark-mode .pref-sub-label {
+  color: #8E8E93;
 }
 
-.dark-mode .label {
-  color: #e5e7eb;
-}
-
-.dark-mode .sub-label {
-  color: #9ca3af;
-}
-
+/* Toggle dark override */
 .dark-mode .toggle {
-  background: #374151;
+  background: #38383A;
 }
 
 .dark-mode .toggle.active {
-  background: linear-gradient(135deg, #6366f1, #7c3aed);
+  background: linear-gradient(135deg, #5b6cff, #3a2bf0);
 }
 
 .dark-mode .toggle-circle {
   background: #f9fafb;
 }
 
-.dark-mode .preferences-field label {
-  color: #e5e7eb;
+/* Input group label */
+.dark-mode .pref-inputGroup label {
+  color: #FFFFFF;
 }
 
-.dark-mode .preferences-field select {
-  background-color: #111827;
-  border-color: #374151;
-  color: #f9fafb;
+/* Select */
+.dark-mode .pref-inputGroup select {
+  background: linear-gradient(135deg, #2C2C2E 0%, #1C1C1E 100%);
+  border: 1px solid #38383A;
+  color: #FFFFFF;
 }
 
-.dark-mode .preferences-field select:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.35);
+.dark-mode .pref-inputGroup select:focus {
+  border-color: #007AFF;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.18);
 }
 
-.dark-mode .save-button {
-  box-shadow: 0 6px 22px rgba(0,0,0,.6);
+.dark-mode .pref-inputGroup select option {
+  background-color: #2C2C2E;
+  color: #FFFFFF;
+}
+
+/* Save button — keep gradient, add dark shadow */
+.dark-mode .prefSaveBtn {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
 }

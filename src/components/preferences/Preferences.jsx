@@ -123,59 +123,57 @@ export default function UserPreferencesCard() {
      UI
   ====================================================== */
   return (
-    <div className={darkMode ? "dark-mode" : ""}>
-      <div className="PreferencesContainer">
-        <div className="preferences-card">
-          <div className="preferences-header">
-            <h2>{translations[language].preferences.preferencesMainTitle}</h2>
-            <p>{translations[language].preferences.preferencesSubTitle}</p>
-          </div>
+    <>
+      <div className={darkMode ? "dark-mode" : ""}>
+        <NavBar language={language} />
+        <div className="preferencesPageContainer">
+          <h2 className="preferencesTitle">{translations[language].preferences.preferencesMainTitle}</h2>
+          <p className="preferencesSubtitle">{translations[language].preferences.preferencesSubTitle}</p>
 
-          {/* 🌙 Tema oscuro */}
-          <div className="preferences-row">
-            <div>
-              <span className="label">{translations[language].preferences.darkModeTitle}</span>
-              <span className="sub-label">
-                {translations[language].preferences.darkModeSubtitle}
-              </span>
+          <div className="preferences-card">
+            {/* 🌙 Tema oscuro */}
+            <div className="preferences-row">
+              <div>
+                <span className="pref-label">{translations[language].preferences.darkModeTitle}</span>
+                <span className="pref-sub-label">
+                  {translations[language].preferences.darkModeSubtitle}
+                </span>
+              </div>
+
+              <button
+                className={`toggle ${darkMode ? "active" : ""}`}
+                onClick={() => setDarkMode(!darkMode)}
+              >
+                <span className="toggle-circle" />
+              </button>
+            </div>
+
+            {/* 🌍 Idioma */}
+            <div className="pref-inputGroup">
+              <label>{translations[language].preferences.languagesTitle}</label>
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+              >
+                {languages.map((lang) => (
+                  <option
+                    key={lang.language_code}
+                    value={lang.language_code}
+                  >
+                    {lang.language_name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <button
-              className={`toggle ${darkMode ? "active" : ""}`}
-              onClick={() => setDarkMode(!darkMode)}
+              className="prefSaveBtn"
+              onClick={handleSave}
+              disabled={loading}
             >
-              <span className="toggle-circle" />
+              {loading ? translations[language].preferences.loadingSaveButton : translations[language].preferences.saveButton}
             </button>
           </div>
-
-          {/* 🌍 Idioma */}
-          <div className="preferences-field">
-            <label>{translations[language].preferences.languagesTitle}</label>
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-            >
-              {languages.map((lang) => (
-                <option
-                  key={lang.language_code}
-                  value={lang.language_code}
-                >
-                  {lang.language_name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-
-          <button
-            className="save-button"
-            onClick={handleSave}
-            disabled={loading}
-          >
-            {loading ? translations[language].preferences.loadingSaveButton : translations[language].preferences.saveButton}
-          </button>
-
-          <NavBar language={language} />
         </div>
       </div>
 
@@ -186,6 +184,6 @@ export default function UserPreferencesCard() {
         message={alertState.message}
         language={language}
       />
-    </div>
+    </>
   );
 }
