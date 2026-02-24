@@ -1,5 +1,5 @@
 import "./Dashboard.css";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import {
   LineChart,
   Line,
@@ -9,7 +9,7 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
-import "react-big-calendar/lib/css/react-big-calendar.css";
+
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
@@ -19,7 +19,7 @@ import { io } from "socket.io-client";
 import { CustomAlert } from "../common/CustomAlert";
 
 import { getAvatarUrl } from "../../utils/avatarUtils";
-import { CalendarCard } from "./CalendarCard";
+import { randomWord } from "../../translations/randomWord";
 import { ConfirmModal } from "../common/ConfirmModal";
 import { Bell, Settings, AlignJustify } from 'lucide-react'; // Assuming lucide-react is available, or use images if not
 
@@ -545,9 +545,9 @@ export function Dashboard({ user }) {
                 </ResponsiveContainer>
               </div>
 
-              {/* 3. CALENDAR CARD */}
-              <div className="grid-card">
-                <CalendarCard />
+              {/* 3. RANDOM WORD CARD */}
+              <div className="grid-card random-word-card">
+                <RandomWordCard language={language} />
               </div>
             </div>
           </div>
@@ -570,6 +570,55 @@ export function Dashboard({ user }) {
         message={translations[language].dashboard.matchSection.deleteMatchWarning}
       />
     </>
+  );
+}
+
+
+function RandomWordCard({ language = "ES" }) {
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const wordData = useMemo(() => {
+    const langWords = randomWord[language] || randomWord["ES"];
+    const totalWords = Object.keys(langWords).length;
+
+    if (refreshKey === 0) {
+      // Day-based selection: use day of year
+      const now = new Date();
+      const start = new Date(now.getFullYear(), 0, 0);
+      const diff = now - start;
+      const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const index = (dayOfYear % totalWords) + 1;
+      return langWords[index] || langWords[1];
+    } else {
+      // Random selection on refresh
+      const index = Math.floor(Math.random() * totalWords) + 1;
+      return langWords[index] || langWords[1];
+    }
+  }, [language, refreshKey]);
+
+  const titleLabel = {
+    ES: "Palabra del día",
+    EN: "Word of the day",
+    FR: "Mot du jour",
+    PT: "Palavra do dia",
+    DE: "Wort des Tages"
+  };
+
+  return (
+    <div className="random-word-content">
+      <div className="random-word-header">
+        <span className="random-word-label">{titleLabel[language] || titleLabel["ES"]}</span>
+        <button
+          className="random-word-refresh"
+          onClick={() => setRefreshKey(prev => prev + 1)}
+          title="🔄"
+        >
+          ↻
+        </button>
+      </div>
+      <h2 className="random-word-title">{wordData?.word}</h2>
+      <p className="random-word-meaning">{wordData?.meaning}</p>
+    </div>
   );
 }
 
