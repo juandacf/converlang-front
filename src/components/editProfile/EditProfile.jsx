@@ -314,59 +314,27 @@ export function EditProfile() {
 
             {/* Modal de Selección de Avatar */}
             {showAvatarModal && (
-              <div style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                backgroundColor: 'rgba(0,0,0,0.5)',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 1000
-              }}>
-                <div style={{
-                  backgroundColor: 'white',
-                  padding: '20px',
-                  borderRadius: '12px',
-                  width: '90%',
-                  maxWidth: '600px',
-                  maxHeight: '80vh',
-                  overflowY: 'auto',
-                  position: 'relative'
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
+              <div className="avatarModalOverlay">
+                <div className="avatarModalPanel">
+                  <div className="avatarModalHeader">
                     <h3>Elige un Avatar</h3>
                     <button
                       type="button"
+                      className="avatarModalCloseBtn"
                       onClick={() => setShowAvatarModal(false)}
-                      style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}
                     >
                       &times;
                     </button>
                   </div>
 
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))',
-                    gap: '15px'
-                  }}>
+                  <div className="avatarModalGrid">
                     {AVATARS.map((avatar, index) => (
                       <img
                         key={index}
                         src={avatar}
                         alt={`Avatar ${index}`}
                         onClick={() => handleAvatarSelection(avatar)}
-                        style={{
-                          width: '100%',
-                          borderRadius: '50%',
-                          cursor: 'pointer',
-                          border: form.profile_photo === avatar ? '3px solid #4f46e5' : '1px solid #ddd',
-                          transition: 'transform 0.2s'
-                        }}
-                        onMouseOver={(e) => e.target.style.transform = 'scale(1.1)'}
-                        onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                        className={form.profile_photo === avatar ? "selected" : ""}
                       />
                     ))}
                   </div>
