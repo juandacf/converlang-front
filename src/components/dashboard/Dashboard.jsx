@@ -597,11 +597,11 @@ function RandomWordCard({ language = "ES" }) {
   }, [language, refreshKey]);
 
   const titleLabel = {
-    ES: "Palabra del día",
-    EN: "Word of the day",
-    FR: "Mot du jour",
-    PT: "Palavra do dia",
-    DE: "Wort des Tages"
+    ES: "Palabra aleatoria",
+    EN: "Random word",
+    FR: "Mot aléatoire",
+    PT: "Palavra aleatória",
+    DE: "Zufälliges Wort"
   };
 
   return (
