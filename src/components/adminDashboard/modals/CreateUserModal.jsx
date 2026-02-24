@@ -29,7 +29,6 @@ export const CreateUserModal = ({ isOpen, onClose, onSuccess }) => {
         target_lang_id: '',
         role_code: 'user',
         match_quantity: constants.DEFAULT_MATCH_QUANTITY,
-        bank_id: '',
         description: '',
         profile_photo: ''
     });
@@ -159,7 +158,6 @@ export const CreateUserModal = ({ isOpen, onClose, onSuccess }) => {
                 target_lang_id: '',
                 role_code: 'user',
                 match_quantity: constants.DEFAULT_MATCH_QUANTITY,
-                bank_id: '',
                 description: '',
                 profile_photo: ''
             });
