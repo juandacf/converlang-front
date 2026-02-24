@@ -122,10 +122,36 @@ export function EditProfile() {
       .catch((error) => console.error(error));
   }, []);
 
+  // Tipos de archivo permitidos
+  const ALLOWED_FILE_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml'];
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
   // Subir foto
   async function handlePhotoChange(e) {
     const file = e.target.files[0];
     if (!file) return;
+
+    // Validar tipo de archivo
+    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+      setAlertState({
+        isOpen: true,
+        type: "error",
+        message: "Solo se permiten archivos PNG, JPG o SVG"
+      });
+      e.target.value = ''; // Limpiar input
+      return;
+    }
+
+    // Validar tamaño de archivo (máximo 5MB)
+    if (file.size > MAX_FILE_SIZE) {
+      setAlertState({
+        isOpen: true,
+        type: "error",
+        message: "El archivo no debe superar los 5MB"
+      });
+      e.target.value = '';
+      return;
+    }
 
     const formData = new FormData();
     formData.append("photo", file);
@@ -298,7 +324,7 @@ export function EditProfile() {
                   Seleccionar Avatar
                 </button>
                 <span style={{ color: '#666' }}>o</span>
-                <input type="file" accept="image/*" onChange={handlePhotoChange} style={{ flex: 1 }} />
+                <input type="file" accept=".png,.jpg,.jpeg,.svg" onChange={handlePhotoChange} style={{ flex: 1 }} />
               </div>
 
             </div>
