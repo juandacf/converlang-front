@@ -189,94 +189,91 @@ export function MatchUser() {
 
   return (
     <div className={darkMode ? "dark-mode" : ""}>
-      <div className="mainContainer">
+      <div className="matchPageContainer">
         <NavBar language={language} />
 
-        <div className="matchHeader">
-          <div className="matchMainTitle">
-            <h1 className="mainTitle">             {translations[language].matchModule.matchModuleTitle}</h1>
+        <div className="matchContentWrapper">
+          <h1 className="matchPageTitle">{translations[language].matchModule.matchModuleTitle}</h1>
+
+          <div className="matchMainContainer">
+            {pageItems.map((u) => (
+              <div
+                className={`potentialMatchContainer ${disappearing[u.id_user] ? "fadeOut" : ""
+                  } ${highlightedUser === u.id_user ? "highlighted" : ""}`}
+                key={u.id_user}
+                id={u.id_user}
+              >
+                <div className="photoNameContainer">
+                  <div className="photoContainer">
+                    <img
+                      src={getAvatarUrl(u.profile_photo)}
+                      alt=""
+                      className="matchPhotoo"
+                    />
+                  </div>
+                  <div className="matchName">
+                    <p className="userName">
+                      {u.first_name} {u.last_name} {`(${u.age})`}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="userDescriptionContainer">
+                  <p className="userDescription">{u.description}</p>
+                  {userTitles[u.id_user] && (
+                    <span className="userTitleBadge">🏅 {userTitles[u.id_user]}</span>
+                  )}
+                </div>
+
+                <div className="connectRateContainer">
+                  <div className="rateContainer">
+                    <p className="ratingNumber">{u.country_id}</p>
+                    <img
+                      src={
+                        u.country_id
+                          ? `../../../public/assets/flag_pics/${u.country_id}.png`
+                          : `../../../public/assets/flag_picslanguages.png`
+                      }
+                      alt=""
+                      className="star"
+                    />
+                  </div>
+
+                  <button
+                    className="connectButton"
+                    onClick={() => handleLike(u.id_user)}
+                  >
+                    <p className="buttonText">{translations[language].matchModule.matchButton}</p>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="pagination">
+            <button
+              className="pageBtn"
+              onClick={() => goTo(page - 1)}
+              disabled={page === 1}
+              aria-label="Anterior"
+            >
+              ‹
+            </button>
+
+            <span className="pageInfo">
+              {page} / {totalPages}
+            </span>
+
+            <button
+              className="pageBtn"
+              onClick={() => goTo(page + 1)}
+              disabled={page === totalPages}
+              aria-label="Siguiente"
+            >
+              ›
+            </button>
           </div>
         </div>
-
-        <div className="matchMainContainer">
-          {pageItems.map((u) => (
-            <div
-              className={`potentialMatchContainer ${disappearing[u.id_user] ? "fadeOut" : ""
-                } ${highlightedUser === u.id_user ? "highlighted" : ""}`}
-              key={u.id_user}
-              id={u.id_user}
-            >
-              <div className="photoNameContainer">
-                <div className="photoContainer">
-                  <img
-                    src={getAvatarUrl(u.profile_photo)}
-                    alt=""
-                    className="matchPhotoo"
-                  />
-                </div>
-                <div className="matchName">
-                  <p className="userName">
-                    {u.first_name} {u.last_name} {`(${u.age})`}
-                  </p>
-                </div>
-              </div>
-
-              <div className="userDescriptionContainer">
-                <p className="userDescription">{u.description}</p>
-                {userTitles[u.id_user] && (
-                  <span className="userTitleBadge">🏅 {userTitles[u.id_user]}</span>
-                )}
-              </div>
-
-              <div className="connectRateContainer">
-                <div className="rateContainer">
-                  <p className="ratingNumber">{u.country_id}</p>
-                  <img
-                    src={
-                      u.country_id
-                        ? `../../../public/assets/flag_pics/${u.country_id}.png`
-                        : `../../../public/assets/flag_picslanguages.png`
-                    }
-                    alt=""
-                    className="star"
-                  />
-                </div>
-
-                <button
-                  className="connectButton"
-                  onClick={() => handleLike(u.id_user)}
-                >
-                  <p className="buttonText">             {translations[language].matchModule.matchButton}</p>
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="pagination">
-          <button
-            className="pageBtn"
-            onClick={() => goTo(page - 1)}
-            disabled={page === 1}
-            aria-label="Anterior"
-          >
-            ‹
-          </button>
-
-          <span className="pageInfo">
-            {page} / {totalPages}
-          </span>
-
-          <button
-            className="pageBtn"
-            onClick={() => goTo(page + 1)}
-            disabled={page === totalPages}
-            aria-label="Siguiente"
-          >
-            ›
-          </button>
-        </div>
-
 
       </div>
     </div>
