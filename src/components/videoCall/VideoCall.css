@@ -12,6 +12,29 @@ body {
 }
 
 /* ===============================
+   TOKENS — Dashboard iOS style
+================================ */
+:root {
+  --bg: #F2F2F7;
+  --card: #FFFFFF;
+  --card-soft: #F4F6FF;
+  --text: #1C1C1E;
+  --text-light: #8E8E93;
+  --border: #C6C6C8;
+  --border-light: #E5E5EA;
+
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-pill: 999px;
+  --shadow: 0 10px 25px rgba(0, 0, 0, .05);
+  --shadow-md: 0 12px 28px rgba(0, 0, 0, 0.08);
+  --gradient-primary: linear-gradient(210deg, #5b6cff, #3a2bf0 55%, #2b23c9 100%);
+  --gradient-self: linear-gradient(135deg, #5b6cff 0%, #3a2bf0 100%);
+
+  --sidebar-width: 88px;
+}
+
+/* ===============================
    LAYOUT GENERAL
 ================================ */
 .videoCallMainContainer {
@@ -19,7 +42,6 @@ body {
   gap: 1.5rem;
   padding: 1.5rem;
 
-  /* ✅ mejor para mobile que 100vh */
   height: 100dvh;
 
   background: var(--bg);
@@ -42,11 +64,11 @@ body {
   background: var(--card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
+  border: 0.5px solid var(--border-light);
 
   width: 100%;
   max-width: 650px;
 
-  /* ✅ en desktop puede ser cuadrado */
   aspect-ratio: 1 / 1;
 
   overflow: hidden;
@@ -74,7 +96,7 @@ body {
 
   object-fit: cover;
   background: black;
-  border: 3px solid white;
+  border: 3px solid var(--card);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 
   z-index: 20;
@@ -85,9 +107,6 @@ body {
   transform: scale(1.05);
 }
 
-/* ===============================
-   BOTÓN TERMINAR LLAMADA
-================================ */
 /* ===============================
    CONTROLES (Mute, Cam, End)
 ================================ */
@@ -102,11 +121,11 @@ body {
   align-items: center;
   z-index: 30;
 
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.55);
   padding: 0.6rem 1rem;
-  border-radius: 999px;
-  /* Pill shape */
-  backdrop-filter: blur(8px);
+  border-radius: var(--radius-pill);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
@@ -130,7 +149,7 @@ body {
 
 .controlBtn:hover {
   background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
+  transform: scale(1.08);
 }
 
 /* Estado "apagado" (rojo) para mic/cam */
@@ -162,6 +181,7 @@ body {
   background: var(--card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
+  border: 0.5px solid var(--border-light);
 
   display: flex;
   flex-direction: column;
@@ -170,15 +190,16 @@ body {
 
   padding: 1rem;
 
-  /* ✅ Para que el scroll interno funcione */
   min-height: 0;
 }
 
 .videoChatTitle {
   margin: 0;
   padding-bottom: 0.8rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-light);
   font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
   flex-shrink: 0;
 }
 
@@ -191,7 +212,6 @@ body {
   flex-direction: column;
   gap: 0.7rem;
 
-  /* ✅ crucial en flex containers para scroll interno */
   min-height: 0;
 }
 
@@ -202,18 +222,23 @@ body {
   max-width: 75%;
   border-radius: 1rem;
   font-size: 0.95rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  word-break: break-word;
 }
 
 .selfVideoMessage {
   align-self: flex-end;
-  background: var(--grad-self);
+  background: var(--gradient-self);
   color: white;
+  border-bottom-right-radius: 0.2rem;
 }
 
 .otherVideoMessage {
   align-self: flex-start;
-  background: #eef2ff;
-  color: var(--ink);
+  background: var(--card-soft);
+  color: var(--text);
+  border: 0.5px solid var(--border-light);
+  border-bottom-left-radius: 0.2rem;
 }
 
 .messageMeta {
@@ -235,24 +260,39 @@ body {
   flex: 1;
   height: 2.8rem;
   border-radius: var(--radius-pill);
-  border: 1px solid #dbeafe;
+  border: 1px solid var(--border-light);
+  background: linear-gradient(135deg, #ffffff 0%, #f5f5f7 100%);
+  color: var(--text);
 
   padding-left: 1rem;
   font-size: 16px;
-  /* ✅ evita zoom iOS */
 
   outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.videoChatInput:focus {
+  background: #fff;
+  border-color: #007AFF;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12);
 }
 
 .videoChatSendBtn {
   padding: 0 1.2rem;
   height: 2.8rem;
   border-radius: var(--radius-pill);
-  background: var(--grad-1);
+  background: var(--gradient-primary);
   color: white;
   border: none;
   cursor: pointer;
   font-weight: 600;
+  box-shadow: 0 4px 14px rgba(91, 108, 255, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.videoChatSendBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(91, 108, 255, 0.45);
 }
 
 /* =========================================
@@ -273,14 +313,13 @@ body {
   }
 }
 
-/* ✅ Tablet vertical / Mobile: layout tipo app */
+/* Tablet vertical / Mobile */
 @media (max-width: 768px) {
   .videoCallMainContainer {
     flex-direction: column;
     padding: 1rem;
     gap: 1rem;
 
-    /* ✅ evita scroll del body */
     height: 100dvh;
     overflow: hidden;
   }
@@ -289,19 +328,22 @@ body {
     flex: none;
   }
 
-  /* ✅ el video deja de ser cuadrado para caber mejor */
   .videoWrapper {
     max-width: none;
     width: 100%;
-
     aspect-ratio: 16 / 10;
-    /* mejor en móvil */
+    border-radius: var(--radius-md);
+  }
+
+  .videoBox {
+    border-radius: var(--radius-md);
   }
 
   .pipVideo {
     width: 34%;
     bottom: 0.7rem;
     right: 0.7rem;
+    border-radius: var(--radius-md);
   }
 
   .endCallBtn {
@@ -311,17 +353,16 @@ body {
     padding: 0.55rem 1rem;
   }
 
-  /* ✅ Chat ocupa el resto de pantalla y scrollea interno */
   .videoChatContainer {
     flex: 1;
     width: 100%;
     max-width: none;
     min-width: 0;
     padding: 0.9rem;
+    border-radius: var(--radius-md);
 
     min-height: 0;
     overflow: hidden;
-    /* ✅ para que el scroll se quede dentro */
   }
 
   .videoChatMessages {
@@ -331,7 +372,7 @@ body {
   }
 }
 
-/* ✅ Mobile pequeño */
+/* Mobile pequeño */
 @media (max-width: 540px) {
   .videoCallMainContainer {
     padding: 0.85rem;
@@ -366,50 +407,76 @@ body {
 }
 
 /* ================================
-   DARK MODE
+   DARK MODE — iOS tokens
 ================================ */
+.dark-mode {
+  --bg: #000000;
+  --card: #1C1C1E;
+  --card-soft: #2C2C2E;
+  --text: #FFFFFF;
+  --text-light: #8E8E93;
+  --border: #38383A;
+  --border-light: #2C2C2E;
+
+  --shadow: 0 10px 25px rgba(0, 0, 0, .6);
+  --shadow-md: 0 12px 28px rgba(0, 0, 0, 0.5);
+}
+
 .dark-mode .videoCallMainContainer {
-  background: #0f172a;
+  background: var(--bg);
 }
 
 .dark-mode .videoWrapper {
-  background: #1f2937;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  background: var(--card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-md);
 }
 
 .dark-mode .videoChatContainer {
-  background: #1f2937;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  background: var(--card);
+  border-color: var(--border);
+  box-shadow: var(--shadow-md);
 }
 
 .dark-mode .videoChatTitle {
-  color: #f9fafb;
-  border-bottom-color: #374151;
+  color: #FFFFFF;
+  border-bottom-color: var(--border);
 }
 
 .dark-mode .otherVideoMessage {
-  background: #111827;
-  color: #e5e7eb;
+  background: var(--card-soft);
+  border-color: var(--border);
+  color: #FFFFFF;
+}
+
+.dark-mode .selfVideoMessage {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
 }
 
 .dark-mode .videoChatInput {
-  background: #0b1220;
-  border-color: #374151;
-  color: #f9fafb;
+  background: linear-gradient(135deg, #2C2C2E 0%, #1C1C1E 100%);
+  border-color: var(--border);
+  color: #FFFFFF;
 }
 
 .dark-mode .videoChatInput::placeholder {
-  color: #9ca3af;
+  color: var(--text-light);
+}
+
+.dark-mode .videoChatInput:focus {
+  background: #2C2C2E;
+  border-color: #007AFF;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.18);
 }
 
 .dark-mode .videoChatSendBtn {
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
 }
 
 .dark-mode .pipVideo {
-  border-color: #1f2937;
+  border-color: var(--card);
 }
 
-.dark-mode .endCallBtn {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+.dark-mode .messageMeta {
+  color: var(--text-light);
 }
