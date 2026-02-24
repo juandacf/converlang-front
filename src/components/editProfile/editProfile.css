@@ -307,6 +307,12 @@ body {
   box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.18);
 }
 
+/* Opciones del dropdown en dark mode */
+.dark-mode .inputGroup select option {
+  background-color: #2C2C2E;
+  color: #FFFFFF;
+}
+
 /* Input deshabilitado */
 .dark-mode .disabledInput {
   background: linear-gradient(135deg, #2C2C2E 0%, #1C1C1E 100%) !important;
