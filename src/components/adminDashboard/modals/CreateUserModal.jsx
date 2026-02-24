@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, User, Mail, Lock, Calendar, Globe, Languages, Hash, FileText, CheckCircle2 } from 'lucide-react';
 import { FormField, SelectField, TextAreaField } from '../forms/FormFields';
 import { usersService, validationUtils, constants, catalogsService } from '../../../adminServices';
+import { AVATARS } from '../../../utils/avatarUtils';
 
 /**
  * Modal para crear nuevos usuarios en el sistema
@@ -29,8 +30,7 @@ export const CreateUserModal = ({ isOpen, onClose, onSuccess }) => {
         target_lang_id: '',
         role_code: 'user',
         match_quantity: constants.DEFAULT_MATCH_QUANTITY,
-        description: '',
-        profile_photo: ''
+        description: ''
     });
 
     // Estados de UI
@@ -102,6 +102,8 @@ export const CreateUserModal = ({ isOpen, onClose, onSuccess }) => {
                 else if (error.includes('email')) errorObj.email = error;
                 else if (error.includes('contraseña')) errorObj.password = error;
                 else if (error.includes('fecha')) errorObj.birth_date = error;
+                else if (error.includes('género')) errorObj.gender_id = error;
+                else if (error.includes('foto')) errorObj.profile_photo = error;
                 else if (error.includes('país')) errorObj.country_id = error;
                 else if (error.includes('idioma nativo')) errorObj.native_lang_id = error;
                 else if (error.includes('idioma objetivo')) errorObj.target_lang_id = error;
@@ -110,6 +112,13 @@ export const CreateUserModal = ({ isOpen, onClose, onSuccess }) => {
                     errorObj.target_lang_id = error;
                 }
                 else if (error.includes('matches')) errorObj.match_quantity = error;
+                else if (error.includes('caracteres no permitidos')) {
+                    // Mapear errores de inyección al campo correspondiente
+                    if (error.includes('first_name')) errorObj.first_name = 'Contiene caracteres no permitidos';
+                    else if (error.includes('last_name')) errorObj.last_name = 'Contiene caracteres no permitidos';
+                    else if (error.includes('description')) errorObj.description = 'Contiene caracteres no permitidos';
+                    else if (error.includes('profile_photo')) errorObj.profile_photo = 'Contiene caracteres no permitidos';
+                }
             });
             setErrors(errorObj);
         }
@@ -132,11 +141,19 @@ export const CreateUserModal = ({ isOpen, onClose, onSuccess }) => {
         setLoading(true);
 
         try {
-            // Preparar payload con tipos correctos
+            // Asignar avatar aleatorio
+            const randomAvatar = AVATARS[Math.floor(Math.random() * AVATARS.length)];
+
+            // Preparar payload con tipos correctos y sanitización
             const payload = {
                 ...formData,
+                first_name: validationUtils.sanitizeString(formData.first_name),
+                last_name: validationUtils.sanitizeString(formData.last_name),
+                email: formData.email.toLowerCase().trim(),
                 gender_id: parseInt(formData.gender_id, 10),
-                match_quantity: parseInt(formData.match_quantity, 10) || 10
+                match_quantity: parseInt(formData.match_quantity, 10) || 10,
+                profile_photo: randomAvatar,
+                description: validationUtils.sanitizeString(formData.description) || 'NO APLICA'
             };
 
             // Llamar al servicio para crear usuario
@@ -260,6 +277,7 @@ export const CreateUserModal = ({ isOpen, onClose, onSuccess }) => {
                                     value={formData.gender_id}
                                     onChange={(val) => handleChange('gender_id', val)}
                                     error={errors.gender_id}
+                                    required
                                     options={catalogs.genders.map(g => ({ value: g.gender_id, label: g.gender_name }))}
                                     placeholder="Seleccionar género"
                                 />
@@ -319,7 +337,7 @@ export const CreateUserModal = ({ isOpen, onClose, onSuccess }) => {
                                     options={catalogs.roles.map(r => ({ value: r.role_code, label: r.role_name }))}
                                 />
                                 <div className="md:col-span-2">
-                                    <TextAreaField label="Descripción" value={formData.description} onChange={(val) => handleChange('description', val)} error={errors.description} placeholder="Información adicional..." rows={3} />
+                                    <TextAreaField label="Descripción" value={formData.description} onChange={(val) => handleChange('description', val)} error={errors.description} required placeholder="Información adicional sobre el usuario..." rows={3} />
                                 </div>
                             </div>
                         </div>

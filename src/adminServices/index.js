@@ -15,6 +15,32 @@ export { catalogsService } from './catalogsService';
 export const validationUtils = {
 
     /**
+     * Sanitiza un string eliminando caracteres peligrosos para SQL/XSS
+     * @param {string} value - Valor a sanitizar
+     * @returns {string} Valor sanitizado
+     */
+    sanitizeString: (value) => {
+        if (!value || typeof value !== 'string') return value;
+        return value
+            .replace(/[\x00-\x1f]/g, '')
+            .replace(/['";\\]/g, '')
+            .replace(/<[^>]*>/g, '')
+            .replace(/(--|\/\*|\*\/|xp_|exec\s|drop\s|insert\s|delete\s|update\s|union\s|select\s)/gi, '')
+            .trim();
+    },
+
+    /**
+     * Detecta si un string contiene patrones de inyección SQL
+     * @param {string} value - Valor a verificar
+     * @returns {boolean} true si contiene patrones peligrosos
+     */
+    containsDangerousInput: (value) => {
+        if (!value || typeof value !== 'string') return false;
+        const dangerousPatterns = /('|--|;|\\|<script|<\/script|union\s+select|drop\s+table|insert\s+into|delete\s+from|update\s+.*set)/i;
+        return dangerousPatterns.test(value);
+    },
+
+    /**
      * Validar formato de email
      * @param {string} email - Email a validar
      * @returns {boolean} true si es válido
@@ -121,6 +147,18 @@ export const validationUtils = {
 
         if (userData.match_quantity && !validationUtils.isValidMatchQuantity(userData.match_quantity)) {
             errors.push('La cantidad de matches debe estar entre 1 y 100');
+        }
+
+        if (!userData.gender_id) {
+            errors.push('El género es obligatorio');
+        }
+
+        // Verificar inyección SQL en campos de texto
+        const textFields = ['first_name', 'last_name', 'email', 'description'];
+        for (const field of textFields) {
+            if (userData[field] && validationUtils.containsDangerousInput(userData[field])) {
+                errors.push(`El campo ${field} contiene caracteres no permitidos`);
+            }
         }
 
         return {
