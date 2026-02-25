@@ -12,6 +12,11 @@ export default function VideoCall() {
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("ES");
 
+  // State for pre-call language selection
+  const [practiceLanguages, setPracticeLanguages] = useState([]);
+  const [practiceLanguage, setPracticeLanguage] = useState("");
+  const [isLanguageSelected, setIsLanguageSelected] = useState(false);
+
   const { match_id } = useParams();
   const navigate = useNavigate();
   const socket = useSocket();
@@ -23,6 +28,7 @@ export default function VideoCall() {
   const remoteVideoRef = useRef(null);
   const peerRef = useRef(null);
   const localStreamRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   // States para controles de media
   const [isMicOn, setIsMicOn] = useState(true);
@@ -38,6 +44,10 @@ export default function VideoCall() {
 
   const [messages, setMessages] = useState([]);
   const [draft, setDraft] = useState("");
+
+  // Nuevo state para la corrección gramatical (Paso 5)
+  const [grammarFeedback, setGrammarFeedback] = useState(null);
+
   const [alertState, setAlertState] = useState({
     isOpen: false,
     message: "",
@@ -74,7 +84,22 @@ export default function VideoCall() {
       }
     };
 
+    const fetchLanguages = async () => {
+      try {
+        const res = await fetch(`${API_BACKEND}/languages`);
+        if (!res.ok) throw new Error("Error fetching languages");
+        const data = await res.json();
+        setPracticeLanguages(data);
+        if (data && data.length > 0) {
+          setPracticeLanguage(data[0].language_code);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     fetchPreferences();
+    fetchLanguages();
   }, [userId, token, API_BACKEND]);
 
   const iceServers = useMemo(
@@ -239,6 +264,9 @@ export default function VideoCall() {
   useEffect(() => {
     if (!socket || !numericMatchId) return;
 
+    // We only initialize WebRTC and join the room AFTER the language has been selected
+    if (!isLanguageSelected) return;
+
     // A. Inicializar recursos locales
     initWebRTC().then(() => {
       // B. Unirse a la sala
@@ -343,6 +371,23 @@ export default function VideoCall() {
     };
     socket.on("newMessage", handleNewMessage);
 
+    // 8. Recibir Correcciones Gramaticales de la IA (PASO 5)
+    socket.on("grammar_correction", (data) => {
+      // Solo mostramos si hay un error real
+      if (data.correction && data.correction.hasError) {
+        setGrammarFeedback({
+          original: data.originalText,
+          correction: data.correction.correction,
+          explanation: data.correction.explanation
+        });
+
+        // Desaparecer el feedback después de 10 segundos
+        setTimeout(() => {
+          setGrammarFeedback(null);
+        }, 10000);
+      }
+    });
+
     return () => {
       socket.off("incomingCall");
       socket.off("callAccepted");
@@ -350,11 +395,89 @@ export default function VideoCall() {
       socket.off("webrtcAnswer");
       socket.off("webrtcIceCandidate");
       socket.off("callEnded");
+      socket.off("grammar_correction");
       socket.off("newMessage", handleNewMessage);
       cleanupCall();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socket, numericMatchId, userId]);
+  }, [socket, numericMatchId, userId, isLanguageSelected]);
+
+  /* ======================================================
+     Web Speech API (Reconocimiento de Voz)
+  ====================================================== */
+  useEffect(() => {
+    if (!isLanguageSelected || !practiceLanguage) return;
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      console.warn("Tu navegador no soporta la Speech Recognition API.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = practiceLanguage;
+    recognition.continuous = true;
+    recognition.interimResults = false; // Solo captura cuando hay una pausa/frase terminada
+
+    recognition.onresult = (event) => {
+      let finalTranscript = '';
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        }
+      }
+
+      if (finalTranscript.trim()) {
+        console.log(`[🗣 Traducción en Vivo - ${practiceLanguage}]: ${finalTranscript}`);
+
+        // Enviando la frase transcrita al backend por Socket.io
+        if (socket && numericMatchId) {
+          socket.emit("transcribed_phrase", {
+            matchId: numericMatchId,
+            userId: userId,
+            languageId: practiceLanguage,
+            text: finalTranscript.trim()
+          });
+        }
+      }
+    };
+
+    recognition.onerror = (event) => {
+      // Errores típicos como 'no-speech' son normales en pausas largas
+      if (event.error !== 'no-speech') {
+        console.error("Error en reconocimiento de voz:", event.error);
+      }
+    };
+
+    recognition.onend = () => {
+      // Truco: Reactivamos continuamente la API para que no se apague en silencios.
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.start();
+        } catch (e) {
+          // Ignorar si el motor ya se está reseteando
+        }
+      }
+    };
+
+    recognitionRef.current = recognition;
+
+    try {
+      recognition.start();
+      console.log(`✅ Micrófono de IA activado y escuchando en: ${practiceLanguage}`);
+    } catch (e) {
+      console.error("No se pudo iniciar SpeechRecognition", e);
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        // Desactivamos el onend temporalmente antes de apagar forzosamente
+        recognitionRef.current.onend = null;
+        recognitionRef.current.stop();
+        recognitionRef.current = null;
+      }
+    };
+  }, [isLanguageSelected, practiceLanguage]);
 
 
   /* ======================================================
@@ -490,7 +613,44 @@ export default function VideoCall() {
   ====================================================== */
   return (
     <div className={darkMode ? "dark-mode" : ""}>
-      <div className="videoCallMainContainer">
+      {!isLanguageSelected && (
+        <div className="pre-call-container" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 999 }}>
+          <div className="language-selection-card">
+            <h2 className="pre-call-title">
+              {translations[language]?.videoModule?.selectLanguage || "Selecciona el idioma a practicar"}
+            </h2>
+            <p className="pre-call-subtitle">
+              {translations[language]?.videoModule?.selectLanguageDesc || "Esto nos ayudará a configurar el reconocimiento de voz correctamente."}
+            </p>
+
+            <select
+              className="language-dropdown"
+              value={practiceLanguage}
+              onChange={(e) => setPracticeLanguage(e.target.value)}
+            >
+              {practiceLanguages.map((l) => (
+                <option key={l.language_code} value={l.language_code}>
+                  {l.language_name}
+                </option>
+              ))}
+            </select>
+
+            <div className="pre-call-actions">
+              <button
+                className="start-session-btn"
+                onClick={() => setIsLanguageSelected(true)}
+              >
+                🚀 {translations[language]?.videoModule?.startSession || "Iniciar Sesión"}
+              </button>
+              <button className="cancel-session-btn" onClick={() => navigate(-1)}>
+                {translations[language]?.videoModule?.cancelButton || "Cancelar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="videoCallMainContainer" style={{ display: isLanguageSelected ? 'flex' : 'none' }}>
         <div className="videoArea">
           <div className="videoWrapper">
             <video
@@ -534,6 +694,46 @@ export default function VideoCall() {
                 🔴
               </button>
             </div>
+
+            {/* Overlay de la corrección gramatical de la IA (Paso 5) */}
+            {grammarFeedback && (
+              <div style={{
+                position: 'absolute',
+                bottom: '80px', // Justo por encima de los controles
+                left: '50%',
+                transform: 'translateX(-50%)',
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                color: 'white',
+                padding: '15px 25px',
+                borderRadius: '12px',
+                zIndex: 100,
+                width: '80%',
+                maxWidth: '600px',
+                boxShadow: '0 4px 15px rgba(0,0,0,0.5)',
+                borderLeft: '4px solid #f39c12'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#f39c12', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                    🤖 IA Correction
+                  </span>
+                  <button
+                    onClick={() => setGrammarFeedback(null)}
+                    style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '16px' }}>
+                    ✕
+                  </button>
+                </div>
+                <div style={{ fontSize: '14px', marginBottom: '4px', opacity: 0.7 }}>
+                  <span style={{ textDecoration: 'line-through' }}>"{grammarFeedback.original}"</span>
+                </div>
+                <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>
+                  ✨ "{grammarFeedback.correction}"
+                </div>
+                <div style={{ fontSize: '14px', fontStyle: 'italic', opacity: 0.9 }}>
+                  💡 {grammarFeedback.explanation}
+                </div>
+              </div>
+            )}
+
           </div>
         </div>
 
