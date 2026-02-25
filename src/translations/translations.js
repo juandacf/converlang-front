@@ -104,7 +104,11 @@ export const Translations = {
       "you": "Tú",
       "endCallButton": "Terminar la llamada",
       "sendAMessageButton": "Enviar",
-      "messageInputPlaceholder": "Escribe un mensaje..."
+      "messageInputPlaceholder": "Escribe un mensaje...",
+      "selectLanguage": "Selecciona el idioma a practicar",
+      "selectLanguageDesc": "Esto nos ayudará a configurar el reconocimiento de voz correctamente.",
+      "startSession": "Iniciar Sesión",
+      "cancelButton": "Cancelar"
     },
     "notifications": {
       "title": "Notificaciones",
@@ -249,7 +253,11 @@ export const Translations = {
       "you": "You",
       "endCallButton": "End call",
       "sendAMessageButton": "Send",
-      "messageInputPlaceholder": "Type a message..."
+      "messageInputPlaceholder": "Type a message...",
+      "selectLanguage": "Select the language to practice",
+      "selectLanguageDesc": "This will help us configure speech recognition correctly.",
+      "startSession": "Start Session",
+      "cancelButton": "Cancel"
     },
     "notifications": {
       "title": "Notifications",
@@ -394,7 +402,11 @@ export const Translations = {
       "you": "Vous",
       "endCallButton": "Terminer l’appel",
       "sendAMessageButton": "Envoyer",
-      "messageInputPlaceholder": "Écrivez un message..."
+      "messageInputPlaceholder": "Écrivez un message...",
+      "selectLanguage": "Sélectionnez la langue à pratiquer",
+      "selectLanguageDesc": "Cela nous aidera à configurer correctement la reconnaissance vocale.",
+      "startSession": "Démarrer la session",
+      "cancelButton": "Annuler"
     },
     "notifications": {
       "title": "Notifications",
@@ -539,7 +551,11 @@ export const Translations = {
       "you": "Você",
       "endCallButton": "Encerrar chamada",
       "sendAMessageButton": "Enviar",
-      "messageInputPlaceholder": "Escreva uma mensagem..."
+      "messageInputPlaceholder": "Escreva uma mensagem...",
+      "selectLanguage": "Selecione o idioma para praticar",
+      "selectLanguageDesc": "Isso nos ajudará a configurar o reconhecimento de voz corretamente.",
+      "startSession": "Iniciar Sessão",
+      "cancelButton": "Cancelar"
     },
     "notifications": {
       "title": "Notificações",
@@ -684,7 +700,11 @@ export const Translations = {
       "you": "Du",
       "endCallButton": "Anruf beenden",
       "sendAMessageButton": "Senden",
-      "messageInputPlaceholder": "Nachricht schreiben..."
+      "messageInputPlaceholder": "Nachricht schreiben...",
+      "selectLanguage": "Wähle die Sprache zum Üben",
+      "selectLanguageDesc": "Dies hilft uns, die Spracherkennung richtig zu konfigurieren.",
+      "startSession": "Sitzung Starten",
+      "cancelButton": "Abbrechen"
     },
     "notifications": {
       "title": "Benachrichtigungen",

@@ -12,6 +12,11 @@ export default function VideoCall() {
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("ES");
 
+  // State for pre-call language selection
+  const [practiceLanguages, setPracticeLanguages] = useState([]);
+  const [practiceLanguage, setPracticeLanguage] = useState("");
+  const [isLanguageSelected, setIsLanguageSelected] = useState(false);
+
   const { match_id } = useParams();
   const navigate = useNavigate();
   const socket = useSocket();
@@ -74,7 +79,22 @@ export default function VideoCall() {
       }
     };
 
+    const fetchLanguages = async () => {
+      try {
+        const res = await fetch(`${API_BACKEND}/languages`);
+        if (!res.ok) throw new Error("Error fetching languages");
+        const data = await res.json();
+        setPracticeLanguages(data);
+        if (data && data.length > 0) {
+          setPracticeLanguage(data[0].language_code);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     fetchPreferences();
+    fetchLanguages();
   }, [userId, token, API_BACKEND]);
 
   const iceServers = useMemo(
@@ -239,6 +259,9 @@ export default function VideoCall() {
   useEffect(() => {
     if (!socket || !numericMatchId) return;
 
+    // We only initialize WebRTC and join the room AFTER the language has been selected
+    if (!isLanguageSelected) return;
+
     // A. Inicializar recursos locales
     initWebRTC().then(() => {
       // B. Unirse a la sala
@@ -354,7 +377,7 @@ export default function VideoCall() {
       cleanupCall();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socket, numericMatchId, userId]);
+  }, [socket, numericMatchId, userId, isLanguageSelected]);
 
 
   /* ======================================================
@@ -490,7 +513,44 @@ export default function VideoCall() {
   ====================================================== */
   return (
     <div className={darkMode ? "dark-mode" : ""}>
-      <div className="videoCallMainContainer">
+      {!isLanguageSelected && (
+        <div className="pre-call-container" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 999 }}>
+          <div className="language-selection-card">
+            <h2 className="pre-call-title">
+              {translations[language]?.videoModule?.selectLanguage || "Selecciona el idioma a practicar"}
+            </h2>
+            <p className="pre-call-subtitle">
+              {translations[language]?.videoModule?.selectLanguageDesc || "Esto nos ayudará a configurar el reconocimiento de voz correctamente."}
+            </p>
+
+            <select
+              className="language-dropdown"
+              value={practiceLanguage}
+              onChange={(e) => setPracticeLanguage(e.target.value)}
+            >
+              {practiceLanguages.map((l) => (
+                <option key={l.language_code} value={l.language_code}>
+                  {l.language_name}
+                </option>
+              ))}
+            </select>
+
+            <div className="pre-call-actions">
+              <button
+                className="start-session-btn"
+                onClick={() => setIsLanguageSelected(true)}
+              >
+                🚀 {translations[language]?.videoModule?.startSession || "Iniciar Sesión"}
+              </button>
+              <button className="cancel-session-btn" onClick={() => navigate(-1)}>
+                {translations[language]?.videoModule?.cancelButton || "Cancelar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="videoCallMainContainer" style={{ display: isLanguageSelected ? 'flex' : 'none' }}>
         <div className="videoArea">
           <div className="videoWrapper">
             <video
