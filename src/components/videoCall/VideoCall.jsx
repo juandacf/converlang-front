@@ -28,6 +28,7 @@ export default function VideoCall() {
   const remoteVideoRef = useRef(null);
   const peerRef = useRef(null);
   const localStreamRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   // States para controles de media
   const [isMicOn, setIsMicOn] = useState(true);
@@ -378,6 +379,83 @@ export default function VideoCall() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, numericMatchId, userId, isLanguageSelected]);
+
+  /* ======================================================
+     Web Speech API (Reconocimiento de Voz)
+  ====================================================== */
+  useEffect(() => {
+    if (!isLanguageSelected || !practiceLanguage) return;
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      console.warn("Tu navegador no soporta la Speech Recognition API.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = practiceLanguage;
+    recognition.continuous = true;
+    recognition.interimResults = false; // Solo captura cuando hay una pausa/frase terminada
+
+    recognition.onresult = (event) => {
+      let finalTranscript = '';
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        }
+      }
+
+      if (finalTranscript.trim()) {
+        console.log(`[🗣 Traducción en Vivo - ${practiceLanguage}]: ${finalTranscript}`);
+
+        // Enviando la frase transcrita al backend por Socket.io
+        if (socket && numericMatchId) {
+          socket.emit("transcribed_phrase", {
+            matchId: numericMatchId,
+            userId: userId,
+            languageId: practiceLanguage,
+            text: finalTranscript.trim()
+          });
+        }
+      }
+    };
+
+    recognition.onerror = (event) => {
+      // Errores típicos como 'no-speech' son normales en pausas largas
+      if (event.error !== 'no-speech') {
+        console.error("Error en reconocimiento de voz:", event.error);
+      }
+    };
+
+    recognition.onend = () => {
+      // Truco: Reactivamos continuamente la API para que no se apague en silencios.
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.start();
+        } catch (e) {
+          // Ignorar si el motor ya se está reseteando
+        }
+      }
+    };
+
+    recognitionRef.current = recognition;
+
+    try {
+      recognition.start();
+      console.log(`✅ Micrófono de IA activado y escuchando en: ${practiceLanguage}`);
+    } catch (e) {
+      console.error("No se pudo iniciar SpeechRecognition", e);
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        // Desactivamos el onend temporalmente antes de apagar forzosamente
+        recognitionRef.current.onend = null;
+        recognitionRef.current.stop();
+        recognitionRef.current = null;
+      }
+    };
+  }, [isLanguageSelected, practiceLanguage]);
 
 
   /* ======================================================
