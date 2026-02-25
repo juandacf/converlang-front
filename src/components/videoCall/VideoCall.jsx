@@ -44,6 +44,10 @@ export default function VideoCall() {
 
   const [messages, setMessages] = useState([]);
   const [draft, setDraft] = useState("");
+
+  // Nuevo state para la corrección gramatical (Paso 5)
+  const [grammarFeedback, setGrammarFeedback] = useState(null);
+
   const [alertState, setAlertState] = useState({
     isOpen: false,
     message: "",
@@ -367,6 +371,23 @@ export default function VideoCall() {
     };
     socket.on("newMessage", handleNewMessage);
 
+    // 8. Recibir Correcciones Gramaticales de la IA (PASO 5)
+    socket.on("grammar_correction", (data) => {
+      // Solo mostramos si hay un error real
+      if (data.correction && data.correction.hasError) {
+        setGrammarFeedback({
+          original: data.originalText,
+          correction: data.correction.correction,
+          explanation: data.correction.explanation
+        });
+
+        // Desaparecer el feedback después de 10 segundos
+        setTimeout(() => {
+          setGrammarFeedback(null);
+        }, 10000);
+      }
+    });
+
     return () => {
       socket.off("incomingCall");
       socket.off("callAccepted");
@@ -374,6 +395,7 @@ export default function VideoCall() {
       socket.off("webrtcAnswer");
       socket.off("webrtcIceCandidate");
       socket.off("callEnded");
+      socket.off("grammar_correction");
       socket.off("newMessage", handleNewMessage);
       cleanupCall();
     };
@@ -672,6 +694,46 @@ export default function VideoCall() {
                 🔴
               </button>
             </div>
+
+            {/* Overlay de la corrección gramatical de la IA (Paso 5) */}
+            {grammarFeedback && (
+              <div style={{
+                position: 'absolute',
+                bottom: '80px', // Justo por encima de los controles
+                left: '50%',
+                transform: 'translateX(-50%)',
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                color: 'white',
+                padding: '15px 25px',
+                borderRadius: '12px',
+                zIndex: 100,
+                width: '80%',
+                maxWidth: '600px',
+                boxShadow: '0 4px 15px rgba(0,0,0,0.5)',
+                borderLeft: '4px solid #f39c12'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#f39c12', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                    🤖 IA Correction
+                  </span>
+                  <button
+                    onClick={() => setGrammarFeedback(null)}
+                    style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '16px' }}>
+                    ✕
+                  </button>
+                </div>
+                <div style={{ fontSize: '14px', marginBottom: '4px', opacity: 0.7 }}>
+                  <span style={{ textDecoration: 'line-through' }}>"{grammarFeedback.original}"</span>
+                </div>
+                <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>
+                  ✨ "{grammarFeedback.correction}"
+                </div>
+                <div style={{ fontSize: '14px', fontStyle: 'italic', opacity: 0.9 }}>
+                  💡 {grammarFeedback.explanation}
+                </div>
+              </div>
+            )}
+
           </div>
         </div>
 
