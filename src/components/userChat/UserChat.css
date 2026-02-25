@@ -443,9 +443,9 @@ body {
 
   .userChatMainContainer {
     flex-direction: column;
-    height: calc(100dvh - 72px);
+    height: 100dvh;
     padding: 12px;
-    padding-bottom: 0;
+    padding-bottom: 80px;
   }
 
   .chatItemsContainer {
@@ -502,7 +502,6 @@ body {
 
   .actualMessageContainer {
     padding: 0.9rem;
-    height: 62vh;
   }
 
   .selfMessage,
