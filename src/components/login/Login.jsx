@@ -5,6 +5,7 @@ import { jwtDecode } from "jwt-decode";
 import { API_URL } from "../../config/api";
 import { InactiveAccountModal } from "./InactiveAccountModal";
 import { CustomAlert } from "../common/CustomAlert";
+import { ForgotPasswordModal } from "./ForgotPasswordModal";
 
 
 
@@ -21,6 +22,7 @@ export function Login() {
         message: ""
     });
     const [showInactiveModal, setShowInactiveModal] = useState(false);
+    const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
@@ -103,6 +105,10 @@ export function Login() {
                 isOpen={showInactiveModal}
                 onClose={() => setShowInactiveModal(false)}
             />
+            <ForgotPasswordModal
+                isOpen={showForgotPasswordModal}
+                onClose={() => setShowForgotPasswordModal(false)}
+            />
             <div className="loginContainer">
                 <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                     <img src="/assets/img/converlang_horizontal.png" alt="Converlang" style={{ height: '130px', width: 'auto', marginBottom: '1rem', display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
@@ -129,7 +135,16 @@ export function Login() {
                         />
                     </div>
                     <div style={{ marginBottom: '1.5rem' }}>
-                        <label style={{ display: 'block', marginBottom: '.5rem', fontWeight: '500' }}>Contraseña</label>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.5rem' }}>
+                            <label style={{ margin: 0, fontWeight: '500' }}>Contraseña</label>
+                            <button
+                                type="button"
+                                onClick={() => setShowForgotPasswordModal(true)}
+                                style={{ background: 'none', border: 'none', color: 'var(--primary-color)', fontSize: '0.85rem', cursor: 'pointer', padding: 0 }}
+                            >
+                                ¿Olvidaste tu contraseña?
+                            </button>
+                        </div>
                         <input
                             type="password"
                             name="password"
