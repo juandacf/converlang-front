@@ -45,12 +45,8 @@ export function SocketProvider({ children }) {
     };
   }, []);
 
-  // Solo mostrar "Conectando..." si hay token pero el socket aún no conecta.
-  // Si NO hay token (páginas públicas), renderizar children normalmente.
+  // Ya no bloqueamos la interfaz mientras conecta. Se renderiza silenciosamente.
   const token = localStorage.getItem("token");
-  if (token && !socket) {
-    return <div>Conectando con el servidor...</div>;
-  }
 
   return (
     <SocketContext.Provider value={{ socket, incomingCall, setIncomingCall }}>

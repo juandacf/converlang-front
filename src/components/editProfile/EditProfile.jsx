@@ -16,7 +16,7 @@ export function EditProfile() {
   const navigate = useNavigate();
   const [languages, setLanguages] = useState([]);
   const [photoPreview, setPhotoPreview] = useState(null);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
   const [language, setLanguage] = useState("ES");
 
   // Estado para el modal de selección de avatar
@@ -282,6 +282,7 @@ export function EditProfile() {
 
         // Backend: theme = true (light) | false (dark)
         setDarkMode(!data.theme);
+        localStorage.setItem("theme", !data.theme ? "dark" : "light");
         setLanguage(data.language_code);
       } catch (error) {
         console.error("Error cargando preferencias:", error);

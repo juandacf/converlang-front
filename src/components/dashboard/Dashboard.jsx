@@ -11,7 +11,7 @@ import {
 } from "recharts";
 
 import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { API_URL } from "../../config/api";
 import { authFetch } from "../../config/authFetch";
 import { Translations } from "../../translations/translations";
@@ -36,7 +36,7 @@ export function Dashboard({ user }) {
   const [authUser, setAuthUser] = useState({});
   const [photoPreview, setPhotoPreview] = useState(null);
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
   const [language, setLanguage] = useState("ES");
   const [alertState, setAlertState] = useState({
     isOpen: false,
@@ -196,6 +196,7 @@ export function Dashboard({ user }) {
 
         // Backend: theme = true (light) | false (dark)
         setDarkMode(!data.theme);
+        localStorage.setItem("theme", !data.theme ? "dark" : "light");
         setLanguage(data.language_code);
       } catch (error) {
         console.error("Error cargando preferencias:", error);
@@ -627,7 +628,7 @@ export function NavBar({ language = "ES" }) {
 
   return (
     <nav className="navBar">
-      <a href="/dashboard" className="navItem" title="Ir al Inicio">
+      <Link to="/dashboard" className="navItem" title="Ir al Inicio">
         <img
 
           src="../../../public/assets/home.png"
@@ -635,31 +636,31 @@ export function NavBar({ language = "ES" }) {
           className="navBarImage"
         />
         <span className="navLabel">{t.home}</span>
-      </a>
-      <a href="/matchUser" className="navItem" title="Buscar personas para practicar">
+      </Link>
+      <Link to="/matchUser" className="navItem" title="Buscar personas para practicar">
         <img
           src="../../../public/assets/friend-request.png"
           alt="Match"
           className="navBarImage"
         />
         <span className="navLabel">{t.match}</span>
-      </a>
-      <a href="/userChat" className="navItem" title="Ver tus mensajes">
+      </Link>
+      <Link to="/userChat" className="navItem" title="Ver tus mensajes">
         <img
           src="../../../public/assets/messages.png"
           alt="Messages"
           className="navBarImage"
         />
         <span className="navLabel">{t.messages}</span>
-      </a>
-      <a href="/metrics" className="navItem" title="Tus métricas">
+      </Link>
+      <Link to="/metrics" className="navItem" title="Tus métricas">
         <img
           src="../../../public/assets/metricas.png"
           alt="Metrics"
           className="navBarImage"
         />
         <span className="navLabel">{t.metrics}</span>
-      </a>
+      </Link>
     </nav>
   );
 }

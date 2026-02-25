@@ -29,7 +29,7 @@ const PIE_COLORS = [
 export function Metrics() {
     const [metrics, setMetrics] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [darkMode, setDarkMode] = useState(false);
+    const [darkMode, setDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
     const [language, setLanguage] = useState("ES");
 
     const navigate = useNavigate();
@@ -50,6 +50,7 @@ export function Metrics() {
                 if (!res.ok) throw new Error(`Error ${res.status}`);
                 const data = await res.json();
                 setDarkMode(!data.theme);
+                localStorage.setItem("theme", !data.theme ? "dark" : "light");
                 setLanguage(data.language_code);
             } catch (error) {
                 console.error("Error cargando preferencias:", error);

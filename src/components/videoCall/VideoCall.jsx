@@ -9,7 +9,7 @@ import { Translations } from "../../translations/translations";
 import { CustomAlert } from "../common/CustomAlert";
 
 export default function VideoCall() {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
   const [language, setLanguage] = useState("ES");
 
   // State for pre-call language selection
@@ -78,6 +78,7 @@ export default function VideoCall() {
           const data = await res.json();
           // Backend: theme = true (light) | false (dark)
           setDarkMode(!data.theme);
+          localStorage.setItem("theme", !data.theme ? "dark" : "light");
           setLanguage(data.language_code || "ES");
         }
       } catch (error) {

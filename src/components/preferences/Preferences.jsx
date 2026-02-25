@@ -11,7 +11,7 @@ import { CustomAlert } from "../common/CustomAlert";
 export default function UserPreferencesCard() {
   // 🌙 Frontend: true = dark mode
   const navigate = useNavigate();
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
   const [language, setLanguage] = useState("ES");
   const [loading, setLoading] = useState(false);
   const [languages, setLanguages] = useState([]);
@@ -64,6 +64,7 @@ export default function UserPreferencesCard() {
 
         // Backend: theme = true (light) | false (dark)
         setDarkMode(!data.theme);
+        localStorage.setItem("theme", !data.theme ? "dark" : "light");
         setLanguage(data.language_code);
       } catch (error) {
         console.error("Error cargando preferencias:", error);

@@ -13,7 +13,7 @@ export function MatchUser() {
   const [users, setUsers] = useState([]);
   const [disappearing, setDisappearing] = useState({});
   const [page, setPage] = useState(1);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
   const [language, setLanguage] = useState("ES");
   const [highlightedUser, setHighlightedUser] = useState(null);
   const [userTitles, setUserTitles] = useState({});
@@ -178,6 +178,7 @@ export function MatchUser() {
 
         // Backend: theme = true (light) | false (dark)
         setDarkMode(!data.theme);
+        localStorage.setItem("theme", !data.theme ? "dark" : "light");
         setLanguage(data.language_code);
       } catch (error) {
         console.error("Error cargando preferencias:", error);

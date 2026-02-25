@@ -22,7 +22,7 @@ export function UserChat() {
   const [draft, setDraft] = useState("");
   const [authUser, setAuthUser] = useState({});
   const [search, setSearch] = useState("");
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
   const [language, setLanguage] = useState("ES");
   const [showConfigMenu, setShowConfigMenu] = useState(false);
   const [alertState, setAlertState] = useState({
@@ -280,6 +280,7 @@ export function UserChat() {
 
         // Backend: theme = true (light) | false (dark)
         setDarkMode(!data.theme);
+        localStorage.setItem("theme", !data.theme ? "dark" : "light");
         setLanguage(data.language_code);
       } catch (error) {
         console.error("Error cargando preferencias:", error);
