@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
-import { useSocket } from "../../context/SocketContext";
+import { useSocket, useIncomingCall } from "../../context/SocketContext";
 import "./VideoCall.css";
 import { jwtDecode } from "jwt-decode";
 import { API_URL } from "../../config/api";
@@ -23,6 +23,7 @@ export default function VideoCall() {
   const location = useLocation();
   const selectedMatch = location.state?.selectedMatch;
   const translations = Translations;
+  const [incomingCallData, setIncomingCall] = useIncomingCall();
 
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
@@ -270,7 +271,7 @@ export default function VideoCall() {
     // A. Inicializar recursos locales
     initWebRTC().then(() => {
       // B. Unirse a la sala
-      socket.emit("joinCallRoom", numericMatchId);
+      socket.emit("joinCallRoom", { matchId: numericMatchId, userId });
       socket.emit("joinRoom", numericMatchId); // Unirse a la sala de chat tambien
 
       // C. Anunciar "estoy listo" para ver si hay alguien más
@@ -351,12 +352,13 @@ export default function VideoCall() {
     socket.on("callEnded", () => {
 
       cleanupCall();
+      const t = translations[language]?.callNotifications || translations["ES"].callNotifications;
       setAlertState({
         isOpen: true,
         type: "success",
-        message: "La llamada ha finalizado."
+        message: t.callEnded
       });
-      setTimeout(() => navigate(-1), 1500);
+      setTimeout(() => navigate('/userChat'), 1500);
     });
 
     // 7. Recibir Mensajes de Chat
@@ -401,6 +403,46 @@ export default function VideoCall() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, numericMatchId, userId, isLanguageSelected]);
+
+  /* ======================================================
+     Escuchar 'call_ended' por canal de notificaciones (respaldo global)
+  ====================================================== */
+  useEffect(() => {
+    if (!incomingCallData) return;
+    const t = translations[language]?.callNotifications || translations["ES"].callNotifications;
+
+    if (incomingCallData.type === 'call_ended' && incomingCallData.matchId === numericMatchId) {
+      cleanupCall();
+      setIncomingCall(null);
+      setAlertState({
+        isOpen: true,
+        type: "success",
+        message: t.callEnded
+      });
+      setTimeout(() => navigate('/userChat'), 1500);
+    }
+    if (incomingCallData.type === 'call_rejected' && incomingCallData.matchId === numericMatchId) {
+      cleanupCall();
+      setIncomingCall(null);
+      const msg = incomingCallData.reason === 'no_answer' ? t.callNoAnswer : t.callRejected;
+      setAlertState({
+        isOpen: true,
+        type: "warning",
+        message: msg
+      });
+      setTimeout(() => navigate('/userChat'), 2000);
+    }
+    if (incomingCallData.type === 'user_busy' && incomingCallData.matchId === numericMatchId) {
+      cleanupCall();
+      setIncomingCall(null);
+      setAlertState({
+        isOpen: true,
+        type: "warning",
+        message: t.userBusy
+      });
+      setTimeout(() => navigate('/userChat'), 2000);
+    }
+  }, [incomingCallData]);
 
   /* ======================================================
      Web Speech API (Reconocimiento de Voz)
@@ -507,8 +549,17 @@ export default function VideoCall() {
      ENVÍO A BACKEND (POST /call)
   ====================================================== */
   async function persistSession() {
+    const now = new Date();
+    // Si callStartTimeRef nunca se seteó, usar 1 minuto antes como respaldo seguro
     const startTime =
-      callStartTimeRef.current ?? new Date().toISOString();
+      callStartTimeRef.current ?? new Date(now.getTime() - 60000).toISOString();
+    const endTime = now.toISOString();
+
+    // Validación: no persistir si startTime >= endTime
+    if (new Date(startTime) >= new Date(endTime)) {
+      console.warn("startTime >= endTime, ajustando startTime");
+      callStartTimeRef.current = new Date(now.getTime() - 60000).toISOString();
+    }
 
     const idUser2 = selectedMatch?.other_user_id;
 
@@ -526,8 +577,8 @@ export default function VideoCall() {
       body: JSON.stringify({
         idUser1: userId,
         idUser2,
-        startTime,
-        endTime: new Date().toISOString(),
+        startTime: callStartTimeRef.current ?? startTime,
+        endTime,
         sessionNotes: "Videollamada finalizada",
       }),
     });
@@ -539,13 +590,13 @@ export default function VideoCall() {
      Terminar llamada (botón)
   ====================================================== */
   async function endCall() {
-    socket.emit("endCall", { matchId: numericMatchId });
+    socket.emit("endCall", { matchId: numericMatchId, targetUserId: selectedMatch?.other_user_id, userId });
 
     // ⬇️ PERSISTE SESIÓN
     await persistSession("completed");
 
     cleanupCall();
-    navigate(-1);
+    navigate('/userChat');
   }
 
   /* ======================================================
@@ -567,7 +618,7 @@ export default function VideoCall() {
   ====================================================== */
   useEffect(() => {
     const onUnload = () => {
-      socket.emit("endCall", { matchId: numericMatchId });
+      socket.emit("endCall", { matchId: numericMatchId, targetUserId: selectedMatch?.other_user_id, userId });
 
       // ⚠️ Usamos fetch con keepalive en lugar de sendBeacon para enviar headers
       fetch(`${API_BACKEND}/call`, {
@@ -580,7 +631,7 @@ export default function VideoCall() {
         body: JSON.stringify({
           idUser1: userId,
           idUser2: selectedMatch.id_user,
-          startTime: callStartTimeRef.current,
+          startTime: callStartTimeRef.current || new Date(Date.now() - 60000).toISOString(),
           endTime: new Date().toISOString(),
           sessionStatus: "completed",
         }),

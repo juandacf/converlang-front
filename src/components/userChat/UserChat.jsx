@@ -20,6 +20,7 @@ export function UserChat() {
   const [messages, setMessages] = useState([]);
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [draft, setDraft] = useState("");
+  const [authUser, setAuthUser] = useState({});
   const [search, setSearch] = useState("");
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("ES");
@@ -48,6 +49,16 @@ export function UserChat() {
   // 1. Obtener lista de chats del usuario
   // =====================================================
   const location = useLocation();
+
+  // Obtener datos del usuario autenticado (nombre + foto)
+  useEffect(() => {
+    authFetch(`${API_BACKEND}/users/${decodedToken.sub}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => { if (data) setAuthUser(data); })
+      .catch((err) => console.error('Error fetching user:', err));
+  }, []);
 
   useEffect(() => {
     authFetch(`${API_BACKEND}/chats/list/${decodedToken.sub}`, {
@@ -350,11 +361,23 @@ export function UserChat() {
                   {showConfigMenu && (
                     <div className="configMenu" ref={configMenuRef}>
                       <p
-                        onClick={() =>
+                        onClick={() => {
+                          // Emitir callRequest con datos del caller ANTES de navegar
+                          if (socket && selectedMatch) {
+                            socket.emit("callRequest", {
+                              matchId: Number(selectedMatch.match_id),
+                              caller: {
+                                userId: Number(decodedToken.sub),
+                                userName: `${authUser.first_name || ''} ${authUser.last_name || ''}`.trim() || 'Usuario',
+                                userPhoto: authUser.profile_photo || null,
+                              },
+                              targetUserId: Number(selectedMatch.other_user_id),
+                            });
+                          }
                           navigate(`/videocall/${selectedMatch.match_id}`, {
                             state: { selectedMatch },
-                          })
-                        }
+                          });
+                        }}
                       >
                         📞 {translations[language].chatModule.startACall}
                       </p>

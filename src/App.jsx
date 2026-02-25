@@ -14,6 +14,7 @@ import UserPreferencesCard from "./components/preferences/Preferences";
 import { UserRoute } from "./components/guards/UserRoute";
 import { AdminRoute } from "./components/guards/AdminRoute";
 import { TermsAndConditions } from "./components/termsAndConditions/TermsAndConditions";
+import IncomingCallOverlay from "./components/common/IncomingCallOverlay";
 
 export default function App() {
 
@@ -24,6 +25,9 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      {/* Overlay global de llamada entrante — visible en cualquier página */}
+      <IncomingCallOverlay />
+
       <Routes>
         <Route path="/" element={<Authentication />} />
         <Route path="/login" element={<div className="auth-page"><Login /></div>} />

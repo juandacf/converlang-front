@@ -110,6 +110,16 @@ export const Translations = {
       "startSession": "Iniciar Sesión",
       "cancelButton": "Cancelar"
     },
+    "callNotifications": {
+      "incomingCall": "📞 Llamada entrante",
+      "accept": "Aceptar",
+      "reject": "Rechazar",
+      "autoCloseTimer": "Se cerrará en",
+      "callEnded": "La llamada ha finalizado.",
+      "callRejected": "El usuario rechazó la llamada.",
+      "callNoAnswer": "El usuario no contestó la llamada.",
+      "userBusy": "El usuario ya se encuentra en otra llamada."
+    },
     "notifications": {
       "title": "Notificaciones",
       "newLike": {
@@ -258,6 +268,16 @@ export const Translations = {
       "selectLanguageDesc": "This will help us configure speech recognition correctly.",
       "startSession": "Start Session",
       "cancelButton": "Cancel"
+    },
+    "callNotifications": {
+      "incomingCall": "📞 Incoming call",
+      "accept": "Accept",
+      "reject": "Reject",
+      "autoCloseTimer": "Closing in",
+      "callEnded": "The call has ended.",
+      "callRejected": "The user rejected the call.",
+      "callNoAnswer": "The user did not answer the call.",
+      "userBusy": "The user is already on another call."
     },
     "notifications": {
       "title": "Notifications",
@@ -408,6 +428,16 @@ export const Translations = {
       "startSession": "Démarrer la session",
       "cancelButton": "Annuler"
     },
+    "callNotifications": {
+      "incomingCall": "📞 Appel entrant",
+      "accept": "Accepter",
+      "reject": "Refuser",
+      "autoCloseTimer": "Fermeture dans",
+      "callEnded": "L'appel est terminé.",
+      "callRejected": "L'utilisateur a refusé l'appel.",
+      "callNoAnswer": "L'utilisateur n'a pas répondu à l'appel.",
+      "userBusy": "L'utilisateur est déjà en appel."
+    },
     "notifications": {
       "title": "Notifications",
       "newLike": {
@@ -557,6 +587,16 @@ export const Translations = {
       "startSession": "Iniciar Sessão",
       "cancelButton": "Cancelar"
     },
+    "callNotifications": {
+      "incomingCall": "📞 Chamada recebida",
+      "accept": "Aceitar",
+      "reject": "Rejeitar",
+      "autoCloseTimer": "Fechando em",
+      "callEnded": "A chamada foi encerrada.",
+      "callRejected": "O usuário rejeitou a chamada.",
+      "callNoAnswer": "O usuário não atendeu a chamada.",
+      "userBusy": "O usuário já está em outra chamada."
+    },
     "notifications": {
       "title": "Notificações",
       "newLike": {
@@ -705,6 +745,16 @@ export const Translations = {
       "selectLanguageDesc": "Dies hilft uns, die Spracherkennung richtig zu konfigurieren.",
       "startSession": "Sitzung Starten",
       "cancelButton": "Abbrechen"
+    },
+    "callNotifications": {
+      "incomingCall": "📞 Eingehender Anruf",
+      "accept": "Annehmen",
+      "reject": "Ablehnen",
+      "autoCloseTimer": "Schließt in",
+      "callEnded": "Der Anruf wurde beendet.",
+      "callRejected": "Der Benutzer hat den Anruf abgelehnt.",
+      "callNoAnswer": "Der Benutzer hat den Anruf nicht beantwortet.",
+      "userBusy": "Der Benutzer ist bereits in einem anderen Anruf."
     },
     "notifications": {
       "title": "Benachrichtigungen",
