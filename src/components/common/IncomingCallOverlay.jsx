@@ -60,7 +60,7 @@ export default function IncomingCallOverlay() {
         return () => clearInterval(timer);
     }, [incomingCall, setIncomingCall]);
 
-    if (!incomingCall) return null;
+    if (!incomingCall || incomingCall.type !== 'incoming_call') return null;
 
     const caller = incomingCall.caller || {};
     const matchId = incomingCall.matchId;
