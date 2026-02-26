@@ -37,18 +37,11 @@ export function UserChat() {
   const socket = useSocket();
 
 
-  if (!socket) {
-    return (
-      <div style={{ textAlign: "center", marginTop: "2rem" }}>
-        Conectando con el servidor...
-      </div>
-    );
-  }
+  const location = useLocation();
 
   // =====================================================
   // 1. Obtener lista de chats del usuario
-  // =====================================================
-  const location = useLocation();
+  // =====================================
 
   // Obtener datos del usuario autenticado (nombre + foto)
   useEffect(() => {
@@ -290,6 +283,14 @@ export function UserChat() {
     fetchPreferences();
   }, []);
 
+
+  if (!socket) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "2rem" }}>
+        Conectando con el servidor...
+      </div>
+    );
+  }
 
   // =====================================================
   //  RENDER
