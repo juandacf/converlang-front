@@ -34,7 +34,7 @@ export default function IncomingCallOverlay() {
     // Auto-dismiss después de 15 segundos
     useEffect(() => {
         if (!incomingCall) {
-            setCountdown(15);
+            setCountdown(60);
             return;
         }
 
