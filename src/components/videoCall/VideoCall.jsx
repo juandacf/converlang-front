@@ -349,17 +349,18 @@ export default function VideoCall() {
       }
     });
 
-    // 6. Fin de llamada
+    // 6. Fin de llamada (Escuchar solo aquí si es posible para evitar duplicados con el backup de notificaciones)
     socket.on("callEnded", () => {
-
-      cleanupCall();
-      const t = translations[language]?.callNotifications || translations["ES"].callNotifications;
-      setAlertState({
-        isOpen: true,
-        type: "success",
-        message: t.callEnded
-      });
-      setTimeout(() => navigate('/userChat'), 1500);
+      if (peerRef.current || localStreamRef.current) { // Solo si la llamada sigue "activa" localmente
+        cleanupCall();
+        const t = translations[language]?.callNotifications || translations["ES"].callNotifications;
+        setAlertState({
+          isOpen: true,
+          type: "success",
+          message: t.callEnded
+        });
+        setTimeout(() => navigate('/userChat'), 1500);
+      }
     });
 
     // 7. Recibir Mensajes de Chat
@@ -412,36 +413,40 @@ export default function VideoCall() {
     if (!incomingCallData) return;
     const t = translations[language]?.callNotifications || translations["ES"].callNotifications;
 
-    if (incomingCallData.type === 'call_ended' && incomingCallData.matchId === numericMatchId) {
-      cleanupCall();
-      setIncomingCall(null);
-      setAlertState({
-        isOpen: true,
-        type: "success",
-        message: t.callEnded
-      });
-      setTimeout(() => navigate('/userChat'), 1500);
-    }
-    if (incomingCallData.type === 'call_rejected' && incomingCallData.matchId === numericMatchId) {
-      cleanupCall();
-      setIncomingCall(null);
-      const msg = incomingCallData.reason === 'no_answer' ? t.callNoAnswer : t.callRejected;
-      setAlertState({
-        isOpen: true,
-        type: "warning",
-        message: msg
-      });
-      setTimeout(() => navigate('/userChat'), 2000);
-    }
-    if (incomingCallData.type === 'user_busy' && incomingCallData.matchId === numericMatchId) {
-      cleanupCall();
-      setIncomingCall(null);
-      setAlertState({
-        isOpen: true,
-        type: "warning",
-        message: t.userBusy
-      });
-      setTimeout(() => navigate('/userChat'), 2000);
+    const isMatch = incomingCallData.matchId === numericMatchId || Number(incomingCallData.match_id) === numericMatchId;
+
+    if (isMatch) {
+      if (incomingCallData.type === 'call_ended' && (peerRef.current || localStreamRef.current)) {
+        cleanupCall();
+        setIncomingCall(null);
+        setAlertState({
+          isOpen: true,
+          type: "success",
+          message: t.callEnded
+        });
+        setTimeout(() => navigate('/userChat'), 1500);
+      }
+      if (incomingCallData.type === 'call_rejected') {
+        cleanupCall();
+        setIncomingCall(null);
+        const msg = incomingCallData.reason === 'no_answer' ? t.callNoAnswer : t.callRejected;
+        setAlertState({
+          isOpen: true,
+          type: "warning",
+          message: msg
+        });
+        setTimeout(() => navigate('/userChat'), 2000);
+      }
+      if (incomingCallData.type === 'user_busy') {
+        cleanupCall();
+        setIncomingCall(null);
+        setAlertState({
+          isOpen: true,
+          type: "warning",
+          message: t.userBusy
+        });
+        setTimeout(() => navigate('/userChat'), 2000);
+      }
     }
   }, [incomingCallData]);
 
@@ -631,7 +636,7 @@ export default function VideoCall() {
         },
         body: JSON.stringify({
           idUser1: userId,
-          idUser2: selectedMatch.id_user,
+          idUser2: selectedMatch?.other_user_id || selectedMatch?.id_user,
           startTime: callStartTimeRef.current || new Date(Date.now() - 60000).toISOString(),
           endTime: new Date().toISOString(),
           sessionStatus: "completed",
