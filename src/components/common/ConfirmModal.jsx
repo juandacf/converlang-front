@@ -1,9 +1,25 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { AlertTriangle } from "lucide-react";
-import "../common/CustomAlert.css"; // Reuse basic modal styles if possible or add specific ones
+import { AlertTriangle, ShieldAlert } from "lucide-react";
+import "../common/CustomAlert.css";
+import { Translations } from "../../translations/translations";
 
-export function ConfirmModal({ isOpen, onClose, onConfirm, message }) {
+export function ConfirmModal({
+    isOpen,
+    onClose,
+    onConfirm,
+    message,
+    confirmText,
+    cancelText,
+    type = "danger",
+    language = "ES"
+}) {
     if (!isOpen) return null;
+
+    const t = Translations[language]?.videoModule || {};
+    const defaultCancel = t.cancelButton || "Cancelar";
+    const defaultConfirm = Translations[language]?.dashboard?.matchSection?.deleteMatchWarning ? "Eliminar" : "Confirmar";
+
+    const isDanger = type === "danger";
 
     return (
         <AnimatePresence>
@@ -17,43 +33,55 @@ export function ConfirmModal({ isOpen, onClose, onConfirm, message }) {
                         className="custom-alert-modal"
                         style={{ maxWidth: '400px' }}
                     >
-                        <div className="custom-alert-icon-wrapper error">
-                            <AlertTriangle size={32} />
+                        <div className={`custom-alert-icon-wrapper ${isDanger ? 'error' : 'success'}`}>
+                            {isDanger ? <ShieldAlert size={32} /> : <AlertTriangle size={32} />}
                         </div>
 
-                        <p className="custom-alert-message" style={{ margin: '1rem 0' }}>
+                        <p className="custom-alert-message" style={{ margin: '1.5rem 0' }}>
                             {message}
                         </p>
 
-                        <div className="custom-alert-actions" style={{ display: 'flex', gap: '10px', justifyContent: 'center', width: '100%' }}>
+                        <div className="custom-alert-actions" style={{
+                            display: 'flex',
+                            gap: '12px',
+                            justifyContent: 'center',
+                            width: '100%',
+                            marginTop: '0.5rem'
+                        }}>
                             <button
                                 onClick={onClose}
-                                className="secondaryBtn"
+                                className="secondaryBtn custom-alert-btn"
                                 style={{
-                                    padding: '0.6rem 1.2rem',
-                                    borderRadius: '8px',
-                                    border: '1px solid #e5e7eb',
-                                    background: 'white',
+                                    flex: 1,
+                                    padding: '0.8rem',
+                                    borderRadius: '12px',
+                                    border: '1px solid var(--border-light)',
+                                    background: 'var(--card)',
+                                    color: 'var(--text)',
                                     cursor: 'pointer',
-                                    fontWeight: '500'
+                                    fontWeight: '600',
+                                    fontSize: '0.95rem'
                                 }}
                             >
-                                Cancelar
+                                {cancelText || defaultCancel}
                             </button>
                             <button
                                 onClick={onConfirm}
-                                className="primaryBtn"
+                                className="primaryBtn custom-alert-btn"
                                 style={{
-                                    padding: '0.6rem 1.2rem',
-                                    borderRadius: '8px',
-                                    background: '#ef4444',
+                                    flex: 1,
+                                    padding: '0.8rem',
+                                    borderRadius: '12px',
+                                    background: isDanger ? '#ef4444' : 'var(--gradient-primary)',
                                     color: 'white',
                                     border: 'none',
                                     cursor: 'pointer',
-                                    fontWeight: '500'
+                                    fontWeight: '600',
+                                    fontSize: '0.95rem',
+                                    boxShadow: isDanger ? '0 4px 12px rgba(239, 68, 68, 0.25)' : 'none'
                                 }}
                             >
-                                Eliminar
+                                {confirmText || defaultConfirm}
                             </button>
                         </div>
                     </motion.div>

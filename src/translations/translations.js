@@ -95,7 +95,7 @@ export const Translations = {
       "startACall": "Iniciar llamada",
       "deleteMatch": "Eliminar match",
       "reportUser": "Reportar usuario",
-      "confirmReport": "¿Estás seguro de que deseas reportar a este usuario?",
+      "confirmReport": "¿Estás seguro de que deseas reportar a este usuario? Tu reporte debe ser por causas como malas palabras, obscenidad o incumplimiento de los términos de uso.",
       "reportSuccess": "Usuario reportado correctamente"
     },
     "videoModule": {
@@ -254,7 +254,7 @@ export const Translations = {
       "startACall": "Start call",
       "deleteMatch": "Delete match",
       "reportUser": "Report user",
-      "confirmReport": "Are you sure you want to report this user?",
+      "confirmReport": "Are you sure you want to report this user? Your report must be for reasons such as bad words, obscenity, or breach of terms of use.",
       "reportSuccess": "User reported successfully"
     },
     "videoModule": {
@@ -413,7 +413,7 @@ export const Translations = {
       "startACall": "Démarrer un appel",
       "deleteMatch": "Supprimer le match",
       "reportUser": "Signaler l'utilisateur",
-      "confirmReport": "Êtes-vous sûr(e) de vouloir signaler cet utilisateur ?",
+      "confirmReport": "Êtes-vous sûr(e) de vouloir signaler cet utilisateur ? Votre signalement doit être motivé par des raisons telles que des gros mots, l'obscénité ou le non-respect des conditions d'utilisation.",
       "reportSuccess": "Utilisateur signalé avec succès"
     },
     "videoModule": {
@@ -572,7 +572,7 @@ export const Translations = {
       "startACall": "Iniciar chamada",
       "deleteMatch": "Excluir match",
       "reportUser": "Denunciar usuário",
-      "confirmReport": "Tem certeza de que deseja denunciar este usuário?",
+      "confirmReport": "Tem certeza de que deseja denunciar este usuário? Sua denúncia deve ser por motivos como palavrões, obscenidade ou descumprimento dos termos de uso.",
       "reportSuccess": "Usuário denunciado com sucesso"
     },
     "videoModule": {
@@ -731,7 +731,7 @@ export const Translations = {
       "startACall": "Anruf starten",
       "deleteMatch": "Match löschen",
       "reportUser": "Benutzer melden",
-      "confirmReport": "Bist du sicher, dass du diesen Benutzer melden möchtest?",
+      "confirmReport": "Sind Sie sicher, dass Sie diesen Benutzer melden möchten? Ihre Meldung muss aus Gründen wie Schimpfwörtern, Obszönität oder Verstoß gegen die Nutzungsbedingungen erfolgen.",
       "reportSuccess": "Benutzer erfolgreich gemeldet"
     },
     "videoModule": {

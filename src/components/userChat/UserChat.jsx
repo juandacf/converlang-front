@@ -9,6 +9,7 @@ import { API_URL } from "../../config/api";
 import { authFetch } from "../../config/authFetch";
 import { Translations } from "../../translations/translations";
 import { CustomAlert } from "../common/CustomAlert";
+import { ConfirmModal } from "../common/ConfirmModal";
 import { getAvatarUrl } from "../../utils/avatarUtils";
 
 
@@ -29,6 +30,13 @@ export function UserChat() {
     isOpen: false,
     type: "success",
     message: ""
+  });
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    message: "",
+    onConfirm: () => { },
+    confirmText: "",
+    type: "danger"
   });
   const configMenuRef = useRef(null);
   const navigate = useNavigate();
@@ -150,14 +158,20 @@ export function UserChat() {
   // =====================================================
   // 7. Eliminar match
   // =====================================================
-  const handleDeleteMatch = async () => {
+  const handleDeleteMatch = () => {
     if (!selectedMatch) return;
 
-    const confirmDelete = window.confirm(
-      "¿Estás seguro de que deseas eliminar este match?"
-    );
-    if (!confirmDelete) return;
+    setConfirmModal({
+      isOpen: true,
+      message: translations[language].dashboard.matchSection.deleteMatchWarning,
+      onConfirm: executeDeleteMatch,
+      confirmText: language === "ES" ? "Eliminar" : "Delete",
+      type: "danger"
+    });
+  };
 
+  const executeDeleteMatch = async () => {
+    setConfirmModal(prev => ({ ...prev, isOpen: false }));
     try {
       const user1 = Number(decodedToken.sub);
       const user2 = Number(selectedMatch.other_user_id);
@@ -195,14 +209,20 @@ export function UserChat() {
   // =====================================================
   // 8. Reportar usuario
   // =====================================================
-  const handleReportUser = async () => {
+  const handleReportUser = () => {
     if (!selectedMatch) return;
 
-    const confirmReport = window.confirm(
-      translations[language].chatModule.confirmReport
-    );
-    if (!confirmReport) return;
+    setConfirmModal({
+      isOpen: true,
+      message: translations[language].chatModule.confirmReport,
+      onConfirm: executeReportUser,
+      confirmText: translations[language].chatModule.reportUser,
+      type: "danger"
+    });
+  };
 
+  const executeReportUser = async () => {
+    setConfirmModal(prev => ({ ...prev, isOpen: false }));
     try {
       // 1. Reportar al usuario
       const res = await authFetch(
@@ -434,19 +454,26 @@ export function UserChat() {
             )}
           </div>
         </div>
-
         <NavBar language={language} />
 
+        <CustomAlert
+          isOpen={alertState.isOpen}
+          onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
+          type={alertState.type}
+          message={alertState.message}
+          language={language}
+        />
+
+        <ConfirmModal
+          isOpen={confirmModal.isOpen}
+          onClose={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+          onConfirm={confirmModal.onConfirm}
+          message={confirmModal.message}
+          confirmText={confirmModal.confirmText}
+          type={confirmModal.type}
+          language={language}
+        />
       </div>
-
-      <CustomAlert
-        isOpen={alertState.isOpen}
-        onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
-        type={alertState.type}
-        message={alertState.message}
-        language={language}
-      />
     </>
-
   );
 }
