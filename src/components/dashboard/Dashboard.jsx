@@ -13,7 +13,7 @@ import {
 import { jwtDecode } from "jwt-decode";
 import { useNavigate, Link } from "react-router-dom";
 import { API_URL } from "../../config/api";
-import { authFetch } from "../../config/authFetch";
+import { authFetch, logoutUser } from "../../config/authFetch";
 import { Translations } from "../../translations/translations";
 import { io } from "socket.io-client";
 import { CustomAlert } from "../common/CustomAlert";
@@ -112,22 +112,6 @@ export function Dashboard({ user }) {
       .catch((err) => console.error('User fetch error:', err.message));
   }, []);
 
-  // ── Heartbeat: reportar que el usuario está activo en su dashboard ──
-  useEffect(() => {
-    const sendHeartbeat = async () => {
-      const t = localStorage.getItem('token');
-      if (!t) return;
-      try {
-        await authFetch(`${API_BACKEND}/auth/heartbeat`, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${t}` }
-        });
-      } catch (e) { /* silencioso — no interrumpir UX si falla */ }
-    };
-    sendHeartbeat(); // enviar inmediatamente al montar
-    const interval = setInterval(sendHeartbeat, 60000); // cada 60s
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -453,8 +437,7 @@ export function Dashboard({ user }) {
                       <p onClick={() => Navigate('/editProfile')}>{translations[language].dashboard.settingMenu.editProfile}</p>
                       <p onClick={() => Navigate('/preferences')}>{translations[language].dashboard.settingMenu.preferences}</p>
                       <p onClick={() => {
-                        localStorage.removeItem("token");
-                        window.location.href = "/";
+                        logoutUser();
                       }}>{translations[language].dashboard.settingMenu.logOut}</p>
                     </div>
                   )}

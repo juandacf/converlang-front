@@ -1,4 +1,5 @@
 import { jwtDecode } from 'jwt-decode';
+import { API_URL } from './api';
 
 /**
  * Verifica si el token JWT ha expirado.
@@ -42,4 +43,26 @@ export async function authFetch(url, options = {}) {
     }
 
     return response;
+}
+
+/**
+ * Cierra sesión del usuario:
+ * 1. Notifica al backend para eliminar el heartbeat inmediatamente.
+ * 2. Limpia localStorage.
+ * 3. Redirige al login.
+ */
+export async function logoutUser() {
+    const token = localStorage.getItem('token');
+    if (token) {
+        try {
+            await fetch(`${API_URL}/auth/logout`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${token}` },
+            });
+        } catch {
+            // silencioso — continuar con el logout aunque falle la red
+        }
+    }
+    localStorage.clear();
+    window.location.href = '/';
 }

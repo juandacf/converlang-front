@@ -74,6 +74,7 @@ import {
   usersService,
   constants
 } from '../../adminServices';
+import { logoutUser } from '../../config/authFetch';
 
 // Importar componentes de modales
 import { CreateUserModal } from './modals/CreateUserModal';
@@ -836,9 +837,7 @@ export function AdminDashboard() {
    * Cerrar sesión
    */
   const handleLogout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    navigate('/');
+    logoutUser();
   };
 
   // ========================================
