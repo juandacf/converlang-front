@@ -3,6 +3,11 @@ import { X, User, Mail, Lock, Calendar, Globe, Languages, Hash, FileText, CheckC
 import { FormField, SelectField, TextAreaField } from '../forms/FormFields';
 import { usersService, validationUtils, constants, catalogsService } from '../../../adminServices';
 import { AVATARS } from '../../../utils/avatarUtils';
+import DatePicker, { registerLocale } from 'react-datepicker';
+import { es } from 'date-fns/locale/es';
+import 'react-datepicker/dist/react-datepicker.css';
+registerLocale('es', es);
+
 
 /**
  * Modal para crear nuevos usuarios en el sistema
@@ -93,7 +98,19 @@ export const CreateUserModal = ({ isOpen, onClose, onSuccess }) => {
     const validateForm = () => {
         const { isValid, errors: validationErrors } = validationUtils.validateUserData(formData);
 
-        if (!isValid) {
+        // Validación extra: edad mínima 15 años
+        const birthDateErrors = {};
+        if (formData.birth_date) {
+            const birthDate = new Date(formData.birth_date);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+            if (age < 15) birthDateErrors.birth_date = 'El usuario debe tener al menos 15 años';
+            if (age > 90) birthDateErrors.birth_date = 'La edad máxima permitida es 90 años';
+        }
+
+        if (!isValid || Object.keys(birthDateErrors).length > 0) {
             // Convertir array de errores a objeto para mostrar en campos específicos
             const errorObj = {};
             validationErrors.forEach(error => {
@@ -120,10 +137,10 @@ export const CreateUserModal = ({ isOpen, onClose, onSuccess }) => {
                     else if (error.includes('profile_photo')) errorObj.profile_photo = 'Contiene caracteres no permitidos';
                 }
             });
-            setErrors(errorObj);
+            setErrors({ ...errorObj, ...birthDateErrors });
         }
 
-        return isValid;
+        return isValid && Object.keys(birthDateErrors).length === 0;
     };
 
     /**
@@ -271,7 +288,40 @@ export const CreateUserModal = ({ isOpen, onClose, onSuccess }) => {
                                 <FormField label="Apellido" value={formData.last_name} onChange={(val) => handleChange('last_name', val)} error={errors.last_name} required placeholder="Ej: Pérez" />
                                 <FormField label="Email" type="email" value={formData.email} onChange={(val) => handleChange('email', val)} error={errors.email} required placeholder="ejemplo@correo.com" />
                                 <FormField label="Contraseña" type="password" value={formData.password} onChange={(val) => handleChange('password', val)} error={errors.password} required placeholder="Mínimo 6 caracteres" />
-                                <FormField label="Fecha de Nacimiento" type="date" value={formData.birth_date} onChange={(val) => handleChange('birth_date', val)} error={errors.birth_date} required />
+                                {/* Campo fecha de nacimiento con DatePicker */}
+                                <div>
+                                    <label className="block text-xs font-semibold text-slate-600 mb-1.5">
+                                        Fecha de Nacimiento <span className="text-red-500">*</span>
+                                        <span className="ml-2 font-normal text-slate-400">(debe tener al menos 15 años)</span>
+                                    </label>
+                                    <DatePicker
+                                        selected={formData.birth_date ? new Date(formData.birth_date) : null}
+                                        onChange={(date) => {
+                                            if (date) {
+                                                const year = date.getFullYear();
+                                                const month = String(date.getMonth() + 1).padStart(2, '0');
+                                                const day = String(date.getDate()).padStart(2, '0');
+                                                handleChange('birth_date', `${year}-${month}-${day}`);
+                                            } else {
+                                                handleChange('birth_date', '');
+                                            }
+                                        }}
+                                        locale="es"
+                                        dateFormat="dd/MM/yyyy"
+                                        showYearDropdown
+                                        scrollableYearDropdown
+                                        yearDropdownItemNumber={76}
+                                        minDate={new Date(1936, 0, 1)}
+                                        maxDate={(() => { const d = new Date(); d.setFullYear(d.getFullYear() - 15); return d; })()}
+                                        placeholderText="Selecciona la fecha de nacimiento"
+                                        className="w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-slate-50"
+                                        wrapperClassName="w-full"
+                                        calendarClassName="custom-calendar"
+                                    />
+                                    {errors.birth_date && (
+                                        <p className="text-xs text-red-500 mt-1">{errors.birth_date}</p>
+                                    )}
+                                </div>
                                 <SelectField
                                     label="Género"
                                     value={formData.gender_id}
