@@ -699,9 +699,6 @@ export default function VideoCall() {
               >
                 🚀 {translations[language]?.videoModule?.startSession || "Iniciar Sesión"}
               </button>
-              <button className="cancel-session-btn" onClick={() => navigate(-1)}>
-                {translations[language]?.videoModule?.cancelButton || "Cancelar"}
-              </button>
             </div>
           </div>
         </div>
