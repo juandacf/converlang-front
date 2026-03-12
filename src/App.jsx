@@ -16,6 +16,7 @@ import { UserRoute } from "./components/guards/UserRoute";
 import { AdminRoute } from "./components/guards/AdminRoute";
 import { TermsAndConditions } from "./components/termsAndConditions/TermsAndConditions";
 import IncomingCallOverlay from "./components/common/IncomingCallOverlay";
+import { PublicRoute } from "./components/guards/PublicRoute";
 
 export default function App() {
 
@@ -30,10 +31,10 @@ export default function App() {
       <IncomingCallOverlay />
 
       <Routes>
-        <Route path="/" element={<Authentication />} />
-        <Route path="/login" element={<div className="auth-page"><Login /></div>} />
-        <Route path="/signup" element={<div className="auth-page"><SignUp /></div>} />
-        <Route path="/reset-password" element={<div className="auth-page"><ResetPassword /></div>} />
+        <Route path="/" element={<PublicRoute><Authentication /></PublicRoute>} />
+        <Route path="/login" element={<PublicRoute><div className="auth-page"><Login /></div></PublicRoute>} />
+        <Route path="/signup" element={<PublicRoute><div className="auth-page"><SignUp /></div></PublicRoute>} />
+        <Route path="/reset-password" element={<PublicRoute><div className="auth-page"><ResetPassword /></div></PublicRoute>} />
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
 
         {/* Rutas de usuario - admin no puede acceder */}
