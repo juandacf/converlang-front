@@ -490,8 +490,22 @@ body {
   box-shadow: 0 6px 18px rgba(91, 108, 255, 0.45);
 }
 
+.cancel-session-btn {
+  background: transparent;
+  color: var(--text-light);
+  border: 1px solid transparent;
+  padding: 0.8rem;
+  border-radius: var(--radius-pill);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s;
+}
 
-
+.cancel-session-btn:hover {
+  color: #dc2626;
+  text-decoration: underline;
+}
 
 /* ================================
    DARK MODE — iOS tokens

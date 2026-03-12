@@ -677,7 +677,7 @@ export default function VideoCall() {
               {translations[language]?.videoModule?.selectLanguage || "Selecciona el idioma a practicar"}
             </h2>
             <p className="pre-call-subtitle">
-              {translations[language]?.videoModule?.selectLanguageDesc || "Este idioma será usado para la corrección gramatical en tiempo real con IA durante la llamada."}
+              {translations[language]?.videoModule?.selectLanguageDesc || "Esto nos ayudará a configurar el reconocimiento de voz correctamente."}
             </p>
 
             <select
@@ -698,6 +698,9 @@ export default function VideoCall() {
                 onClick={() => setIsLanguageSelected(true)}
               >
                 🚀 {translations[language]?.videoModule?.startSession || "Iniciar Sesión"}
+              </button>
+              <button className="cancel-session-btn" onClick={() => navigate(-1)}>
+                {translations[language]?.videoModule?.cancelButton || "Cancelar"}
               </button>
             </div>
           </div>
