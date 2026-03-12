@@ -420,6 +420,17 @@ export default function VideoCall() {
   }, [socket, numericMatchId, userId, isLanguageSelected]);
 
   /* ======================================================
+     Cleanup on Unmount (Catches sudden navigations out)
+  ====================================================== */
+  useEffect(() => {
+    return () => {
+      if (socket && numericMatchId && userId) {
+        socket.emit("endCall", { matchId: numericMatchId, userId });
+      }
+    };
+  }, [socket, numericMatchId, userId]);
+
+  /* ======================================================
      Escuchar 'call_ended' por canal de notificaciones (respaldo global)
   ====================================================== */
   useEffect(() => {
