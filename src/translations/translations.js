@@ -106,8 +106,9 @@ export const Translations = {
       "sendAMessageButton": "Enviar",
       "messageInputPlaceholder": "Escribe un mensaje...",
       "selectLanguage": "Selecciona el idioma a practicar",
-      "selectLanguageDesc": "Este idioma será usado para la corrección gramatical en tiempo real con IA durante la llamada.",
-      "startSession": "Iniciar Sesión"
+      "selectLanguageDesc": "Esto nos ayudará a configurar el reconocimiento de voz correctamente.",
+      "startSession": "Iniciar Sesión",
+      "cancelButton": "Cancelar"
     },
     "callNotifications": {
       "incomingCall": "📞 Llamada entrante",
@@ -264,8 +265,9 @@ export const Translations = {
       "sendAMessageButton": "Send",
       "messageInputPlaceholder": "Type a message...",
       "selectLanguage": "Select the language to practice",
-      "selectLanguageDesc": "This language will be used for real-time AI grammar correction during the call.",
-      "startSession": "Start Session"
+      "selectLanguageDesc": "This will help us configure speech recognition correctly.",
+      "startSession": "Start Session",
+      "cancelButton": "Cancel"
     },
     "callNotifications": {
       "incomingCall": "📞 Incoming call",
@@ -422,8 +424,9 @@ export const Translations = {
       "sendAMessageButton": "Envoyer",
       "messageInputPlaceholder": "Écrivez un message...",
       "selectLanguage": "Sélectionnez la langue à pratiquer",
-      "selectLanguageDesc": "Cette langue sera utilisée pour la correction grammaticale en temps réel par l'IA pendant l'appel.",
-      "startSession": "Démarrer la session"
+      "selectLanguageDesc": "Cela nous aidera à configurer correctement la reconnaissance vocale.",
+      "startSession": "Démarrer la session",
+      "cancelButton": "Annuler"
     },
     "callNotifications": {
       "incomingCall": "📞 Appel entrant",
@@ -580,8 +583,9 @@ export const Translations = {
       "sendAMessageButton": "Enviar",
       "messageInputPlaceholder": "Escreva uma mensagem...",
       "selectLanguage": "Selecione o idioma para praticar",
-      "selectLanguageDesc": "Este idioma será usado para a correção gramatical em tempo real com IA durante a chamada.",
-      "startSession": "Iniciar Sessão"
+      "selectLanguageDesc": "Isso nos ajudará a configurar o reconhecimento de voz corretamente.",
+      "startSession": "Iniciar Sessão",
+      "cancelButton": "Cancelar"
     },
     "callNotifications": {
       "incomingCall": "📞 Chamada recebida",
@@ -738,8 +742,9 @@ export const Translations = {
       "sendAMessageButton": "Senden",
       "messageInputPlaceholder": "Nachricht schreiben...",
       "selectLanguage": "Wähle die Sprache zum Üben",
-      "selectLanguageDesc": "Diese Sprache wird für die KI-gestützte Echtzeit-Grammatikkorrektur während des Anrufs verwendet.",
-      "startSession": "Sitzung Starten"
+      "selectLanguageDesc": "Dies hilft uns, die Spracherkennung richtig zu konfigurieren.",
+      "startSession": "Sitzung Starten",
+      "cancelButton": "Abbrechen"
     },
     "callNotifications": {
       "incomingCall": "📞 Eingehender Anruf",
