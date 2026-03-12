@@ -33,8 +33,8 @@ export default function IncomingCallOverlay() {
 
     // Auto-dismiss después de 15 segundos
     useEffect(() => {
-        if (!incomingCall) {
-            setCountdown(60);
+        if (!incomingCall || incomingCall.type !== 'incoming_call') {
+            setCountdown(15);
             return;
         }
 
@@ -45,7 +45,7 @@ export default function IncomingCallOverlay() {
                     // Notificar al caller que no fue contestada
                     if (socket && incomingCall) {
                         socket.emit("callRejected", {
-                            matchId: incomingCall.matchId,
+                            matchId: incomingCall.matchId || incomingCall.match_id,
                             callerUserId: incomingCall.caller?.userId,
                             reason: "no_answer"
                         });
@@ -58,12 +58,12 @@ export default function IncomingCallOverlay() {
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [incomingCall, setIncomingCall]);
+    }, [incomingCall, setIncomingCall, socket]);
 
     if (!incomingCall || incomingCall.type !== 'incoming_call') return null;
 
     const caller = incomingCall.caller || {};
-    const matchId = incomingCall.matchId;
+    const matchId = incomingCall.matchId || incomingCall.match_id;
 
     const handleAccept = () => {
         navigate(`/videocall/${matchId}`, {
