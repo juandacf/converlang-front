@@ -363,6 +363,18 @@ export default function VideoCall() {
       }
     });
 
+    // 6.5 Llamada rechazada (cuando el caller está esperando en la sala)
+    socket.on("callRejected", () => {
+      cleanupCall();
+      const t = translations[language]?.callNotifications || translations["ES"].callNotifications;
+      setAlertState({
+        isOpen: true,
+        type: "warning",
+        message: t.callRejected || t.callNoAnswer || "Llamada rechazada"
+      });
+      setTimeout(() => navigate('/userChat'), 2000);
+    });
+
     // 7. Recibir Mensajes de Chat
     const handleNewMessage = (msg) => {
       if (getMsgMatchId(msg) === numericMatchId) {
@@ -399,6 +411,7 @@ export default function VideoCall() {
       socket.off("webrtcAnswer");
       socket.off("webrtcIceCandidate");
       socket.off("callEnded");
+      socket.off("callRejected");
       socket.off("grammar_correction");
       socket.off("newMessage", handleNewMessage);
       cleanupCall();
