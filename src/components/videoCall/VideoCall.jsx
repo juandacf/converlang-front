@@ -349,30 +349,34 @@ export default function VideoCall() {
       }
     });
 
-    // 6. Fin de llamada (Escuchar solo aquí si es posible para evitar duplicados con el backup de notificaciones)
+    // 6. Fin de llamada
     socket.on("callEnded", () => {
-      if (peerRef.current || localStreamRef.current) { // Solo si la llamada sigue "activa" localmente
+      if (peerRef.current || localStreamRef.current) {
         cleanupCall();
+        setIncomingCall(null);
+        socket.emit("endCall", { matchId: numericMatchId, userId }); // Immediately signal to free the room
         const t = translations[language]?.callNotifications || translations["ES"].callNotifications;
-        setAlertState({
+        const alertPayload = {
           isOpen: true,
           type: "success",
           message: t.callEnded
-        });
-        setTimeout(() => navigate('/userChat'), 1500);
+        };
+        navigate('/userChat', { state: { alert: alertPayload } });
       }
     });
 
-    // 6.5 Llamada rechazada (cuando el caller está esperando en la sala)
+    // 6.5 Llamada rechazada
     socket.on("callRejected", () => {
       cleanupCall();
+      setIncomingCall(null);
+      socket.emit("endCall", { matchId: numericMatchId, userId }); // Instantly release user state
       const t = translations[language]?.callNotifications || translations["ES"].callNotifications;
-      setAlertState({
+      const alertPayload = {
         isOpen: true,
         type: "warning",
         message: t.callRejected || t.callNoAnswer || "Llamada rechazada"
-      });
-      setTimeout(() => navigate('/userChat'), 2000);
+      };
+      navigate('/userChat', { state: { alert: alertPayload } });
     });
 
     // 7. Recibir Mensajes de Chat
@@ -443,33 +447,36 @@ export default function VideoCall() {
       if (incomingCallData.type === 'call_ended' && (peerRef.current || localStreamRef.current)) {
         cleanupCall();
         setIncomingCall(null);
-        setAlertState({
+        socket.emit("endCall", { matchId: numericMatchId, userId }); // Immediately signal to free the room
+        const alertPayload = {
           isOpen: true,
           type: "success",
           message: t.callEnded
-        });
-        setTimeout(() => navigate('/userChat'), 1500);
+        };
+        navigate('/userChat', { state: { alert: alertPayload } });
       }
       if (incomingCallData.type === 'call_rejected') {
         cleanupCall();
         setIncomingCall(null);
+        socket.emit("endCall", { matchId: numericMatchId, userId }); // Immediately signal to free the room
         const msg = incomingCallData.reason === 'no_answer' ? t.callNoAnswer : t.callRejected;
-        setAlertState({
+        const alertPayload = {
           isOpen: true,
           type: "warning",
           message: msg
-        });
-        setTimeout(() => navigate('/userChat'), 2000);
+        };
+        navigate('/userChat', { state: { alert: alertPayload } });
       }
       if (incomingCallData.type === 'user_busy') {
         cleanupCall();
         setIncomingCall(null);
-        setAlertState({
+        socket.emit("endCall", { matchId: numericMatchId, userId }); // Immediately signal to free the room
+        const alertPayload = {
           isOpen: true,
           type: "warning",
           message: t.userBusy
-        });
-        setTimeout(() => navigate('/userChat'), 2000);
+        };
+        navigate('/userChat', { state: { alert: alertPayload } });
       }
     }
   }, [incomingCallData]);
@@ -591,7 +598,7 @@ export default function VideoCall() {
       callStartTimeRef.current = new Date(now.getTime() - 60000).toISOString();
     }
 
-    const idUser2 = selectedMatch?.other_user_id;
+    const idUser2 = Number(selectedMatch?.other_user_id || selectedMatch?.id_user);
 
     if (!idUser2) {
       console.error("idUser2 inválido", selectedMatch);
@@ -626,6 +633,7 @@ export default function VideoCall() {
     await persistSession("completed");
 
     cleanupCall();
+    setIncomingCall(null); // Fix: Force immediate synchronous clear of the notification state
     navigate('/userChat');
   }
 
@@ -660,10 +668,9 @@ export default function VideoCall() {
         },
         body: JSON.stringify({
           idUser1: userId,
-          idUser2: selectedMatch?.other_user_id || selectedMatch?.id_user,
+          idUser2: Number(selectedMatch?.other_user_id || selectedMatch?.id_user),
           startTime: callStartTimeRef.current || new Date(Date.now() - 60000).toISOString(),
-          endTime: new Date().toISOString(),
-          sessionStatus: "completed",
+          endTime: new Date().toISOString()
         }),
       });
 

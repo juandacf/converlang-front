@@ -12,7 +12,7 @@ export default function IncomingCallOverlay() {
     const [incomingCall, setIncomingCall] = useIncomingCall();
     const socket = useSocket();
     const navigate = useNavigate();
-    const [countdown, setCountdown] = useState(15);
+    const [countdown, setCountdown] = useState(10);
     const [language, setLanguage] = useState("ES");
 
     // Obtener idioma del usuario
@@ -31,10 +31,10 @@ export default function IncomingCallOverlay() {
 
     const t = Translations[language]?.callNotifications || Translations["ES"].callNotifications;
 
-    // Auto-dismiss después de 15 segundos
+    // Auto-dismiss después de 10 segundos
     useEffect(() => {
         if (!incomingCall || incomingCall.type !== 'incoming_call') {
-            setCountdown(15);
+            setCountdown(10);
             return;
         }
 
@@ -51,7 +51,7 @@ export default function IncomingCallOverlay() {
                         });
                     }
                     setIncomingCall(null);
-                    return 15;
+                    return 10;
                 }
                 return prev - 1;
             });

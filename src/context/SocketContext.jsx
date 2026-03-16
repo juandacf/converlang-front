@@ -56,14 +56,15 @@ export function SocketProvider({ children }) {
   // Conexión de socket
   // =====================================================
   useEffect(() => {
-    let interval;
+    let currentSocket = null;
+    let fallbackInterval = null;
 
-    const initSocket = () => {
+    const connectSocket = () => {
       const token = localStorage.getItem("token");
       if (!token) return;
 
-      if (socket) {
-        if (interval) clearInterval(interval);
+      if (currentSocket && currentSocket.connected) {
+        if (fallbackInterval) clearInterval(fallbackInterval);
         return;
       }
 
@@ -75,8 +76,9 @@ export function SocketProvider({ children }) {
       });
 
       newSocket.on("connect", () => {
+        currentSocket = newSocket;
         setSocket(newSocket);
-        if (interval) clearInterval(interval);
+        if (fallbackInterval) clearInterval(fallbackInterval);
 
         try {
           const decoded = jwtDecode(token);
@@ -106,21 +108,22 @@ export function SocketProvider({ children }) {
       });
 
       newSocket.on("disconnect", () => {
+        currentSocket = null;
         setSocket(null);
-        if (!interval) {
-          interval = setInterval(initSocket, 2000);
+        if (!fallbackInterval) {
+          fallbackInterval = setInterval(connectSocket, 2000);
         }
       });
     };
 
-    initSocket();
-    interval = setInterval(initSocket, 2000);
+    connectSocket();
+    fallbackInterval = setInterval(connectSocket, 2000);
 
     return () => {
-      if (interval) clearInterval(interval);
-      if (socket) socket.disconnect();
+      if (fallbackInterval) clearInterval(fallbackInterval);
+      if (currentSocket) currentSocket.disconnect();
     };
-  }, [socket]);
+  }, [API_BACKEND]);
 
   // =====================================================
   // Heartbeat global — mantiene al usuario como "online"

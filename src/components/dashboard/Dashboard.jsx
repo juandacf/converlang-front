@@ -17,7 +17,6 @@ import { authFetch, logoutUser } from "../../config/authFetch";
 import { Translations } from "../../translations/translations";
 import { io } from "socket.io-client";
 import { CustomAlert } from "../common/CustomAlert";
-
 import { getAvatarUrl } from "../../utils/avatarUtils";
 import { randomWord } from "../../translations/randomWord";
 import { ConfirmModal } from "../common/ConfirmModal";
@@ -226,6 +225,10 @@ export function Dashboard({ user }) {
     socket.emit('joinNotifications', decodedToken.sub);
 
     socket.on('newNotification', (notification) => {
+      // Ignorar notificaciones de control de llamadas (estas las maneja SocketContext)
+      const callTypes = ["incoming_call", "call_rejected", "call_ended", "user_busy"];
+      if (callTypes.includes(notification.type || notification.notification_type)) return;
+
       setNotifications(prev => [notification, ...prev]);
       setUnreadCount(prev => prev + 1);
     });

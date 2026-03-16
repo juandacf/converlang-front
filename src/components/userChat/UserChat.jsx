@@ -61,6 +61,15 @@ export function UserChat() {
       .catch((err) => console.error('Error fetching user:', err));
   }, []);
 
+  // Leer alertas pasadas por navigation state desde VideoCall.jsx
+  useEffect(() => {
+    if (location.state?.alert) {
+      setAlertState(location.state.alert);
+      // Limpiar el estado para que no vuelva a saltar si recarga la página
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
+
   useEffect(() => {
     authFetch(`${API_BACKEND}/chats/list/${decodedToken.sub}`, {
       headers: { Authorization: `Bearer ${token}` }
