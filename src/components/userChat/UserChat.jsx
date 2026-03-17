@@ -11,6 +11,7 @@ import { Translations } from "../../translations/translations";
 import { CustomAlert } from "../common/CustomAlert";
 import { ConfirmModal } from "../common/ConfirmModal";
 import { getAvatarUrl } from "../../utils/avatarUtils";
+import { ArrowLeft } from "lucide-react";
 
 
 export function UserChat() {
@@ -334,6 +335,16 @@ export function UserChat() {
              LISTA DE CHATS
         ======================== */}
           <div className="chatItemsContainer">
+            <div className="chatHeader">
+              <button
+                className="chatBackBtn"
+                onClick={() => navigate("/dashboard")}
+              >
+                <ArrowLeft size={20} />
+                {translations[language]?.chatModule?.backToDashboard || "Volver"}
+              </button>
+            </div>
+
             <div className="chatSearchContainer">
               <input
                 type="text"
@@ -457,9 +468,11 @@ export function UserChat() {
                 </div>
               </>
             ) : (
-              <p style={{ textAlign: "center", marginTop: "20%" }}>
-                Selecciona un chat
-              </p>
+              <div className="selectChatContainer">
+                <p className="selectChatText">
+                  {translations[language]?.chatModule?.selectChatPlaceholder || "Selecciona un chat para empezar a interactuar y practicar con otros hablantes"}
+                </p>
+              </div>
             )}
           </div>
         </div>

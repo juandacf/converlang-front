@@ -58,6 +58,33 @@ body {
   height: 90vh;
 }
 
+/* Header para el boton de volver */
+.chatHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding-bottom: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.chatBackBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--ios-blue, #007AFF);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  padding: 0;
+}
+
+.chatBackBtn:hover {
+  opacity: 0.7;
+}
+
 .chatSearchContainer {
   padding: 10px;
   background: var(--card-soft);
@@ -252,6 +279,26 @@ body {
   color: var(--text);
   border: 0.5px solid var(--border-light);
   border-bottom-left-radius: 0.2rem;
+}
+
+/* =====================================================
+   Mensaje Placeholder (Sin chat seleccionado)
+===================================================== */
+.selectChatContainer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.selectChatText {
+  text-align: center;
+  color: var(--text-light);
+  font-size: 1.1rem;
+  font-weight: 500;
+  max-width: 80%;
+  line-height: 1.5;
 }
 
 /* =====================================================

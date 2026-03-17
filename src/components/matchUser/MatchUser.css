@@ -66,14 +66,77 @@ body {
 }
 
 /* ===============================
-   TITLE
+   HEADER AND TITLE
 ================================ */
+.matchHeader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.matchBackBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--ios-blue, #007AFF);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.matchBackBtn:hover {
+  opacity: 0.7;
+}
+
 .matchPageTitle {
   font-size: clamp(1.5rem, 3.5vw, 2rem);
   font-weight: 700;
   color: var(--text);
   text-align: center;
-  margin-bottom: 2rem;
+  margin: 0;
+  background: linear-gradient(135deg, #5b6cff, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===============================
+   INFO BANNER
+================================ */
+.matchInfoBanner {
+  background: var(--card-soft);
+  border: 1px solid rgba(0, 122, 255, 0.2);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.5rem;
+  margin: 0 auto 2rem auto;
+  width: fit-content;
+  max-width: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.matchInfoIcon {
+  color: #f59e0b; /* Un tono cálido y vistoso para el ícono */
+  flex-shrink: 0;
+}
+
+.matchInfoText {
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+  font-weight: 500;
+  max-width: 800px;
 }
 
 /* ===============================
@@ -163,6 +226,7 @@ body {
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 4;
+  line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -297,7 +361,7 @@ body {
 }
 
 /* Tablet / mobile */
-@media (max-width: 750px) {
+@media (max-width: 900px) {
   :root {
     --sidebar-width: 0px;
   }
@@ -345,11 +409,16 @@ body {
 
   .userDescription {
     -webkit-line-clamp: 5;
+    line-clamp: 5;
+  }
+
+  .matchHeader {
+    margin-bottom: 1.25rem;
   }
 
   .matchPageTitle {
     font-size: 1.4rem;
-    margin-bottom: 1.25rem;
+    margin: 0;
   }
 }
 
@@ -448,6 +517,23 @@ body {
 
 .dark-mode .userTitleBadge {
   background: linear-gradient(135deg, #fbbf24, #b45309);
+}
+
+.dark-mode .matchPageTitle {
+  background: linear-gradient(135deg, #818cf8, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark-mode .matchInfoBanner {
+  background: var(--card-soft);
+  border-color: rgba(245, 158, 11, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .matchInfoIcon {
+  color: #fbbf24; /* Tono cálido para modo oscuro */
 }
 
 /* ================================

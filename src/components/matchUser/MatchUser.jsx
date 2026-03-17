@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { NavBar } from "../dashboard/Dashboard";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, UserCheck } from "lucide-react";
 
 import "./MatchUser.css";
 import { jwtDecode } from "jwt-decode";
@@ -9,6 +11,7 @@ import { Translations } from "../../translations/translations";
 import { getAvatarUrl } from "../../utils/avatarUtils";
 
 export function MatchUser() {
+  const navigate = useNavigate();
   const translations = Translations
   const [users, setUsers] = useState([]);
   const [disappearing, setDisappearing] = useState({});
@@ -194,7 +197,25 @@ export function MatchUser() {
         <NavBar language={language} />
 
         <div className="matchContentWrapper">
-          <h1 className="matchPageTitle">{translations[language].matchModule.matchModuleTitle}</h1>
+          <div className="matchHeader">
+            <button
+              className="matchBackBtn"
+              onClick={() => navigate("/dashboard")}
+            >
+              <ArrowLeft size={20} />
+              {translations[language]?.matchModule?.backToDashboard || "Volver"}
+            </button>
+            <h1 className="matchPageTitle">{translations[language].matchModule.matchModuleTitle}</h1>
+            <div style={{ width: 80 }} /> {/* Spacer */}
+          </div>
+
+          {/* Banner descriptivo */}
+          <div className="matchInfoBanner">
+            <UserCheck size={28} className="matchInfoIcon" />
+            <p className="matchInfoText">
+              {translations[language]?.matchModule?.matchDescription || "Envía un Like a los usuarios con los que te gustaría practicar. Si ellos también te dan Like, ¡harán Match y podrán empezar a chatear!"}
+            </p>
+          </div>
 
           <div className="matchMainContainer">
             {pageItems.map((u) => (

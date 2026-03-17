@@ -73,7 +73,9 @@ export const Translations = {
     },
     "matchModule": {
       "matchModuleTitle": "Hagamos Match",
-      "matchButton": "Like"
+      "matchButton": "Like",
+      "backToDashboard": "Volver",
+      "matchDescription": "Envía un Like a los usuarios con los que te gustaría practicar. Si ellos también te dan Like, ¡harán Match y podrán empezar a chatear!"
     },
     "metricsModule": {
       "pageTitle": "Mis Métricas",
@@ -96,7 +98,9 @@ export const Translations = {
       "deleteMatch": "Eliminar match",
       "reportUser": "Reportar usuario",
       "confirmReport": "¿Estás seguro de que deseas reportar a este usuario? Tu reporte debe ser por causas como malas palabras, obscenidad o incumplimiento de los términos de uso.",
-      "reportSuccess": "Usuario reportado correctamente"
+      "reportSuccess": "Usuario reportado correctamente",
+      "backToDashboard": "Volver",
+      "selectChatPlaceholder": "Selecciona un chat para que empieces a chatear e interactuar con hablantes."
     },
     "videoModule": {
       "chatTitle": "Chat con ",
@@ -232,7 +236,9 @@ export const Translations = {
     },
     "matchModule": {
       "matchModuleTitle": "Let's Match",
-      "matchButton": "Like"
+      "matchButton": "Like",
+      "backToDashboard": "Back",
+      "matchDescription": "Send a Like to users you'd like to practice with. If they also Like you back, it's a Match and you can start chatting!"
     },
     "metricsModule": {
       "pageTitle": "My Metrics",
@@ -255,7 +261,9 @@ export const Translations = {
       "deleteMatch": "Delete match",
       "reportUser": "Report user",
       "confirmReport": "Are you sure you want to report this user? Your report must be for reasons such as bad words, obscenity, or breach of terms of use.",
-      "reportSuccess": "User reported successfully"
+      "reportSuccess": "User reported successfully",
+      "backToDashboard": "Back",
+      "selectChatPlaceholder": "Select a chat to start chatting and interacting with speakers."
     },
     "videoModule": {
       "chatTitle": "Chat with ",
@@ -391,7 +399,9 @@ export const Translations = {
     },
     "matchModule": {
       "matchModuleTitle": "Faisons match",
-      "matchButton": "J’aime"
+      "matchButton": "J’aime",
+      "backToDashboard": "Retour",
+      "matchDescription": "Envoyez un J'aime aux utilisateurs avec lesquels vous aimeriez pratiquer. S'ils vous aiment aussi en retour, c'est un Match et vous pouvez commencer à discuter !"
     },
     "metricsModule": {
       "pageTitle": "Mes Métriques",
@@ -414,7 +424,9 @@ export const Translations = {
       "deleteMatch": "Supprimer le match",
       "reportUser": "Signaler l'utilisateur",
       "confirmReport": "Êtes-vous sûr(e) de vouloir signaler cet utilisateur ? Votre signalement doit être motivé par des raisons telles que des gros mots, l'obscénité ou le non-respect des conditions d'utilisation.",
-      "reportSuccess": "Utilisateur signalé avec succès"
+      "reportSuccess": "Utilisateur signalé avec succès",
+      "backToDashboard": "Retour",
+      "selectChatPlaceholder": "Sélectionnez un chat pour commencer à discuter et à interagir avec les locuteurs."
     },
     "videoModule": {
       "chatTitle": "Chat avec ",
@@ -550,7 +562,9 @@ export const Translations = {
     },
     "matchModule": {
       "matchModuleTitle": "Vamos dar match",
-      "matchButton": "Curtir"
+      "matchButton": "Curtir",
+      "backToDashboard": "Voltar",
+      "matchDescription": "Envie um Curtir para usuários com os quais você gostaria de praticar. Se eles também curtirem você de volta, é um Match e vocês podem começar a conversar!"
     },
     "metricsModule": {
       "pageTitle": "Minhas Métricas",
@@ -573,7 +587,9 @@ export const Translations = {
       "deleteMatch": "Excluir match",
       "reportUser": "Denunciar usuário",
       "confirmReport": "Tem certeza de que deseja denunciar este usuário? Sua denúncia deve ser por motivos como palavrões, obscenidade ou descumprimento dos termos de uso.",
-      "reportSuccess": "Usuário denunciado com sucesso"
+      "reportSuccess": "Usuário denunciado com sucesso",
+      "backToDashboard": "Voltar",
+      "selectChatPlaceholder": "Selecione um chat para começar a conversar e interagir com os falantes."
     },
     "videoModule": {
       "chatTitle": "Chat com ",
@@ -709,7 +725,9 @@ export const Translations = {
     },
     "matchModule": {
       "matchModuleTitle": "Lass uns matchen",
-      "matchButton": "Gefällt mir"
+      "matchButton": "Gefällt mir",
+      "backToDashboard": "Zurück",
+      "matchDescription": "Sende Benutzern, mit denen du üben möchtest, ein Gefällt mir. Wenn sie dir auch ein Gefällt mir geben, ist es ein Match und ihr könnt anfangen zu chatten!"
     },
     "metricsModule": {
       "pageTitle": "Meine Metriken",
@@ -732,7 +750,9 @@ export const Translations = {
       "deleteMatch": "Match löschen",
       "reportUser": "Benutzer melden",
       "confirmReport": "Sind Sie sicher, dass Sie diesen Benutzer melden möchten? Ihre Meldung muss aus Gründen wie Schimpfwörtern, Obszönität oder Verstoß gegen die Nutzungsbedingungen erfolgen.",
-      "reportSuccess": "Benutzer erfolgreich gemeldet"
+      "reportSuccess": "Benutzer erfolgreich gemeldet",
+      "backToDashboard": "Zurück",
+      "selectChatPlaceholder": "Wählen Sie einen Chat aus, um mit dem Chatten und Interagieren mit Sprechern zu beginnen."
     },
     "videoModule": {
       "chatTitle": "Chat mit ",
