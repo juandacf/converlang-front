@@ -28,6 +28,7 @@ const PIE_COLORS = [
 
 export function Metrics() {
     const [metrics, setMetrics] = useState(null);
+    const [userTitle, setUserTitle] = useState(null);
     const [loading, setLoading] = useState(true);
     const [darkMode, setDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
     const [language, setLanguage] = useState("ES");
@@ -68,19 +69,30 @@ export function Metrics() {
         }
     }, [darkMode]);
 
-    // ── Cargar métricas ──
+    // ── Cargar métricas y título ──
     useEffect(() => {
-        const fetchMetrics = async () => {
+        const fetchMetricsAndTitle = async () => {
             try {
-                const res = await authFetch(
-                    `${API_BACKEND}/metrics/${userId}`,
-                    { headers: { Authorization: `Bearer ${token}` } }
-                );
-                if (!res.ok) throw new Error(`Error ${res.status}`);
-                const data = await res.json();
-                setMetrics(data);
+                const [metricsRes, titleRes] = await Promise.all([
+                    authFetch(`${API_BACKEND}/metrics/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
+                    authFetch(`${API_BACKEND}/titles/latest/${userId}`, { headers: { Authorization: `Bearer ${token}` } })
+                ]);
+
+                if (metricsRes.ok) {
+                    const data = await metricsRes.json();
+                    setMetrics(data);
+                } else {
+                    throw new Error(`Error métricas: ${metricsRes.status}`);
+                }
+
+                if (titleRes.ok) {
+                    const titleData = await titleRes.json();
+                    setUserTitle(titleData);
+                } else {
+                    setUserTitle(null);
+                }
             } catch (error) {
-                console.error("Error cargando métricas:", error);
+                console.error("Error cargando métricas o título:", error);
                 setMetrics({
                     preferredUser: null,
                     matchCountries: [],
@@ -92,7 +104,7 @@ export function Metrics() {
                 setLoading(false);
             }
         };
-        fetchMetrics();
+        fetchMetricsAndTitle();
     }, []);
 
     // ── Skeleton loader ──
@@ -150,6 +162,9 @@ export function Metrics() {
                             </p>
                             <p className="preferredUserInteractions">
                                 {preferred.interaction_count} {t.interactions || "interacciones"}
+                            </p>
+                            <p className="preferredUserExplanation">
+                                {t.preferredUserExplanation || "Tu usuario preferido es la persona con la que más interactúas."}
                             </p>
                         </div>
                     </div>
@@ -306,6 +321,36 @@ export function Metrics() {
         );
     };
 
+    // ── Sección 4: Título del Usuario ──
+    const renderTitleSection = () => {
+        return (
+            <div className="metricsCard titleSection">
+                <div className="titleSectionHeader">
+                    <span className="titleSectionLabel">{t.yourTitle || "Tu Título:"}</span>
+                    {userTitle ? (
+                        <div className="userTitleBadgeBadge">
+
+                            🏅{userTitle.title_name.toUpperCase()}
+                        </div>
+                    ) : (
+                        <span className="noTitleBadge">{t.noTitleYet || "Aún no tienes título"}</span>
+                    )}
+                </div>
+
+                <div className="titleExplanationsContainer">
+                    <h4 className="titleExplanationHeader">{t.titleExplanationTitle || "Niveles de experiencia"}</h4>
+                    <ul className="titleExplanationList">
+                        <li><strong>Beginner:</strong> {t.beginnerDesc || "Usuario que está comenzando su camino."}</li>
+                        <li><strong>Enthusiast:</strong> {t.enthusiastDesc || "Usuario entusiasta que participa activamente."}</li>
+                        <li><strong>Intermediate:</strong> {t.intermediateDesc || "Usuario con un nivel intermedio en intercambios."}</li>
+                        <li><strong>Advanced:</strong> {t.advancedDesc || "Usuario avanzado con amplia experiencia."}</li>
+                        <li><strong>Master:</strong> {t.masterDesc || "Usuario maestro que ha dominado el intercambio de idiomas."}</li>
+                    </ul>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <>
             <div className={darkMode ? "dark-mode dark-mode-root" : "dark-mode-root"}>
@@ -331,6 +376,7 @@ export function Metrics() {
                                 {renderStatsSection()}
                                 {renderPieSection()}
                                 {renderWordsSection()}
+                                {renderTitleSection()}
                             </div>
                         )}
                     </div>
