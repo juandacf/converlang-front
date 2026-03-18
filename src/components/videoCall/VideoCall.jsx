@@ -350,7 +350,9 @@ export default function VideoCall() {
     });
 
     // 6. Fin de llamada
-    socket.on("callEnded", () => {
+    socket.on("callEnded", (data) => {
+      if (data && data.matchId && Number(data.matchId) !== numericMatchId) return;
+
       if (peerRef.current || localStreamRef.current) {
         cleanupCall();
         setIncomingCall(null);
@@ -366,7 +368,9 @@ export default function VideoCall() {
     });
 
     // 6.5 Llamada rechazada
-    socket.on("callRejected", () => {
+    socket.on("callRejected", (data) => {
+      if (data && data.matchId && Number(data.matchId) !== numericMatchId) return;
+
       cleanupCall();
       setIncomingCall(null);
       socket.emit("endCall", { matchId: numericMatchId, userId }); // Instantly release user state

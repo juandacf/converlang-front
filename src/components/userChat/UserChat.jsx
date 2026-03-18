@@ -404,18 +404,6 @@ export function UserChat() {
                     <div className="configMenu" ref={configMenuRef}>
                       <p
                         onClick={() => {
-                          // Emitir callRequest con datos del caller ANTES de navegar
-                          if (socket && selectedMatch) {
-                            socket.emit("callRequest", {
-                              matchId: Number(selectedMatch.match_id),
-                              caller: {
-                                userId: Number(decodedToken.sub),
-                                userName: `${authUser.first_name || ''} ${authUser.last_name || ''}`.trim() || 'Usuario',
-                                userPhoto: authUser.profile_photo || null,
-                              },
-                              targetUserId: Number(selectedMatch.other_user_id),
-                            });
-                          }
                           navigate(`/videocall/${selectedMatch.match_id}`, {
                             state: { selectedMatch },
                           });
