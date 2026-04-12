@@ -40,6 +40,7 @@ export function UserChat() {
     type: "danger"
   });
   const configMenuRef = useRef(null);
+  const messagesEndRef = useRef(null);
   const navigate = useNavigate();
   const API_BACKEND = API_URL
 
@@ -125,6 +126,15 @@ export function UserChat() {
     return () => socket.off("newMessage", handler);
 
   }, [socket]);
+
+  // =====================================================
+  // Auto-scroll al último mensaje
+  // =====================================================
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   // =====================================================
   // 4. Enviar mensaje
@@ -422,7 +432,7 @@ export function UserChat() {
                   )}
                 </div>
 
-                <div className="actualMessageContainer">
+                <div className="actualMessageContainer" ref={messagesEndRef}>
                   {messages.map((m) => (
                     <div
                       key={m.message_id}
