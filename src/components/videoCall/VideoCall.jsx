@@ -30,6 +30,7 @@ export default function VideoCall() {
   const peerRef = useRef(null);
   const localStreamRef = useRef(null);
   const recognitionRef = useRef(null);
+  const chatMessagesRef = useRef(null);
 
   // States para controles de media
   const [isMicOn, setIsMicOn] = useState(true);
@@ -655,6 +656,13 @@ export default function VideoCall() {
       .catch(() => setMessages([]));
   }, [numericMatchId]);
 
+  // Auto-scroll al último mensaje del chat
+  useEffect(() => {
+    if (chatMessagesRef.current) {
+      chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   /* ======================================================
      Cierre de pestaña
   ====================================================== */
@@ -831,7 +839,7 @@ export default function VideoCall() {
             {translations[language].videoModule.chatTitle} {selectedMatch?.full_name}
           </h3>
 
-          <div className="videoChatMessages">
+          <div className="videoChatMessages" ref={chatMessagesRef}>
             {messages.map((m) => {
               const isMe = getMsgSenderId(m) === userId;
               return (
